@@ -31,11 +31,12 @@ version = "0.0.1a0"
 source = { editable = "." }
 dependencies = [
     { name = "coola" },
+    { name = "grandalf" },
     { name = "langchain" },
     { name = "langchain-core" },
     { name = "langchain-google-genai" },
+    { name = "langchain-ollama" },
     { name = "langgraph" },
-    { name = "logging" },
     { name = "python-dotenv" },
 ]
 
@@ -64,12 +65,13 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "coola", specifier = ">=1.1.1,<2.0" },
+    { name = "coola", specifier = ">=1.1.2,<2.0" },
+    { name = "grandalf", specifier = ">=0.8,<1.0" },
     { name = "langchain", specifier = ">=1.2,<2.0" },
     { name = "langchain-core", specifier = ">=1.2,<2.0" },
     { name = "langchain-google-genai", specifier = ">=4.2,<5.0" },
+    { name = "langchain-ollama", specifier = ">=1.0,<2.0" },
     { name = "langgraph", specifier = ">=1.1,<2.0" },
-    { name = "logging", specifier = ">=0.4.9.6" },
     { name = "python-dotenv", specifier = ">=1.2,<2.0" },
 ]
 
@@ -400,11 +402,11 @@ wheels = [
 
 [[package]]
 name = "coola"
-version = "1.1.1"
+version = "1.1.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/70/2c/4d7c191630906ccb3fdb14b40fc5155b6a21bc32098de4579a767680475a/coola-1.1.1.tar.gz", hash = "sha256:933d272eaf22931f7d1fe651ba24bc8050e7c385149d80c7325f6d635591ab74", size = 81767, upload-time = "2026-03-12T21:01:30.957Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2b/48/37c7f589e75b0806c6cc9f6ca6d4fdfcbfceb023ffc813b09823a2d3fac6/coola-1.1.2.tar.gz", hash = "sha256:ba0e53e4c51c35bb443ff9b443a16570594e8671459cff59dd74edcb2ee6f7fc", size = 82081, upload-time = "2026-03-17T22:27:12.213Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f6/f3/2548b0cf8899ffa6ba37073f0da571cb11fcee57ffe841d2e901a9647144/coola-1.1.1-py3-none-any.whl", hash = "sha256:aab793edada55159137056bad489857a266357269482796eee06b934564ad7b1", size = 155012, upload-time = "2026-03-12T21:01:32.093Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/34/d7d86e090b57e390aa3c5a129db2b85b75e7ecd7427451fe1e9183ce4810/coola-1.1.2-py3-none-any.whl", hash = "sha256:747bd2f88059844087c92eb9bc648a6667b6a03679ab3a69bde1abda37bc2040", size = 155733, upload-time = "2026-03-17T22:27:10.697Z" },
 ]
 
 [[package]]
@@ -748,6 +750,18 @@ wheels = [
 ]
 
 [[package]]
+name = "grandalf"
+version = "0.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyparsing" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/95/0e/4ac934b416857969f9135dec17ac80660634327e003a870835dd1f382659/grandalf-0.8.tar.gz", hash = "sha256:2813f7aab87f0d20f334a3162ccfbcbf085977134a17a5b516940a93a77ea974", size = 38128, upload-time = "2023-01-26T07:37:06.668Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/61/30/44c7eb0a952478dbb5f2f67df806686d6a7e4b19f6204e091c4f49dc7c69/grandalf-0.8-py3-none-any.whl", hash = "sha256:793ca254442f4a79252ea9ff1ab998e852c1e071b863593e5383afee906b4185", size = 41802, upload-time = "2023-01-10T15:16:19.753Z" },
+]
+
+[[package]]
 name = "griffelib"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -910,6 +924,19 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain-ollama"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langchain-core" },
+    { name = "ollama" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/73/51/72cd04d74278f3575f921084f34280e2f837211dc008c9671c268c578afe/langchain_ollama-1.0.1.tar.gz", hash = "sha256:e37880c2f41cdb0895e863b1cfd0c2c840a117868b3f32e44fef42569e367443", size = 153850, upload-time = "2025-12-12T21:48:28.68Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e3/46/f2907da16dc5a5a6c679f83b7de21176178afad8d2ca635a581429580ef6/langchain_ollama-1.0.1-py3-none-any.whl", hash = "sha256:37eb939a4718a0255fe31e19fbb0def044746c717b01b97d397606ebc3e9b440", size = 29207, upload-time = "2025-12-12T21:48:27.832Z" },
+]
+
+[[package]]
 name = "langgraph"
 version = "1.1.2"
 source = { registry = "https://pypi.org/simple" }
@@ -967,7 +994,7 @@ wheels = [
 
 [[package]]
 name = "langsmith"
-version = "0.7.18"
+version = "0.7.19"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -980,16 +1007,10 @@ dependencies = [
     { name = "xxhash" },
     { name = "zstandard" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a5/a8/31e9e7b42089cf194a0d873cbfc1ecec6d6dd0cc693808f1cb64494cbd0c/langsmith-0.7.18.tar.gz", hash = "sha256:d7e6e1f9c9300ee83b9f201c9254b4a32799218de102a5b1d2b217e00be2dfa2", size = 1134635, upload-time = "2026-03-16T18:54:19.131Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9d/3a/7c65c600365ca72c207781d05b79f6599360b217bbc235834b78f6166df9/langsmith-0.7.19.tar.gz", hash = "sha256:11b20ec3211e0252fe99450b979a118cce5f832c9f7c624cf1b88d0447fbe346", size = 1134745, upload-time = "2026-03-17T21:03:24.857Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/58/244a14e29c7feccf06ed3929c9ab65a747a9ee94d5ac43d40862053b2f54/langsmith-0.7.18-py3-none-any.whl", hash = "sha256:3253c171fe2f6506056a42f9077983a34749b7a1629e41d8fb8e2005d8960886", size = 359268, upload-time = "2026-03-16T18:54:17.397Z" },
+    { url = "https://files.pythonhosted.org/packages/4b/cb/676e9cdb574b73eb2bdfb9f5d177cb8938c17e8fcf3a016e9cc550345f76/langsmith-0.7.19-py3-none-any.whl", hash = "sha256:78fd4a50a0653f86f4098ac47d700c5eefd7350bae1b4716ccc358a3f758e706", size = 359314, upload-time = "2026-03-17T21:03:23.407Z" },
 ]
-
-[[package]]
-name = "logging"
-version = "0.4.9.6"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/93/4b/979db9e44be09f71e85c9c8cfc42f258adfb7d93ce01deed2788b2948919/logging-0.4.9.6.tar.gz", hash = "sha256:26f6b50773f085042d301085bd1bf5d9f3735704db9f37c1ce6d8b85c38f2417", size = 96029, upload-time = "2013-06-04T23:43:22.086Z" }
 
 [[package]]
 name = "markdown"
@@ -1260,6 +1281,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/24/bf/d1bda4f6168e0b2e9e5958945e01910052158313224ada5ce1fb2e1113b8/nodeenv-1.10.0.tar.gz", hash = "sha256:996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb", size = 55611, upload-time = "2025-12-20T14:08:54.006Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/88/b2/d0896bdcdc8d28a7fc5717c305f1a861c26e18c05047949fb371034d98bd/nodeenv-1.10.0-py2.py3-none-any.whl", hash = "sha256:5bb13e3eed2923615535339b3c620e76779af4cb4c6a90deccc9e36b274d3827", size = 23438, upload-time = "2025-12-20T14:08:52.782Z" },
+]
+
+[[package]]
+name = "ollama"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9d/5a/652dac4b7affc2b37b95386f8ae78f22808af09d720689e3d7a86b6ed98e/ollama-0.6.1.tar.gz", hash = "sha256:478c67546836430034b415ed64fa890fd3d1ff91781a9d548b3325274e69d7c6", size = 51620, upload-time = "2025-11-13T23:02:17.416Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/47/4f/4a617ee93d8208d2bcf26b2d8b9402ceaed03e3853c754940e2290fed063/ollama-0.6.1-py3-none-any.whl", hash = "sha256:fc4c984b345735c5486faeee67d8a265214a31cbb828167782dc642ce0a2bf8c", size = 14354, upload-time = "2025-11-13T23:02:16.292Z" },
 ]
 
 [[package]]

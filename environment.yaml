@@ -1,0 +1,5 @@
+name: argos
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13

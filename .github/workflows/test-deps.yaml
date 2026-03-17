@@ -26,19 +26,33 @@ jobs:
       package-name: coola
       package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).coola) }}
 
-  google-adk:
+  langchain-core:
     needs: get-versions
     uses: ./.github/workflows/test-code-dep.yaml
     with:
-      package-name: google-adk
-      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).google-adk) }}
+      package-name: langchain-core
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-core) }}
 
-  google-genai:
+  langchain-google-genai:
     needs: get-versions
     uses: ./.github/workflows/test-code-dep.yaml
     with:
-      package-name: google-genai
-      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).google-genai) }}
+      package-name: langchain-google-genai
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-google-genai) }}
+
+  langgraph:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: langgraph
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langgraph) }}
+
+  python-dotenv:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: python-dotenv
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).python-dotenv) }}
 
   #################################
   #     Optional dependencies     #

@@ -26,6 +26,13 @@ jobs:
       package-name: coola
       package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).coola) }}
 
+  langchain:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: langchain
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain) }}
+
   langchain-core:
     needs: get-versions
     uses: ./.github/workflows/test-code-dep.yaml

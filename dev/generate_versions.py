@@ -23,6 +23,7 @@ def fetch_package_versions() -> dict[str, list[str]]:
     """
     return {
         "coola": list(fetch_latest_minor_versions("coola", lower="1.1")),
+        "langchain": list(fetch_latest_minor_versions("langchain", lower="1.2")),
         "langchain-core": list(fetch_latest_minor_versions("langchain-core", lower="1.2")),
         "langchain-google-genai": list(
             fetch_latest_major_versions("langchain-google-genai", lower="4.2")

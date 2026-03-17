@@ -31,9 +31,11 @@ version = "0.0.1a0"
 source = { editable = "." }
 dependencies = [
     { name = "coola" },
+    { name = "langchain" },
     { name = "langchain-core" },
     { name = "langchain-google-genai" },
     { name = "langgraph" },
+    { name = "logging" },
     { name = "python-dotenv" },
 ]
 
@@ -63,9 +65,11 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "coola", specifier = ">=1.1.1,<2.0" },
+    { name = "langchain", specifier = ">=1.2,<2.0" },
     { name = "langchain-core", specifier = ">=1.2,<2.0" },
     { name = "langchain-google-genai", specifier = ">=4.2,<5.0" },
     { name = "langgraph", specifier = ">=1.1,<2.0" },
+    { name = "logging", specifier = ">=0.4.9.6" },
     { name = "python-dotenv", specifier = ">=1.2,<2.0" },
 ]
 
@@ -858,6 +862,20 @@ wheels = [
 ]
 
 [[package]]
+name = "langchain"
+version = "1.2.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "langchain-core" },
+    { name = "langgraph" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d8/1d/1af2fc0ac084d4781778b7846b1aed62e05006bf2d73fdf84ac3a8f5225c/langchain-1.2.12.tar.gz", hash = "sha256:ed705b5b293799f7e3e394387f398a1b71707542758283206c8c21415759d991", size = 566444, upload-time = "2026-03-11T22:21:00.712Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ca/51/09bb1cfb0b57ae9440ca56cc576e4dc792f83d030eef7637d2c516dcb0a0/langchain-1.2.12-py3-none-any.whl", hash = "sha256:60eff184b8f92c2610f5a4c9a97ad339a891adb01901e83e4df8e6c9c69cf852", size = 112373, upload-time = "2026-03-11T22:20:59.508Z" },
+]
+
+[[package]]
 name = "langchain-core"
 version = "1.2.19"
 source = { registry = "https://pypi.org/simple" }
@@ -966,6 +984,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/a5/a8/31e9e7b42089cf194
 wheels = [
     { url = "https://files.pythonhosted.org/packages/29/58/244a14e29c7feccf06ed3929c9ab65a747a9ee94d5ac43d40862053b2f54/langsmith-0.7.18-py3-none-any.whl", hash = "sha256:3253c171fe2f6506056a42f9077983a34749b7a1629e41d8fb8e2005d8960886", size = 359268, upload-time = "2026-03-16T18:54:17.397Z" },
 ]
+
+[[package]]
+name = "logging"
+version = "0.4.9.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/93/4b/979db9e44be09f71e85c9c8cfc42f258adfb7d93ce01deed2788b2948919/logging-0.4.9.6.tar.gz", hash = "sha256:26f6b50773f085042d301085bd1bf5d9f3735704db9f37c1ce6d8b85c38f2417", size = 96029, upload-time = "2013-06-04T23:43:22.086Z" }
 
 [[package]]
 name = "markdown"

@@ -25,10 +25,10 @@ def read_jsonl_in_batches(path: Path, batch_size: int = 1) -> Generator[list[dic
     batch = []
     with path.open("r", encoding="utf-8") as f:
         for line in f:
-            line = line.strip()
-            if not line:
+            stripped_line = line.strip()
+            if not stripped_line:
                 continue
-            batch.append(json.loads(line))
+            batch.append(json.loads(stripped_line))
             if len(batch) == batch_size:
                 yield batch
                 batch = []

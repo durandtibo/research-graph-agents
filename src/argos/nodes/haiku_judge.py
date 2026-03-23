@@ -218,13 +218,10 @@ def make_haiku_judge_node(
 
     Example:
         ```pycon
-        >>> from unittest.mock import Mock
-        >>> from langchain_core.language_models import BaseChatModel
+        >>> from langchain_ollama import ChatOllama
         >>> from argos.nodes.haiku_judge import make_haiku_judge_node
-        >>> llm = Mock(spec=BaseChatModel, with_structured_output=Mock())
+        >>> llm = ChatOllama(model="gemma3:1b")
         >>> node = make_haiku_judge_node(llm=llm)
-        >>> callable(node)
-        True
 
         ```
     """

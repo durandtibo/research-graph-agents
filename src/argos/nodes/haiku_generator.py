@@ -68,8 +68,7 @@ def make_haiku_generator_node(
     Args:
         llm: The LLM used to generate the haiku.
         system_prompt: The system prompt that instructs the LLM on how
-            to write a haiku. Defaults to
-            ``HAIKU_GENERATOR_SYSTEM_PROMPT``.
+            to write a haiku.
 
     Returns:
         A callable node that accepts a :class:`HaikuState` and returns
@@ -77,13 +76,10 @@ def make_haiku_generator_node(
 
     Example:
         ```pycon
-        >>> from unittest.mock import Mock
-        >>> from langchain_core.language_models import BaseChatModel
+        >>> from langchain_ollama import ChatOllama
         >>> from argos.nodes.haiku_generator import make_haiku_generator_node
-        >>> llm = Mock(spec=BaseChatModel)
+        >>> llm = ChatOllama(model="gemma3:1b")
         >>> node = make_haiku_generator_node(llm=llm)
-        >>> callable(node)
-        True
 
         ```
     """

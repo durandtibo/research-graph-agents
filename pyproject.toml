@@ -30,7 +30,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: BSD License",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -39,7 +38,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "coola >= 1.1.2,<2.0",
     "grandalf >= 0.8,<1.0",
@@ -112,7 +111,7 @@ addopts = ["--color", "yes", "--durations", "10", "-rf"]
 
 [tool.black]
 line-length = 100
-target-version = ["py310", "py311", "py312", "py313", "py314"]
+target-version = ["py311", "py312", "py313", "py314"]
 include = '\.pyi?$'
 
 [tool.pylint.FORMAT]
@@ -261,7 +260,7 @@ lint.exclude = [
 lint.extend-select = ["D400", "D401", "D404"]
 
 line-length = 100
-target-version = "py310"
+target-version = "py311"
 src = ["src"]
 
 [tool.ruff.lint.per-file-ignores]

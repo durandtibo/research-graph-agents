@@ -1,4 +1,9 @@
-r"""Contain node implementations."""
+r"""Contain node implementations for LangGraph graphs.
+
+This package exposes the haiku generator and haiku judge nodes,
+along with the associated state types used to wire them together
+in a :class:`~langgraph.graph.StateGraph`.
+"""
 
 from __future__ import annotations
 

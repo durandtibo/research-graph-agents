@@ -1,4 +1,4 @@
-r"""Implement a example about a haiku generator-judge system."""
+r"""Implement an example of a haiku generator-judge system."""
 
 from __future__ import annotations
 

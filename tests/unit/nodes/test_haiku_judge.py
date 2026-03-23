@@ -240,14 +240,12 @@ def test_haiku_judge_state_keys() -> None:
 ###########################################
 
 
-def test_make_haiku_judge_node_returns_callable() -> None:
-    node = make_haiku_judge_node(llm=Mock(spec=BaseChatModel))
+def test_make_haiku_judge_node_returns_callable(mock_llm: BaseChatModel) -> None:
+    node = make_haiku_judge_node(llm=mock_llm)
     assert callable(node)
 
 
-def test_make_haiku_judge_node_with_structured_output_called_with_haiku_judge_result(
-    mock_llm: BaseChatModel,
-) -> None:
+def test_make_haiku_judge_node_with_structured_output_called(mock_llm: BaseChatModel) -> None:
     make_haiku_judge_node(llm=mock_llm)
     mock_llm.with_structured_output.assert_called_once_with(HaikuJudgeResult)
 
@@ -258,7 +256,8 @@ def test_make_haiku_judge_node_call(
     chain_mock = Mock(invoke=Mock(return_value=mock_judge_result))
     with patch("langchain_core.prompts.ChatPromptTemplate.__or__", return_value=chain_mock):
         node = make_haiku_judge_node(mock_llm)
-        node({"topic": "fog", "haiku": "grey mist hides the hills"})
+        out = node({"topic": "fog", "haiku": "grey mist hides the hills"})
+        assert out == {"evaluation": mock_judge_result}
     chain_mock.invoke.assert_called_once_with(
         {"topic": "fog", "haiku": "grey mist hides the hills"}
     )

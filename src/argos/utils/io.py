@@ -5,14 +5,16 @@ from __future__ import annotations
 __all__ = ["read_jsonl_in_batches", "write_jsonl"]
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Generator
     from pathlib import Path
 
 
-def read_jsonl_in_batches(path: Path, batch_size: int = 1) -> Generator[list[dict], None, None]:
+def read_jsonl_in_batches(
+    path: Path, batch_size: int = 1
+) -> Generator[list[dict[Any, Any]], None, None]:
     """Read a JSONL file in batches.
 
     Args:
@@ -37,7 +39,7 @@ def read_jsonl_in_batches(path: Path, batch_size: int = 1) -> Generator[list[dic
         yield batch
 
 
-def write_jsonl(path: Path, records: list[dict]) -> None:
+def write_jsonl(path: Path, records: list[dict[Any, Any]]) -> None:
     """Write a list of dicts to a JSONL file.
 
     Args:

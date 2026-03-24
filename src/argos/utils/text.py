@@ -47,9 +47,9 @@ def remove_empty_lines(text: str) -> str:
     Example:
         ```pycon
         >>> from argos.utils.text import remove_empty_lines
-        >>> remove_empty_lines("Hello\\n\\nWorld\\n\\n\\nFoo")
-        'Hello\\nWorld\\nFoo'
-        >>> remove_empty_lines("\\n\\nOnly empty lines\\n\\n")
+        >>> remove_empty_lines("Hello\n\nWorld\n\n\nFoo")
+        'Hello\nWorld\nFoo'
+        >>> remove_empty_lines("\n\nOnly empty lines\n\n")
         'Only empty lines'
 
         ```

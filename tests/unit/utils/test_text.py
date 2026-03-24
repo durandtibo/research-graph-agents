@@ -1,6 +1,51 @@
 from __future__ import annotations
 
-from argos.utils.text import count_syllables, remove_empty_lines
+from argos.utils.text import count_lines, count_syllables, remove_empty_lines
+
+#################################
+#     Tests for count_lines     #
+#################################
+
+
+def test_count_lines_empty_string() -> None:
+    assert count_lines("") == 0
+
+
+def test_count_lines_single_line() -> None:
+    assert count_lines("Hello") == 1
+
+
+def test_count_lines_two_lines() -> None:
+    assert count_lines("Hello\nWorld") == 2
+
+
+def test_count_lines_three_lines() -> None:
+    assert count_lines("Hello\nWorld\nFoo") == 3
+
+
+def test_count_lines_trailing_newline() -> None:
+    assert count_lines("Hello\n") == 1
+
+
+def test_count_lines_leading_newline() -> None:
+    assert count_lines("\nHello") == 2
+
+
+def test_count_lines_multiple_consecutive_newlines() -> None:
+    assert count_lines("Hello\n\n\nWorld") == 4
+
+
+def test_count_lines_only_newlines() -> None:
+    assert count_lines("\n\n\n") == 3
+
+
+def test_count_lines_windows_line_endings() -> None:
+    assert count_lines("Hello\r\nWorld") == 2
+
+
+def test_count_lines_mixed_line_endings() -> None:
+    assert count_lines("Hello\nWorld\r\nFoo") == 3
+
 
 #####################################
 #     Tests for count_syllables     #

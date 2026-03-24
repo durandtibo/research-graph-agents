@@ -12,8 +12,6 @@ from argos.utils.imports import is_colorlog_available
 if is_colorlog_available():  # pragma: no cover
     import colorlog
 
-logger = logging.getLogger(__name__)
-
 
 def configure_logging(level: int = logging.INFO) -> None:
     r"""Configure the logging module with a colored formatter.

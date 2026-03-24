@@ -83,37 +83,48 @@ def test_haiku_judge_result_invalid_score_too_high() -> None:
         )
 
 
-def test_haiku_judge_result_valid_inconsistent_passed_and_structure_passed() -> None:
-    with pytest.raises(ValueError, match=r"passed .* does not match structure_passed"):
-        HaikuJudgeResult(
-            structure_passed=False,
-            topic_passed=True,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
+def test_haiku_judge_result_passed_auto_corrected_structure_failed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=False,
+        topic_passed=True,
+        score=8,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
 
 
-def test_haiku_judge_result_valid_inconsistent_passed_and_topic_passed() -> None:
-    with pytest.raises(ValueError, match=r"passed .* does not match topic_passed"):
-        HaikuJudgeResult(
-            structure_passed=True,
-            topic_passed=False,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
+def test_haiku_judge_result_passed_auto_corrected_topic_failed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=False,
+        score=8,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
 
 
-def test_haiku_judge_result_valid_inconsistent_passed_and_score() -> None:
-    with pytest.raises(ValueError, match=r"passed .* does not match score"):
-        HaikuJudgeResult(
-            structure_passed=True,
-            topic_passed=True,
-            score=6,
-            reasoning="meow",
-            passed=True,
-        )
+def test_haiku_judge_result_passed_auto_corrected_score_too_low() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=True,
+        score=6,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
+
+
+def test_haiku_judge_result_passed_auto_corrected_all_pass() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=True,
+        score=7,
+        reasoning="meow",
+        passed=False,  # LLM inconsistency: overridden to True
+    )
+    assert result.passed
 
 
 #####################################

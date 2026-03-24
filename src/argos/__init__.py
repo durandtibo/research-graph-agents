@@ -1,4 +1,5 @@
-r"""Root package for argos — research agents built with LangChain and LangGraph.
+r"""Root package for argos — research agents built with LangChain and
+LangGraph.
 
 This package provides reusable LangGraph nodes, state definitions, and
 utilities for building and evaluating LLM-powered graph agents.

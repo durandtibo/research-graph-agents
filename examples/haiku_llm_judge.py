@@ -37,7 +37,7 @@ def create_graph() -> CompiledStateGraph:
     """
     llm: BaseChatModel = ChatOllama(model="gemma3:1b")
     logger.info(f"LLM model={llm.model}")
-    llm_judge: BaseChatModel = llm  # ChatOllama(model="gemma3:4b", temperature=0)
+    llm_judge: BaseChatModel = ChatOllama(model="gemma3:4b", temperature=0)
     logger.info(f"LLM judge model={llm_judge.model}")
 
     graph_builder = StateGraph(State)

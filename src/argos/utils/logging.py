@@ -1,4 +1,5 @@
-r"""Contain utility functions to configure the standard logging library."""
+r"""Contain utility functions to configure the standard logging
+library."""
 
 from __future__ import annotations
 

@@ -15,7 +15,11 @@ from langchain_ollama import ChatOllama
 from langgraph.constants import END, START
 from langgraph.graph import StateGraph
 
-from argos.nodes import HaikuJudgeState, make_haiku_generator_node, make_haiku_judge_node
+from argos.nodes import (
+    HaikuJudgeState,
+    make_haiku_generator_node,
+    make_haiku_judge_node,
+)
 
 llm = ChatOllama(model="gemma3:1b")
 

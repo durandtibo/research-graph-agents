@@ -59,7 +59,8 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_line_count_passed(self) -> Self:
-        r"""Validate that ``line_count_passed`` is consistent with ``line_count``.
+        r"""Validate that ``line_count_passed`` is consistent with
+        ``line_count``.
 
         Raises:
             ValueError: If ``line_count_passed`` is ``True`` but
@@ -72,7 +73,8 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_syllable_breakdown(self) -> Self:
-        r"""Validate that ``syllable_breakdown`` length matches ``line_count``.
+        r"""Validate that ``syllable_breakdown`` length matches
+        ``line_count``.
 
         Raises:
             ValueError: If ``len(syllable_breakdown)`` does not equal
@@ -85,7 +87,8 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_structure_passed(self) -> Self:
-        r"""Validate that ``structure_passed`` is consistent with ``syllable_breakdown``.
+        r"""Validate that ``structure_passed`` is consistent with
+        ``syllable_breakdown``.
 
         Raises:
             ValueError: If ``structure_passed`` is ``True`` but
@@ -98,7 +101,8 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_passed(self) -> Self:
-        r"""Validate that ``passed`` is consistent with all contributing fields.
+        r"""Validate that ``passed`` is consistent with all contributing
+        fields.
 
         Raises:
             ValueError: If ``passed`` is ``True`` but any of the

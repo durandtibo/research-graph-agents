@@ -59,11 +59,10 @@ def is_colorlog_available() -> bool:
 
 
 def colorlog_available(fn: F) -> F:
-    r"""Implement a decorator to execute a function only if ``colorlog``
-    package is installed.
+    r"""Implement a decorator to execute a function only if ``colorlog`` is installed.
 
     Args:
-        fn: The function to execute.
+        fn: The function to conditionally execute.
 
     Returns:
         A wrapper around ``fn`` if ``colorlog`` package is installed,
@@ -84,6 +83,10 @@ def colorlog_available(fn: F) -> F:
 
 
 def raise_colorlog_missing_error() -> NoReturn:
-    r"""Raise a RuntimeError to indicate the ``colorlog`` package is
-    missing."""
+    r"""Raise a ``RuntimeError`` to indicate the ``colorlog`` package is missing.
+
+    Raises:
+        RuntimeError: Always, with a message indicating that the
+            ``colorlog`` package is not installed.
+    """
     raise_package_missing_error("colorlog", "colorlog")

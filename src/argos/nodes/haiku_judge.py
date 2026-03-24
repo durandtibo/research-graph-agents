@@ -23,7 +23,12 @@ if TYPE_CHECKING:
 
 
 class HaikuJudgeResult(BaseModel):
-    r"""Define the structure of the haiku judge result."""
+    r"""Define the structured result produced by the haiku judge LLM.
+
+    All fields are populated by the LLM via structured output and are
+    then validated by the model validators to ensure internal
+    consistency.
+    """
 
     line_count: int = Field(description="Number of lines in the input haiku.", ge=0)
     line_count_passed: bool = Field(description="True ONLY if line_count == 3.")
@@ -54,6 +59,12 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_line_count_passed(self) -> Self:
+        r"""Validate that ``line_count_passed`` is consistent with ``line_count``.
+
+        Raises:
+            ValueError: If ``line_count_passed`` is ``True`` but
+                ``line_count`` is not ``3``.
+        """
         if self.line_count_passed and self.line_count != 3:
             msg = f"line_count_passed ({self.line_count_passed}) does not match line_count ({self.line_count})"
             raise ValueError(msg)
@@ -61,6 +72,12 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_syllable_breakdown(self) -> Self:
+        r"""Validate that ``syllable_breakdown`` length matches ``line_count``.
+
+        Raises:
+            ValueError: If ``len(syllable_breakdown)`` does not equal
+                ``line_count``.
+        """
         if self.line_count != len(self.syllable_breakdown):
             msg = f"line_count ({self.line_count}) does not match syllable_breakdown ({self.syllable_breakdown})"
             raise ValueError(msg)
@@ -68,6 +85,12 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_structure_passed(self) -> Self:
+        r"""Validate that ``structure_passed`` is consistent with ``syllable_breakdown``.
+
+        Raises:
+            ValueError: If ``structure_passed`` is ``True`` but
+                ``syllable_breakdown`` is not ``[5, 7, 5]``.
+        """
         if self.structure_passed and self.syllable_breakdown != [5, 7, 5]:
             msg = f"structure_passed ({self.structure_passed}) does not match syllable_breakdown ({self.syllable_breakdown})"
             raise ValueError(msg)
@@ -75,6 +98,14 @@ class HaikuJudgeResult(BaseModel):
 
     @model_validator(mode="after")
     def check_passed(self) -> Self:
+        r"""Validate that ``passed`` is consistent with all contributing fields.
+
+        Raises:
+            ValueError: If ``passed`` is ``True`` but any of the
+                following conditions are not met: ``line_count_passed``
+                is ``True``, ``structure_passed`` is ``True``,
+                ``topic_passed`` is ``True``, and ``score >= 7``.
+        """
         if self.passed and not self.line_count_passed:
             msg = (
                 f"passed ({self.passed}) does not match line_count_passed "
@@ -96,7 +127,15 @@ class HaikuJudgeResult(BaseModel):
 
 
 class HaikuJudgeState(HaikuState):
-    r"""Define the state to judge a haiku."""
+    r"""Define the graph state used during haiku evaluation.
+
+    Extends :class:`HaikuState` with an ``evaluation`` field that
+    holds the structured output produced by the judge node.
+
+    Attributes:
+        evaluation: The structured evaluation result returned by the
+            haiku judge LLM.
+    """
 
     evaluation: HaikuJudgeResult
 
@@ -159,12 +198,32 @@ def make_haiku_judge_node(
 ) -> Callable[[HaikuState], dict]:
     r"""Create a judge node for haiku evaluation.
 
+    The returned node reads ``topic`` and ``haiku`` from the graph
+    state, invokes the LLM with structured output to produce a
+    :class:`HaikuJudgeResult`, and returns it under the ``evaluation``
+    key.
+
     Args:
-        llm: The LLM used to build the judge.
-        system_prompt: The judge system prompt.
+        llm: The LLM used to build the judge. The LLM must support
+            structured output via
+            :meth:`~langchain_core.language_models.BaseChatModel.with_structured_output`.
+        system_prompt: The system prompt that instructs the LLM on how
+            to evaluate a haiku. Defaults to
+            ``HAIKU_JUDGE_SYSTEM_PROMPT``.
 
     Returns:
-        The judge node.
+        A callable node that accepts a :class:`HaikuState` and returns
+            a dict with the evaluation result under the ``evaluation``
+            key.
+
+    Example:
+        ```pycon
+        >>> from langchain_ollama import ChatOllama
+        >>> from argos.nodes.haiku_judge import make_haiku_judge_node
+        >>> llm = ChatOllama(model="gemma3:1b")
+        >>> node = make_haiku_judge_node(llm=llm)
+
+        ```
     """
     judge_prompt = ChatPromptTemplate.from_messages(
         [

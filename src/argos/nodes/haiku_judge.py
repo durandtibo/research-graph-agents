@@ -30,13 +30,8 @@ class HaikuJudgeResult(BaseModel):
     consistency.
     """
 
-    line_count: int = Field(description="Number of lines in the input haiku.", ge=0)
-    line_count_passed: bool = Field(description="True ONLY if line_count == 3.")
-    syllable_breakdown: list[int] = Field(
-        description="The exact syllable count for each line (e.g., [5, 7, 5])."
-    )
     structure_passed: bool = Field(
-        description="True ONLY if line_count_passed AND syllable_breakdown == [5, 7, 5]."
+        description="True ONLY if there are 3 non-empty lines and the number of syllables per line is 5, 7, and 5."
     )
     topic_passed: bool = Field(
         description="True if the haiku meaningfully addresses the target topic, otherwise False."
@@ -52,52 +47,8 @@ class HaikuJudgeResult(BaseModel):
         description="A brief explanation justifying the score, topic adherence, and structure."
     )
     passed: bool = Field(
-        description=(
-            "True ONLY if line_count_passed AND structure_passed AND topic_passed AND score >= 7."
-        )
+        description=("True ONLY if structure_passed AND topic_passed AND score >= 7.")
     )
-
-    @model_validator(mode="after")
-    def check_line_count_passed(self) -> Self:
-        r"""Validate that ``line_count_passed`` is consistent with
-        ``line_count``.
-
-        Raises:
-            ValueError: If ``line_count_passed`` is ``True`` but
-                ``line_count`` is not ``3``.
-        """
-        if self.line_count_passed and self.line_count != 3:
-            msg = f"line_count_passed ({self.line_count_passed}) does not match line_count ({self.line_count})"
-            raise ValueError(msg)
-        return self
-
-    @model_validator(mode="after")
-    def check_syllable_breakdown(self) -> Self:
-        r"""Validate that ``syllable_breakdown`` length matches
-        ``line_count``.
-
-        Raises:
-            ValueError: If ``len(syllable_breakdown)`` does not equal
-                ``line_count``.
-        """
-        if self.line_count != len(self.syllable_breakdown):
-            msg = f"line_count ({self.line_count}) does not match syllable_breakdown ({self.syllable_breakdown})"
-            raise ValueError(msg)
-        return self
-
-    @model_validator(mode="after")
-    def check_structure_passed(self) -> Self:
-        r"""Validate that ``structure_passed`` is consistent with
-        ``syllable_breakdown``.
-
-        Raises:
-            ValueError: If ``structure_passed`` is ``True`` but
-                ``syllable_breakdown`` is not ``[5, 7, 5]``.
-        """
-        if self.structure_passed and self.syllable_breakdown != [5, 7, 5]:
-            msg = f"structure_passed ({self.structure_passed}) does not match syllable_breakdown ({self.syllable_breakdown})"
-            raise ValueError(msg)
-        return self
 
     @model_validator(mode="after")
     def check_passed(self) -> Self:
@@ -110,12 +61,6 @@ class HaikuJudgeResult(BaseModel):
                 is ``True``, ``structure_passed`` is ``True``,
                 ``topic_passed`` is ``True``, and ``score >= 7``.
         """
-        if self.passed and not self.line_count_passed:
-            msg = (
-                f"passed ({self.passed}) does not match line_count_passed "
-                f"({self.line_count_passed})"
-            )
-            raise ValueError(msg)
         if self.passed and not self.structure_passed:
             msg = (
                 f"passed ({self.passed}) does not match structure_passed ({self.structure_passed})"

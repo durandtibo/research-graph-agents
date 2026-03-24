@@ -1,4 +1,9 @@
-r"""Root package for argos."""
+r"""Root package for argos — research agents built with LangChain and
+LangGraph.
+
+This package provides reusable LangGraph nodes, state definitions, and
+utilities for building and evaluating LLM-powered graph agents.
+"""
 
 from __future__ import annotations
 

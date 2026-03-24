@@ -15,7 +15,13 @@ if TYPE_CHECKING:
 
 
 class HaikuState(TypedDict):
-    r"""Define the state to generate a haiku."""
+    r"""Define the state used throughout haiku generation.
+
+    Attributes:
+        topic: The subject or theme the haiku should be written about.
+        haiku: The generated haiku text, consisting of three lines
+            separated by newlines.
+    """
 
     topic: str
     haiku: str
@@ -55,12 +61,27 @@ def make_haiku_generator_node(
 ) -> Callable[[HaikuState], dict]:
     r"""Create a haiku generator node.
 
+    The returned node reads ``topic`` from the graph state, calls the
+    LLM to compose a haiku, and returns the result under the ``haiku``
+    key.
+
     Args:
         llm: The LLM used to generate the haiku.
-        system_prompt: The haiku generator system prompt.
+        system_prompt: The system prompt that instructs the LLM on how
+            to write a haiku.
 
     Returns:
-        The haiku generator node.
+        A callable node that accepts a :class:`HaikuState` and returns
+            a dict with the generated haiku under the ``haiku`` key.
+
+    Example:
+        ```pycon
+        >>> from langchain_ollama import ChatOllama
+        >>> from argos.nodes.haiku_generator import make_haiku_generator_node
+        >>> llm = ChatOllama(model="gemma3:1b")
+        >>> node = make_haiku_generator_node(llm=llm)
+
+        ```
     """
     generator_prompt = ChatPromptTemplate.from_messages(
         [

@@ -18,8 +18,20 @@ logger = logging.getLogger(__name__)
 def configure_logging(level: int = logging.INFO) -> None:
     r"""Configure the logging module with a colored formatter.
 
+    If the ``colorlog`` package is installed, a colored formatter is
+    used. Otherwise, the standard ``logging.basicConfig`` is called.
+
     Args:
-        level: The lower level.
+        level: The minimum log level to capture. Defaults to
+            ``logging.INFO``.
+
+    Example:
+        ```pycon
+        >>> import logging
+        >>> from argos.utils.logging import configure_logging
+        >>> configure_logging(level=logging.DEBUG)
+
+        ```
     """
     if not is_colorlog_available():
         logging.basicConfig(level=level)

@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
-from argos.utils.dataframe import concat_and_merge
+from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
 
 ######################################
 #     Tests for concat_and_merge     #
@@ -104,3 +104,151 @@ def test_concat_and_merge_row_count_mismatch_raises() -> None:
     df2 = pl.DataFrame({"b": [1, 2]})
     with pytest.raises(ValueError, match="DataFrames must have the same number of rows"):
         concat_and_merge(df1, df2)
+
+
+###############################################
+#     Tests for summarize_boolean_columns     #
+###############################################
+
+
+def test_summarize_boolean_columns_all_true() -> None:
+    df = pl.DataFrame({"a": [True, True, True]})
+    result = summarize_boolean_columns(df)
+    assert_frame_equal(
+        result,
+        pl.DataFrame(
+            {
+                "column": ["a"],
+                "true_count": [3],
+                "false_count": [0],
+                "true_pct": [100.0],
+                "false_pct": [0.0],
+            }
+        ),
+    )
+
+
+def test_summarize_boolean_columns_all_false() -> None:
+    df = pl.DataFrame({"a": [False, False, False]})
+    result = summarize_boolean_columns(df)
+    assert_frame_equal(
+        result,
+        pl.DataFrame(
+            {
+                "column": ["a"],
+                "true_count": [0],
+                "false_count": [3],
+                "true_pct": [0.0],
+                "false_pct": [100.0],
+            }
+        ),
+    )
+
+
+def test_summarize_boolean_columns_mixed_true_and_false() -> None:
+    df = pl.DataFrame({"a": [True, True, False, True]})
+    result = summarize_boolean_columns(df)
+    assert_frame_equal(
+        result,
+        pl.DataFrame(
+            {
+                "column": ["a"],
+                "true_count": [3],
+                "false_count": [1],
+                "true_pct": [75.0],
+                "false_pct": [25.0],
+            }
+        ),
+    )
+
+
+def test_summarize_boolean_columns_single_row_true() -> None:
+    df = pl.DataFrame({"a": [True]})
+    result = summarize_boolean_columns(df)
+    assert_frame_equal(
+        result,
+        pl.DataFrame(
+            {
+                "column": ["a"],
+                "true_count": [1],
+                "false_count": [0],
+                "true_pct": [100.0],
+                "false_pct": [0.0],
+            }
+        ),
+    )
+
+
+def test_summarize_boolean_columns_single_row_false() -> None:
+    df = pl.DataFrame({"a": [False]})
+    result = summarize_boolean_columns(df)
+    assert_frame_equal(
+        result,
+        pl.DataFrame(
+            {
+                "column": ["a"],
+                "true_count": [0],
+                "false_count": [1],
+                "true_pct": [0.0],
+                "false_pct": [100.0],
+            }
+        ),
+    )
+
+
+def test_summarize_boolean_columns_multiple_columns() -> None:
+    df = pl.DataFrame(
+        {
+            "is_active": [True, True, False, True],
+            "has_error": [False, False, False, True],
+        }
+    )
+    result = summarize_boolean_columns(df)
+    assert_frame_equal(
+        result,
+        pl.DataFrame(
+            {
+                "column": ["is_active", "has_error"],
+                "true_count": [3, 1],
+                "false_count": [1, 3],
+                "true_pct": [75.0, 25.0],
+                "false_pct": [25.0, 75.0],
+            }
+        ),
+    )
+
+
+def test_summarize_boolean_columns_row_order_matches_input_column_order() -> None:
+    df = pl.DataFrame({"z": [True], "a": [False], "m": [True]})
+    result = summarize_boolean_columns(df)
+    assert_frame_equal(
+        result,
+        pl.DataFrame(
+            {
+                "column": ["z", "a", "m"],
+                "true_count": [1, 0, 1],
+                "false_count": [0, 1, 0],
+                "true_pct": [100.0, 0.0, 100.0],
+                "false_pct": [0.0, 100.0, 0.0],
+            }
+        ),
+    )
+
+
+def test_summarize_boolean_columns_raises_on_integer_column() -> None:
+    df = pl.DataFrame({"a": [1, 0, 1]})
+    with pytest.raises(ValueError, match="Non-boolean columns"):
+        summarize_boolean_columns(df)
+
+
+def test_summarize_boolean_columns_raises_on_string_column() -> None:
+    df = pl.DataFrame({"a": ["true", "false"]})
+    with pytest.raises(ValueError, match="Non-boolean columns"):
+        summarize_boolean_columns(df)
+
+
+def test_summarize_boolean_columns_raises_on_mixed_bool_and_non_bool() -> None:
+    df = pl.DataFrame({"a": [True, False], "b": [1.0, 0.0]})
+
+    with pytest.raises(ValueError, match="Non-boolean columns"):
+        summarize_boolean_columns(df)

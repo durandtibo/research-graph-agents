@@ -49,6 +49,7 @@ dependencies = [
     "langgraph >= 1.1,<2.0",
     "python-dotenv >= 1.2,<2.0",
     "syllables >= 1.1,<2.0",
+    "polars >= 1.39,<2.0",
 ]
 
 [project.optional-dependencies]

@@ -2,6 +2,8 @@ r"""Contain code to generate a haiku dataset."""
 
 from __future__ import annotations
 
+__all__ = ["generate_examples"]
+
 import logging
 
 import polars as pl

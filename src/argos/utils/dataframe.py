@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import polars as pl
 
-__all__ = ["concat_and_merge"]
+__all__ = ["concat_and_merge", "summarize_boolean_columns"]
 
 _TEMP_SUFFIX = "_temp_right"
 
@@ -61,3 +61,68 @@ def concat_and_merge(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
 
     coalesced = [pl.coalesce(col, f"{col}{_TEMP_SUFFIX}").alias(col) for col in shared_cols]
     return combined.with_columns(coalesced).drop([f"{col}{_TEMP_SUFFIX}" for col in shared_cols])
+
+
+def summarize_boolean_columns(df: pl.DataFrame) -> pl.DataFrame:
+    """Summarize the count of True and False values for each boolean
+    column.
+
+    Each row in the output represents one column from the input DataFrame,
+    with the counts of True and False values and their respective percentages.
+
+    Args:
+        df: A DataFrame whose columns are all boolean.
+
+    Returns:
+        A DataFrame with one row per input column and the following columns:
+
+        - ``column``: the name of the original column.
+        - ``true_count``: number of True values.
+        - ``false_count``: number of False values.
+        - ``true_pct``: percentage of True values (0-100), rounded to 2 decimal places.
+        - ``false_pct``: percentage of False values (0-100), rounded to 2 decimal places.
+
+    Raises:
+        ValueError: If any column in ``df`` is not of boolean dtype.
+
+    Example:
+        ```pycon
+        >>> import polars as pl
+        >>> from argos.utils.dataframe import summarize_boolean_columns
+        >>> df = pl.DataFrame(
+        ...     {
+        ...         "is_active": [True, True, False, True],
+        ...         "has_error": [False, False, False, True],
+        ...     }
+        ... )
+        >>> summarize_boolean_columns(df)
+        shape: (2, 5)
+        ┌───────────┬────────────┬─────────────┬──────────┬───────────┐
+        │ column    ┆ true_count ┆ false_count ┆ true_pct ┆ false_pct │
+        │ ---       ┆ ---        ┆ ---         ┆ ---      ┆ ---       │
+        │ str       ┆ i64        ┆ i64         ┆ f64      ┆ f64       │
+        ╞═══════════╪════════════╪═════════════╪══════════╪═══════════╡
+        │ is_active ┆ 3          ┆ 1           ┆ 75.0     ┆ 25.0      │
+        │ has_error ┆ 1          ┆ 3           ┆ 25.0     ┆ 75.0      │
+        └───────────┴────────────┴─────────────┴──────────┴───────────┘
+
+        ```
+    """
+    non_bool = [col for col in df.columns if df[col].dtype != pl.Boolean]
+    if non_bool:
+        msg = f"All columns must be boolean. Non-boolean columns: {non_bool}"
+        raise ValueError(msg)
+
+    n_rows = df.height
+    return pl.DataFrame(
+        {
+            "column": df.columns,
+            "true_count": [df[col].sum() for col in df.columns],
+            "false_count": [n_rows - df[col].sum() for col in df.columns],
+        }
+    ).with_columns(
+        [
+            (pl.col("true_count") / n_rows * 100).alias("true_pct"),
+            (pl.col("false_count") / n_rows * 100).alias("false_pct"),
+        ]
+    )

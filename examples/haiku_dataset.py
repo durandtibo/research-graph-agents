@@ -1,3 +1,5 @@
+r"""Contain code to generate a haiku dataset."""
+
 from __future__ import annotations
 
 import logging
@@ -519,7 +521,7 @@ def generate_negative_examples_incorrect_structure() -> pl.DataFrame:
 
 
 def main() -> None:
-    r"""Main function."""
+    r"""Define the main function to generate a haiku dataset."""
     with timeblock(message="Example generation time: {time}"):
         examples = generate_examples()
     with pl.Config(tbl_cols=-1, tbl_rows=50):

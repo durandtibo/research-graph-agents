@@ -2,30 +2,25 @@ r"""Contain code to generate a haiku dataset."""
 
 from __future__ import annotations
 
-__all__ = ["generate_examples"]
+__all__ = ["generate_haiku_dataset"]
 
 import logging
 
 import polars as pl
-from coola.utils.timing import timeblock
-from dotenv import load_dotenv
-
-from argos.utils.dataframe import summarize_boolean_columns
-from argos.utils.logging import configure_logging
 
 logger = logging.getLogger(__name__)
 
 
-def generate_examples() -> pl.DataFrame:
-    r"""Generate a list of Haiku examples.
+def generate_haiku_dataset() -> pl.DataFrame:
+    r"""Generate a dataset of haiku examples.
 
     Returns:
-        A list of Haiku examples.
+        A dataset of haiku examples.
     """
-    return pl.concat([generate_positive_examples(), generate_negative_examples()], how="vertical")
+    return pl.concat([_generate_positive_examples(), _generate_negative_examples()], how="vertical")
 
 
-def generate_positive_examples() -> pl.DataFrame:
+def _generate_positive_examples() -> pl.DataFrame:
     r"""Generate a list of positive examples.
 
     Returns:
@@ -222,21 +217,21 @@ def generate_positive_examples() -> pl.DataFrame:
             # train journey
             {
                 "topic": "train journey",
-                "haiku": ("Iron wheels roll on\nPassing by the green forests\nLeaving home behind"),
+                "haiku": "Iron wheels roll on\nPassing by the green forests\nLeaving home behind",
                 "structure_target": True,
                 "topic_target": True,
                 "target": True,
             },
             {
                 "topic": "train journey",
-                "haiku": ("Whistle in the wind\nCities fade into the night\nSleeping in my seat"),
+                "haiku": "Whistle in the wind\nCities fade into the night\nSleeping in my seat",
                 "structure_target": True,
                 "topic_target": True,
                 "target": True,
             },
             {
                 "topic": "train journey",
-                "haiku": ("Silver metal snake\nRhythm beats against the rail\nCarrying me home"),
+                "haiku": "Silver metal snake\nRhythm beats against the rail\nCarrying me home",
                 "structure_target": True,
                 "topic_target": True,
                 "target": True,
@@ -252,7 +247,7 @@ def generate_positive_examples() -> pl.DataFrame:
             },
             {
                 "topic": "train journey",
-                "haiku": ("Tickets in my hand\nStrangers sitting in the car\nWaiting for the stop"),
+                "haiku": "Tickets in my hand\nStrangers sitting in the car\nWaiting for the stop",
                 "structure_target": True,
                 "topic_target": True,
                 "target": True,
@@ -260,7 +255,7 @@ def generate_positive_examples() -> pl.DataFrame:
             # morning coffee
             {
                 "topic": "morning coffee",
-                "haiku": ("Dark and bitter brew\nWaking up my sleepy mind\nWarming up my soul"),
+                "haiku": "Dark and bitter brew\nWaking up my sleepy mind\nWarming up my soul",
                 "structure_target": True,
                 "topic_target": True,
                 "target": True,
@@ -285,7 +280,7 @@ def generate_positive_examples() -> pl.DataFrame:
             },
             {
                 "topic": "morning coffee",
-                "haiku": ("Mug into my hands\nDrinking liquid energy\nReady for the sun"),
+                "haiku": "Mug into my hands\nDrinking liquid energy\nReady for the sun",
                 "structure_target": True,
                 "topic_target": True,
                 "target": True,
@@ -303,7 +298,7 @@ def generate_positive_examples() -> pl.DataFrame:
     )
 
 
-def generate_negative_examples() -> pl.DataFrame:
+def _generate_negative_examples() -> pl.DataFrame:
     r"""Generate a list of negative examples.
 
     Returns:
@@ -311,14 +306,14 @@ def generate_negative_examples() -> pl.DataFrame:
     """
     return pl.concat(
         [
-            generate_negative_examples_incorrect_topic(),
-            generate_negative_examples_incorrect_structure(),
+            _generate_negative_examples_incorrect_topic(),
+            _generate_negative_examples_incorrect_structure(),
         ],
         how="vertical",
     )
 
 
-def generate_negative_examples_incorrect_topic() -> pl.DataFrame:
+def _generate_negative_examples_incorrect_topic() -> pl.DataFrame:
     r"""Generate a list of negative examples.
 
     Returns:
@@ -368,7 +363,7 @@ def generate_negative_examples_incorrect_topic() -> pl.DataFrame:
     )
 
 
-def generate_negative_examples_incorrect_structure() -> pl.DataFrame:
+def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
     r"""Generate a list of negative examples.
 
     Returns:
@@ -465,7 +460,7 @@ def generate_negative_examples_incorrect_structure() -> pl.DataFrame:
             },
             {
                 "topic": "cat",
-                "haiku": ("Soft paws on the rug\nPurring in her sleep\nDreaming of a little mouse"),
+                "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a little mouse",
                 "structure_target": False,  # structure is 5, 5, 7
                 "topic_target": True,
                 "target": False,
@@ -520,23 +515,3 @@ def generate_negative_examples_incorrect_structure() -> pl.DataFrame:
             },
         ]
     )
-
-
-def main() -> None:
-    r"""Define the main function to generate a haiku dataset."""
-    with timeblock(message="Example generation time: {time}"):
-        examples = generate_examples()
-    with pl.Config(tbl_cols=-1, tbl_rows=50):
-        logger.info(f"\n{examples}")
-
-    stats = summarize_boolean_columns(
-        examples.select(["target", "structure_target", "topic_target"])
-    )
-    logger.info(f"\n{stats}")
-
-
-if __name__ == "__main__":
-    configure_logging(level=logging.INFO)
-    load_dotenv()
-
-    main()

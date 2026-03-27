@@ -16,6 +16,199 @@ def dataframe() -> pl.DataFrame:
     )
 
 
+@pytest.fixture
+def perfect_results() -> BinaryClassificationResults:
+    return BinaryClassificationResults(
+        n_samples=100,
+        accuracy=1.0,
+        tp=60,
+        tn=40,
+        fp=0,
+        fn=0,
+        precision=1.0,
+        recall=1.0,
+        f1_score=1.0,
+        specificity=1.0,
+    )
+
+
+@pytest.fixture
+def worst_results() -> BinaryClassificationResults:
+    return BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.0,
+        tp=0,
+        tn=0,
+        fp=40,
+        fn=60,
+        precision=0.0,
+        recall=0.0,
+        f1_score=0.0,
+        specificity=0.0,
+    )
+
+
+@pytest.fixture
+def typical_results() -> BinaryClassificationResults:
+    return BinaryClassificationResults(
+        n_samples=200,
+        accuracy=0.85,
+        tp=90,
+        tn=80,
+        fp=15,
+        fn=15,
+        precision=0.857,
+        recall=0.857,
+        f1_score=0.857,
+        specificity=0.842,
+    )
+
+
+#################################################
+#     Tests for BinaryClassificationResults     #
+#################################################
+
+
+def test_binary_classification_results_instantiation(
+    typical_results: BinaryClassificationResults,
+) -> None:
+    assert typical_results.n_samples == 200
+    assert typical_results.accuracy == 0.85
+    assert typical_results.tp == 90
+    assert typical_results.tn == 80
+    assert typical_results.fp == 15
+    assert typical_results.fn == 15
+    assert typical_results.precision == 0.857
+    assert typical_results.recall == 0.857
+    assert typical_results.f1_score == 0.857
+    assert typical_results.specificity == 0.842
+
+
+def test_binary_classification_results_is_mutable() -> None:
+    results = BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        tp=50,
+        tn=40,
+        fp=5,
+        fn=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    )
+    results.accuracy = 0.95
+    assert results.accuracy == 0.95
+
+
+def test_binary_classification_results_equality() -> None:
+    r1 = BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        tp=50,
+        tn=40,
+        fp=5,
+        fn=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    )
+    r2 = BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        tp=50,
+        tn=40,
+        fp=5,
+        fn=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    )
+    assert r1 == r2
+
+
+def test_binary_classification_results_inequality(
+    typical_results: BinaryClassificationResults, perfect_results: BinaryClassificationResults
+) -> None:
+    assert typical_results != perfect_results
+
+
+def test_binary_classification_results_to_str_typical(
+    typical_results: BinaryClassificationResults,
+) -> None:
+    assert typical_results.to_str() == (
+        "Classification Results (n=200)\n"
+        "------------------------------\n"
+        "Accuracy    [████████░░]  0.8500\n"
+        "Precision   [█████████░]  0.8570\n"
+        "Recall      [█████████░]  0.8570\n"
+        "F1 Score    [█████████░]  0.8570\n"
+        "Specificity [████████░░]  0.8420\n"
+        "\n"
+        "Confusion Matrix: TP=90  TN=80  FP=15  FN=15"
+    )
+
+
+def test_binary_classification_results_to_str_perfect(
+    perfect_results: BinaryClassificationResults,
+) -> None:
+    assert perfect_results.to_str() == (
+        "Classification Results (n=100)\n"
+        "------------------------------\n"
+        "Accuracy    [██████████]  1.0000\n"
+        "Precision   [██████████]  1.0000\n"
+        "Recall      [██████████]  1.0000\n"
+        "F1 Score    [██████████]  1.0000\n"
+        "Specificity [██████████]  1.0000\n"
+        "\n"
+        "Confusion Matrix: TP=60  TN=40  FP=0  FN=0"
+    )
+
+
+def test_binary_classification_results_to_str_worst(
+    worst_results: BinaryClassificationResults,
+) -> None:
+    assert worst_results.to_str() == (
+        "Classification Results (n=100)\n"
+        "------------------------------\n"
+        "Accuracy    [░░░░░░░░░░]  0.0000\n"
+        "Precision   [░░░░░░░░░░]  0.0000\n"
+        "Recall      [░░░░░░░░░░]  0.0000\n"
+        "F1 Score    [░░░░░░░░░░]  0.0000\n"
+        "Specificity [░░░░░░░░░░]  0.0000\n"
+        "\n"
+        "Confusion Matrix: TP=0  TN=0  FP=40  FN=60"
+    )
+
+
+def test_binary_classification_results_to_str_single_sample() -> None:
+    results = BinaryClassificationResults(
+        n_samples=1,
+        accuracy=1.0,
+        tp=1,
+        tn=0,
+        fp=0,
+        fn=0,
+        precision=1.0,
+        recall=1.0,
+        f1_score=1.0,
+        specificity=0.0,
+    )
+    assert results.to_str() == (
+        "Classification Results (n=1)\n"
+        "----------------------------\n"
+        "Accuracy    [██████████]  1.0000\n"
+        "Precision   [██████████]  1.0000\n"
+        "Recall      [██████████]  1.0000\n"
+        "F1 Score    [██████████]  1.0000\n"
+        "Specificity [░░░░░░░░░░]  0.0000\n"
+        "\n"
+        "Confusion Matrix: TP=1  TN=0  FP=0  FN=0"
+    )
+
+
 ###########################################################
 #     Tests for compute_binary_classification_metrics     #
 ###########################################################

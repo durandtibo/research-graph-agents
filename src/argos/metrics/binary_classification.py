@@ -7,6 +7,9 @@ __all__ = ["BinaryClassificationResults", "compute_binary_classification_metrics
 from dataclasses import dataclass
 
 import polars as pl
+from coola.utils.format import make_bar
+
+ROUNDING_DECIMALS = 4
 
 
 @dataclass
@@ -36,6 +39,32 @@ class BinaryClassificationResults:
     recall: float
     f1_score: float
     specificity: float
+
+    def to_str(self) -> str:
+        """Return a human-friendly text representation of the
+        classification results.
+
+        Returns:
+            A formatted string with progress bars for each metric and a confusion matrix.
+        """
+        metrics = [
+            ("Accuracy", self.accuracy),
+            ("Precision", self.precision),
+            ("Recall", self.recall),
+            ("F1 Score", self.f1_score),
+            ("Specificity", self.specificity),
+        ]
+
+        header = f"Classification Results (n={self.n_samples})"
+        separator = "-" * len(header)
+
+        metric_lines = "\n".join(
+            f"{name:<11} {make_bar(value)}  {value:.4f}" for name, value in metrics
+        )
+
+        confusion = f"Confusion Matrix: TP={self.tp}  TN={self.tn}  FP={self.fp}  FN={self.fn}"
+
+        return f"{header}\n{separator}\n{metric_lines}\n\n{confusion}"
 
 
 def compute_binary_classification_metrics(

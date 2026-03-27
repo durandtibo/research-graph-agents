@@ -4,11 +4,8 @@ from __future__ import annotations
 
 __all__ = ["generate_haiku_dataset"]
 
-import logging
 
 import polars as pl
-
-logger = logging.getLogger(__name__)
 
 
 def generate_haiku_dataset() -> pl.DataFrame:

@@ -9,8 +9,6 @@ from dataclasses import dataclass
 import polars as pl
 from coola.utils.format import make_bar
 
-ROUNDING_DECIMALS = 4
-
 
 @dataclass
 class BinaryClassificationResults:

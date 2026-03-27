@@ -475,6 +475,7 @@ def _generate_negative_examples() -> pl.DataFrame:
         [
             _generate_negative_examples_incorrect_topic(),
             _generate_negative_examples_incorrect_structure(),
+            _generate_negative_examples_incorrect_topic_and_structure(),
         ],
         how="vertical",
     )
@@ -527,6 +528,16 @@ def _generate_negative_examples_incorrect_topic() -> pl.DataFrame:
             }
             for topic in ["cat", "rain", "ocean", "train journey", "morning coffee"]
         ]
+        + [
+            {
+                "topic": topic,  # real topic: moon
+                "haiku": ("Silver orb above\nWatching over sleeping worlds\nSilent light descends"),
+                "structure_target": True,
+                "topic_target": False,
+                "target": False,
+            }
+            for topic in ["cat", "rain", "ocean", "train journey", "morning coffee"]
+        ]
     )
 
 
@@ -541,6 +552,13 @@ def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
             {
                 "topic": "cat",
                 "haiku": "meow",
+                "structure_target": False,
+                "topic_target": True,
+                "target": False,
+            },
+            {
+                "topic": "snow",
+                "haiku": "Footprints in the fresh snow lead directly into the dark woods.",
                 "structure_target": False,
                 "topic_target": True,
                 "target": False,
@@ -678,6 +696,161 @@ def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
                 ),
                 "structure_target": False,  # structure is 7, 7, 7
                 "topic_target": True,
+                "target": False,
+            },
+            {
+                "topic": "bakery",
+                "haiku": (
+                    "Fresh bread baking in the hot oven\n"
+                    "The sweet smell fills the early morning air\n"
+                    "Customers line up outside"
+                ),
+                "structure_target": False,
+                "topic_target": True,
+                "target": False,
+            },
+            {
+                "topic": "thunderstorm",
+                "haiku": (
+                    "Dark clouds roll over the hills\n"
+                    "A sudden flash of lightning strikes the ground\n"
+                    "Thunder shakes the window glass"
+                ),
+                "structure_target": False,
+                "topic_target": True,
+                "target": False,
+            },
+            {
+                "topic": "garden",
+                "haiku": (
+                    "Weeding the damp soil with bare hands\n"
+                    "A bright green tomato still clinging to the vine\n"
+                    "Summer is fading away"
+                ),
+                "structure_target": False,
+                "topic_target": True,
+                "target": False,
+            },
+            {
+                "topic": "coffee shop",
+                "haiku": (
+                    "The barista calls out a mispronounced name\n"
+                    "Espresso machines hiss and steam\n"
+                    "Finding an empty corner table"
+                ),
+                "structure_target": False,
+                "topic_target": True,
+                "target": False,
+            },
+        ]
+    )
+
+
+def _generate_negative_examples_incorrect_topic_and_structure() -> pl.DataFrame:
+    r"""Generate a list of negative examples.
+
+    Returns:
+        A list of negative examples.
+    """
+    return pl.from_dicts(
+        [
+            {
+                "topic": "cat",
+                "haiku": (
+                    "The abyssal weight crushes down in cold, absolute silence.\n"
+                    "Yet alien eyes spark like embers in the suffocating dark."
+                ),
+                "structure_target": False,
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "mountain",
+                "haiku": (
+                    "The pressure builds with every sinking league.\n"
+                    "Sunlight is a memory, swallowed by the blue,\n"
+                    "then the purple, then the absolute black.\n"
+                    "Here, the water feels like iron,\n"
+                    "heavy, silent, and ancient."
+                ),
+                "structure_target": False,
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "morning coffee",
+                "haiku": (
+                    "The turquoise surface fades into a deep, impenetrable violet.\n"
+                    "Gravity pulls the submersible down into the crushing, breathless deep.\n"
+                    "We are merely fragile visitors intruding on the trench's sleep."
+                ),
+                "structure_target": False,
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "moon",
+                "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a little mouse",
+                "structure_target": False,  # structure is 5, 5, 7
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "train journey",
+                "haiku": "Sleeping in the sunny spot\nGolden fur so warm\nPurring all the day",
+                "structure_target": False,  # structure is 7, 5, 5
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "rain",
+                "haiku": "Tail is standing high\nRubbing on my leg\nBegging for a treat",
+                "structure_target": False,  # structure is 5, 5, 5
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "mountain",
+                "haiku": (
+                    "Sleepy kitten in the sun\n"
+                    "Stretching out when day is done\n"
+                    "Purring softly, having fun"
+                ),
+                "structure_target": False,  # structure is 7, 7, 7
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "cat",
+                "haiku": (
+                    "Crashing waves against the dark rocks\n"
+                    "Salt spray heavy in the air\n"
+                    "A lone gull cries out"
+                ),
+                "structure_target": False,
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "moon",
+                "haiku": (
+                    "The train rattles down the track\n"
+                    "Tired faces staring at glowing screens\n"
+                    "Rain against the glass"
+                ),
+                "structure_target": False,
+                "topic_target": False,
+                "target": False,
+            },
+            {
+                "topic": "cat",
+                "haiku": (
+                    "Snow caps the jagged mountain peaks\n"
+                    "Thick clouds roll over the valley below\n"
+                    "Perfect silence remains"
+                ),
+                "structure_target": False,
+                "topic_target": False,
                 "target": False,
             },
         ]

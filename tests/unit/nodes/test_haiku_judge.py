@@ -20,9 +20,6 @@ def mock_llm() -> BaseChatModel:
 @pytest.fixture
 def mock_judge_result() -> HaikuJudgeResult:
     return HaikuJudgeResult(
-        line_count=3,
-        line_count_passed=True,
-        syllable_breakdown=[5, 7, 5],
         structure_passed=True,
         topic_passed=True,
         score=8,
@@ -38,18 +35,12 @@ def mock_judge_result() -> HaikuJudgeResult:
 
 def test_haiku_judge_result_valid_passed() -> None:
     result = HaikuJudgeResult(
-        line_count=3,
-        line_count_passed=True,
-        syllable_breakdown=[5, 7, 5],
         structure_passed=True,
         topic_passed=True,
         score=8,
         reasoning="Great imagery and strong structure.",
         passed=True,
     )
-    assert result.line_count == 3
-    assert result.line_count_passed
-    assert result.syllable_breakdown == [5, 7, 5]
     assert result.structure_passed
     assert result.topic_passed
     assert result.score == 8
@@ -58,47 +49,21 @@ def test_haiku_judge_result_valid_passed() -> None:
 
 def test_haiku_judge_result_valid_failed() -> None:
     result = HaikuJudgeResult(
-        line_count=4,
-        line_count_passed=False,
-        syllable_breakdown=[5, 7, 5, 3],
         structure_passed=False,
         topic_passed=True,
         score=8,
         reasoning="Great imagery but incorrect structure.",
         passed=False,
     )
-    assert result.line_count == 4
-    assert not result.line_count_passed
-    assert result.syllable_breakdown == [5, 7, 5, 3]
     assert not result.structure_passed
     assert result.topic_passed
     assert result.score == 8
     assert not result.passed
 
 
-@pytest.mark.parametrize("line_count", [-1, -2])
-def test_haiku_judge_result_invalid_line_count(line_count: int) -> None:
-    with pytest.raises(
-        ValueError, match=r"line_count\n  Input should be greater than or equal to 0"
-    ):
-        HaikuJudgeResult(
-            line_count=line_count,
-            line_count_passed=False,
-            syllable_breakdown=[5, 7, 5],
-            structure_passed=True,
-            topic_passed=True,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
-
-
 def test_haiku_judge_result_invalid_score_too_low() -> None:
     with pytest.raises(ValueError, match=r"score\n  Input should be greater than or equal to 1"):
         HaikuJudgeResult(
-            line_count=3,
-            line_count_passed=False,
-            syllable_breakdown=[5, 7, 5],
             structure_passed=True,
             topic_passed=True,
             score=0,
@@ -110,9 +75,6 @@ def test_haiku_judge_result_invalid_score_too_low() -> None:
 def test_haiku_judge_result_invalid_score_too_high() -> None:
     with pytest.raises(ValueError, match=r"score\n  Input should be less than or equal to 10"):
         HaikuJudgeResult(
-            line_count=3,
-            line_count_passed=False,
-            syllable_breakdown=[5, 7, 5],
             structure_passed=True,
             topic_passed=True,
             score=11,
@@ -121,109 +83,48 @@ def test_haiku_judge_result_invalid_score_too_high() -> None:
         )
 
 
-@pytest.mark.parametrize("line_count", [0, 1, 2, 4])
-def test_haiku_judge_result_valid_inconsistent_line_count(line_count: int) -> None:
-    with pytest.raises(ValueError, match=r"line_count_passed .* does not match line_count"):
-        HaikuJudgeResult(
-            line_count=line_count,
-            line_count_passed=True,
-            syllable_breakdown=[5, 7, 5],
-            structure_passed=True,
-            topic_passed=True,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
+def test_haiku_judge_result_passed_auto_corrected_structure_failed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=False,
+        topic_passed=True,
+        score=8,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
 
 
-@pytest.mark.parametrize("syllable_breakdown", [[5], [5, 7], [5, 7, 5, 3]])
-def test_haiku_judge_result_valid_inconsistent_syllable_breakdown(
-    syllable_breakdown: list[int],
-) -> None:
-    with pytest.raises(ValueError, match=r"line_count .* does not match syllable_breakdown"):
-        HaikuJudgeResult(
-            line_count=3,
-            line_count_passed=True,
-            syllable_breakdown=syllable_breakdown,
-            structure_passed=False,
-            topic_passed=True,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
+def test_haiku_judge_result_passed_auto_corrected_topic_failed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=False,
+        score=8,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
 
 
-@pytest.mark.parametrize("syllable_breakdown", [[5, 5, 7], [1, 1, 1], [7, 5, 5]])
-def test_haiku_judge_result_valid_inconsistent_structure_passed(
-    syllable_breakdown: list[int],
-) -> None:
-    with pytest.raises(ValueError, match=r"structure_passed .* does not match syllable_breakdown"):
-        HaikuJudgeResult(
-            line_count=3,
-            line_count_passed=True,
-            syllable_breakdown=syllable_breakdown,
-            structure_passed=True,
-            topic_passed=True,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
+def test_haiku_judge_result_passed_auto_corrected_score_too_low() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=True,
+        score=6,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
 
 
-def test_haiku_judge_result_valid_inconsistent_passed_and_line_count_passed() -> None:
-    with pytest.raises(ValueError, match=r"passed .* does not match line_count_passed"):
-        HaikuJudgeResult(
-            line_count=4,
-            line_count_passed=False,
-            syllable_breakdown=[5, 7, 5, 3],
-            structure_passed=False,
-            topic_passed=True,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
-
-
-def test_haiku_judge_result_valid_inconsistent_passed_and_structure_passed() -> None:
-    with pytest.raises(ValueError, match=r"passed .* does not match structure_passed"):
-        HaikuJudgeResult(
-            line_count=3,
-            line_count_passed=True,
-            syllable_breakdown=[5, 7, 3],
-            structure_passed=False,
-            topic_passed=True,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
-
-
-def test_haiku_judge_result_valid_inconsistent_passed_and_topic_passed() -> None:
-    with pytest.raises(ValueError, match=r"passed .* does not match topic_passed"):
-        HaikuJudgeResult(
-            line_count=3,
-            line_count_passed=True,
-            syllable_breakdown=[5, 7, 5],
-            structure_passed=True,
-            topic_passed=False,
-            score=8,
-            reasoning="meow",
-            passed=True,
-        )
-
-
-def test_haiku_judge_result_valid_inconsistent_passed_and_score() -> None:
-    with pytest.raises(ValueError, match=r"passed .* does not match score"):
-        HaikuJudgeResult(
-            line_count=3,
-            line_count_passed=True,
-            syllable_breakdown=[5, 7, 5],
-            structure_passed=True,
-            topic_passed=True,
-            score=6,
-            reasoning="meow",
-            passed=True,
-        )
+def test_haiku_judge_result_passed_auto_corrected_all_pass() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=True,
+        score=7,
+        reasoning="meow",
+        passed=False,  # LLM inconsistency: overridden to True
+    )
+    assert result.passed
 
 
 #####################################

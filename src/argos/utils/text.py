@@ -2,11 +2,36 @@ r"""Contain utility functions to process text."""
 
 from __future__ import annotations
 
-__all__ = ["remove_empty_lines"]
+__all__ = ["count_lines", "count_syllables", "remove_empty_lines"]
 
 import re
 
 import syllables
+
+
+def count_lines(text: str) -> int:
+    r"""Count the number of lines in a string.
+
+    Args:
+        text: The input string to count lines in.
+
+    Returns:
+        The number of lines in the input string.
+
+    Example:
+        ```pycon
+        >>> from argos.utils.text import count_lines
+        >>> count_lines("Hello\nWorld")
+        2
+        >>> count_lines("Hello\nWorld\nFoo")
+        3
+
+        ```
+    """
+    if not text:
+        return 0
+
+    return len(text.splitlines())
 
 
 def count_syllables(text: str) -> int:

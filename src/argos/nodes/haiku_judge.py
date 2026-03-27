@@ -25,18 +25,14 @@ if TYPE_CHECKING:
 class HaikuJudgeResult(BaseModel):
     r"""Define the structured result produced by the haiku judge LLM.
 
-    All fields are populated by the LLM via structured output and are
-    then validated by the model validators to ensure internal
-    consistency.
+    ``structure_passed``, ``topic_passed``, ``score``, and
+    ``reasoning`` are populated by the LLM via structured output.
+    ``passed`` is always derived automatically from those fields by the
+    model validator, so it is guaranteed to be consistent.
     """
 
-    line_count: int = Field(description="Number of lines in the input haiku.", ge=0)
-    line_count_passed: bool = Field(description="True ONLY if line_count == 3.")
-    syllable_breakdown: list[int] = Field(
-        description="The exact syllable count for each line (e.g., [5, 7, 5])."
-    )
     structure_passed: bool = Field(
-        description="True ONLY if line_count_passed AND syllable_breakdown == [5, 7, 5]."
+        description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
     )
     topic_passed: bool = Field(
         description="True if the haiku meaningfully addresses the target topic, otherwise False."
@@ -52,81 +48,19 @@ class HaikuJudgeResult(BaseModel):
         description="A brief explanation justifying the score, topic adherence, and structure."
     )
     passed: bool = Field(
-        description=(
-            "True ONLY if line_count_passed AND structure_passed AND topic_passed AND score >= 7."
-        )
+        default=False,
+        description="Derived automatically: True ONLY if structure_passed AND topic_passed AND score >= 7.",
     )
 
     @model_validator(mode="after")
-    def check_line_count_passed(self) -> Self:
-        r"""Validate that ``line_count_passed`` is consistent with
-        ``line_count``.
+    def compute_passed(self) -> Self:
+        r"""Compute ``passed`` from the contributing fields.
 
-        Raises:
-            ValueError: If ``line_count_passed`` is ``True`` but
-                ``line_count`` is not ``3``.
+        Overrides any LLM-provided value to guarantee that ``passed``
+        is always consistent with ``structure_passed``,
+        ``topic_passed``, and ``score``.
         """
-        if self.line_count_passed and self.line_count != 3:
-            msg = f"line_count_passed ({self.line_count_passed}) does not match line_count ({self.line_count})"
-            raise ValueError(msg)
-        return self
-
-    @model_validator(mode="after")
-    def check_syllable_breakdown(self) -> Self:
-        r"""Validate that ``syllable_breakdown`` length matches
-        ``line_count``.
-
-        Raises:
-            ValueError: If ``len(syllable_breakdown)`` does not equal
-                ``line_count``.
-        """
-        if self.line_count != len(self.syllable_breakdown):
-            msg = f"line_count ({self.line_count}) does not match syllable_breakdown ({self.syllable_breakdown})"
-            raise ValueError(msg)
-        return self
-
-    @model_validator(mode="after")
-    def check_structure_passed(self) -> Self:
-        r"""Validate that ``structure_passed`` is consistent with
-        ``syllable_breakdown``.
-
-        Raises:
-            ValueError: If ``structure_passed`` is ``True`` but
-                ``syllable_breakdown`` is not ``[5, 7, 5]``.
-        """
-        if self.structure_passed and self.syllable_breakdown != [5, 7, 5]:
-            msg = f"structure_passed ({self.structure_passed}) does not match syllable_breakdown ({self.syllable_breakdown})"
-            raise ValueError(msg)
-        return self
-
-    @model_validator(mode="after")
-    def check_passed(self) -> Self:
-        r"""Validate that ``passed`` is consistent with all contributing
-        fields.
-
-        Raises:
-            ValueError: If ``passed`` is ``True`` but any of the
-                following conditions are not met: ``line_count_passed``
-                is ``True``, ``structure_passed`` is ``True``,
-                ``topic_passed`` is ``True``, and ``score >= 7``.
-        """
-        if self.passed and not self.line_count_passed:
-            msg = (
-                f"passed ({self.passed}) does not match line_count_passed "
-                f"({self.line_count_passed})"
-            )
-            raise ValueError(msg)
-        if self.passed and not self.structure_passed:
-            msg = (
-                f"passed ({self.passed}) does not match structure_passed ({self.structure_passed})"
-            )
-            raise ValueError(msg)
-        if self.passed and not self.topic_passed:
-            msg = f"passed ({self.passed}) does not match topic_passed ({self.topic_passed})"
-            raise ValueError(msg)
-        if self.passed and self.score < 7:
-            msg = f"passed ({self.passed}) does not match score ({self.score})"
-            raise ValueError(msg)
+        self.passed = self.structure_passed and self.topic_passed and self.score >= 7
         return self
 
 
@@ -144,57 +78,24 @@ class HaikuJudgeState(HaikuState):
     evaluation: HaikuJudgeResult
 
 
-HAIKU_JUDGE_SYSTEM_PROMPT = """# Role
-You are a strict haiku evaluator.
+HAIKU_JUDGE_SYSTEM_PROMPT = """You are a strict haiku evaluator. Evaluate the given haiku against the target topic and return a structured result.
 
-# Task
-Evaluate a generated haiku against a target topic and return a structured result that strictly matches the required schema.
+## Structure (`structure_passed`)
+True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively.
+Count syllables phonetically. Any deviation makes this False.
 
-# Inputs
-- Target Topic
-- Generated Haiku (expected: exactly 3 lines)
+## Topic (`topic_passed`)
+True if the haiku clearly and meaningfully reflects the given topic. Otherwise False.
 
-# Evaluation Rules (Deterministic)
-
-## 0. Line Count Check
-- Split the input by newline.
-- line_count = number of lines.
-- line_count_passed = True ONLY if line_count == 3.
-- If False, still attempt evaluation but mark structure_passed = False.
-
-## 1. Syllable Counting
-- Count syllables per line phonetically.
-- If line_count != 3, return best-effort counts for available lines.
-- Return as: [L1, L2, L3] (use 0 for missing lines if needed).
-
-## 2. Structure
-- structure_passed = True ONLY if:
-  - line_count_passed == True AND
-  - syllable_breakdown == [5, 7, 5]
-
-## 3. Topic Fidelity
-- topic_passed = True if the haiku clearly and meaningfully reflects the topic.
-- Otherwise False.
-
-## 4. Quality Score (1-10)
+## Quality Score (`score`)
+Rate the haiku from 1 to 10:
 - 1-3: Literal, dull, or incoherent
 - 4-6: Adequate but weak imagery
 - 7-8: Vivid imagery and effective juxtaposition
 - 9-10: Exceptional, precise, and evocative
 
-## 5. Final Pass
-- passed = True ONLY if:
-  - line_count_passed == True
-  - structure_passed == True
-  - topic_passed == True
-  - score >= 7
-
-## 6. Reasoning
-- 1-3 concise sentences covering:
-  - line count (if incorrect)
-  - syllable issues (if any)
-  - topic adherence
-  - quality justification"""
+## Reasoning (`reasoning`)
+1-3 concise sentences covering syllable accuracy, topic adherence, and quality."""
 
 
 def make_haiku_judge_node(

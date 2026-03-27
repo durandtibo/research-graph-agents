@@ -20,7 +20,7 @@ def test_generate_haiku_dataset_columns() -> None:
 
 def test_generate_haiku_dataset_num_rows() -> None:
     df = generate_haiku_dataset()
-    assert len(df) == 60
+    assert len(df) == 100
 
 
 def test_generate_haiku_dataset_schema() -> None:
@@ -38,32 +38,32 @@ def test_generate_haiku_dataset_schema() -> None:
 
 def test_generate_haiku_dataset_num_positive_examples() -> None:
     df = generate_haiku_dataset()
-    assert df["target"].sum() == 30
+    assert df["target"].sum() == 50
 
 
 def test_generate_haiku_dataset_num_negative_examples() -> None:
     df = generate_haiku_dataset()
-    assert (~df["target"]).sum() == 30
+    assert (~df["target"]).sum() == 50
 
 
 def test_generate_haiku_dataset_num_correct_structure() -> None:
     df = generate_haiku_dataset()
-    assert df["structure_target"].sum() == 45
+    assert df["structure_target"].sum() == 70
 
 
 def test_generate_haiku_dataset_num_incorrect_structure() -> None:
     df = generate_haiku_dataset()
-    assert (~df["structure_target"]).sum() == 15
+    assert (~df["structure_target"]).sum() == 30
 
 
 def test_generate_haiku_dataset_num_correct_topic() -> None:
     df = generate_haiku_dataset()
-    assert df["topic_target"].sum() == 45
+    assert df["topic_target"].sum() == 70
 
 
 def test_generate_haiku_dataset_num_incorrect_topic() -> None:
     df = generate_haiku_dataset()
-    assert (~df["topic_target"]).sum() == 15
+    assert (~df["topic_target"]).sum() == 30
 
 
 def test_generate_haiku_dataset_no_null_values() -> None:

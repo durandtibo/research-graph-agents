@@ -3,6 +3,7 @@ r"""Define a script to test the performance of the haiku judge."""
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
@@ -128,10 +129,16 @@ def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.
     return concat_and_merge(pl.DataFrame(flat_data), dataset).select(cols)
 
 
-def main() -> None:
-    r"""Define the main function to test the haiku judge system."""
-    model = "ollama:gemma3:1b"
-    # model = "anthropic:claude-haiku-4-5-20251001"
+def run_inference(model: str, path_results: Path) -> pl.DataFrame:
+    r"""Run inference and store the results in a parquet file.
+
+    Args:
+        model: The name of the model to run inference.
+        path_results: The path of the parquet file to store the results.
+
+    Returns:
+        The DataFrame containing the results of the inference.
+    """
     graph = create_graph(model=model)
     logger.info(f"\n{graph.get_graph().draw_ascii()}")
 
@@ -146,12 +153,38 @@ def main() -> None:
             outputs.extend(graph.batch(batch, config={"max_concurrency": batch_size}))
 
     results = prepare_results(dataset, outputs)
+    logger.info(f"Writing results ({results.shape}) in {path_results}")
+    results.write_parquet(path_results)
+    return results
+
+
+def main() -> None:
+    r"""Define the main function to test the haiku judge system."""
+    model = "ollama:smollm:135m"
+    # model = "ollama:gemma3:1b"
+    # model = "anthropic:claude-haiku-4-5-20251001"
+
+    path_results = (
+        Path(__file__)
+        .resolve()
+        .parent.parent.joinpath("results")
+        .joinpath("haiku_judge")
+        .joinpath(model.replace(":", "_"))
+        .joinpath("results.parquet")
+    )
+    path_results.parent.mkdir(parents=True, exist_ok=True)
+
+    if not path_results.is_file():
+        run_inference(model=model, path_results=path_results)
+
+    logger.info(f"Reading results from {path_results}")
+    results = pl.read_parquet(path_results)
     with pl.Config(tbl_cols=-1, tbl_rows=10):
         logger.info(f"\n{results}")
 
-    for row in results.iter_rows(named=True):
-        if row["score"] < 7:
-            logger.info(f"\n{row}")
+    # for row in results.iter_rows(named=True):
+    #     if row["score"] < 7:
+    #         logger.info(f"\n{row}")
 
     evaluate_metrics(results)
 

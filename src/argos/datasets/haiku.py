@@ -291,6 +291,176 @@ def _generate_positive_examples() -> pl.DataFrame:
                 "topic_target": True,
                 "target": True,
             },
+            # cherry blossoms
+            {
+                "topic": "cherry blossoms",
+                "haiku": (
+                    "Pink buds on the branch\nSoftly waking from the sleep\nSpring has come again"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "cherry blossoms",
+                "haiku": "Petals on the wind\nDancing through the quiet air\nSnow of rosy light",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "cherry blossoms",
+                "haiku": "Underneath the tree\nFloating on the silver stream\nTime is drifting by",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "cherry blossoms",
+                "haiku": "Brief and lovely bloom\nBeauty fading in the sun\nGone before the night",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "cherry blossoms",
+                "haiku": (
+                    "Walking through the park\n"
+                    "Clouds of pink above our heads\n"
+                    "Earth is breathing sweet"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            # moon
+            {
+                "topic": "moon",
+                "haiku": "Silver orb above\nWatching over sleeping worlds\nSilent light descends",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "moon",
+                "haiku": "Crescent in the dark\nHanging from a velvet sky\nGolden thread of night",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "moon",
+                "haiku": (
+                    "Full and bright tonight\nCasting shadows on the snow\nCold and distant glow"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "moon",
+                "haiku": "Mirror in the stars\nReflecting the hidden sun\nGuardian of dreams",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "moon",
+                "haiku": (
+                    "Clouds drift slowly by\nHiding then revealing light\nGhostly face on high"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            # silence
+            {
+                "topic": "silence",
+                "haiku": (
+                    "Breath within the dark\nWords are lost in heavy air\nOnly heartbeats stay"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "silence",
+                "haiku": (
+                    "Snow falls on the lake\nMuffling the distant world\nNature holds its breath"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "silence",
+                "haiku": "Empty room at night\nEchoes of a voice long gone\nQuiet fills the space",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "silence",
+                "haiku": "Stillness in the woods\nEven wind has gone to sleep\nTime begins to fade",
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "silence",
+                "haiku": (
+                    "Deep beneath the sea\nSunlight fails to reach the floor\nPeace is all there is"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            # colorful leaves
+            {
+                "topic": "colorful leaves",
+                "haiku": (
+                    "Crimson, gold, and brown\nFalling to the forest floor\nAutumn's soft descent"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "colorful leaves",
+                "haiku": (
+                    "Fire on the branch\nBurning bright before the cold\nSummer's last goodbye"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "colorful leaves",
+                "haiku": (
+                    "Drifting on the breeze\n"
+                    "Painting paths across the grass\n"
+                    "Nature's vibrant quilt"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "colorful leaves",
+                "haiku": (
+                    "Crisp beneath my feet\nRustling songs of changing times\nGolden light remains"
+                ),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
+            {
+                "topic": "colorful leaves",
+                "haiku": ("Scarlet maple star\nFloating on the silver pond\nRipple in the glass"),
+                "structure_target": True,
+                "topic_target": True,
+                "target": True,
+            },
         ]
     )
 

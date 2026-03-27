@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 import polars as pl
 from coola.utils.timing import timeblock
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
+from langchain.chat_models import init_chat_model
 from langgraph.constants import END, START
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 
@@ -29,14 +29,17 @@ class State(HaikuJudgeState):
     r"""Define the state of the haiku generator-judge system."""
 
 
-def create_graph(model: str = "gemma3:4b") -> CompiledStateGraph:
+def create_graph(model: str = "ollama:gemma3:4b") -> CompiledStateGraph:
     r"""Create the graph of the haiku generator-judge.
 
     Returns:
         The graph of the haiku generator-judge.
     """
-    llm: BaseChatModel = ChatOllama(model=model, temperature=0)
-    logger.info(f"LLM model={llm.model}")
+    llm: BaseChatModel = init_chat_model(model=model, temperature=0)
+    model_version = getattr(llm, "model", getattr(llm, "model_name", "Unknown"))
+    logger.info(
+        f"class: {type(llm).__name__} | model: {model_version} | temperature: {llm.temperature}"
+    )
 
     graph_builder = StateGraph(State)
 
@@ -83,6 +86,9 @@ def prepare_dataset() -> pl.DataFrame:
     """
     with timeblock(message="Dataset generation time: {time}"):
         dataset = generate_haiku_dataset()
+
+    # uncomment this line to sample a smaller version of the dataset.
+    # dataset = dataset.sample(n=5, seed=42)
     with pl.Config(tbl_cols=-1, tbl_rows=10):
         logger.info(f"\n{dataset}")
 
@@ -124,12 +130,8 @@ def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.
 
 def main() -> None:
     r"""Define the main function to test the haiku judge system."""
-    # model = "olmo-3:7b"
-    model = "gemma3:12b"
-    # model = "gemma3n:e2b"
-    # model = "deepseek-r1:8b"
-    # model = "ministral-3:3b"
-    # model = "llama3.2:latest"
+    model = "ollama:gemma3:1b"
+    # model = "anthropic:claude-haiku-4-5-20251001"
     graph = create_graph(model=model)
     logger.info(f"\n{graph.get_graph().draw_ascii()}")
 
@@ -137,10 +139,11 @@ def main() -> None:
 
     outputs = []
     examples = list(dataset.iter_rows(named=True))
+    batch_size = 20
     with timeblock(message="LLM inference time: {time}"):
-        for index, batch in enumerate(batchify(examples, size=32)):
+        for index, batch in enumerate(batchify(examples, size=batch_size)):
             logger.info(f"--- Processing Batch {index + 1} ---")
-            outputs.extend(graph.batch(batch, config={"max_concurrency": 5}))
+            outputs.extend(graph.batch(batch, config={"max_concurrency": batch_size}))
 
     results = prepare_results(dataset, outputs)
     with pl.Config(tbl_cols=-1, tbl_rows=10):

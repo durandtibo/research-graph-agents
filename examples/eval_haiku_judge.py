@@ -410,14 +410,16 @@ def main() -> None:
         # "anthropic:claude-sonnet-4-6",
         # "anthropic:claude-opus-4-6",
         # "google_genai:gemini-3.1-flash-lite-preview",
-        "openai:gpt-5.4-nano",
+        # "openai:gpt-5.4-nano",
+        # "openai:gpt-5.4-mini",
+        "openai:gpt-5.4",
     ]
     judge_system_prompts = [
         HAIKU_JUDGE_SYSTEM_PROMPT,
-        # HAIKU_JUDGE_SYSTEM_PROMPT1,
-        # HAIKU_JUDGE_SYSTEM_PROMPT2,
-        # HAIKU_JUDGE_SYSTEM_PROMPT3,
-        # HAIKU_JUDGE_SYSTEM_PROMPT4,
+        HAIKU_JUDGE_SYSTEM_PROMPT1,
+        HAIKU_JUDGE_SYSTEM_PROMPT2,
+        HAIKU_JUDGE_SYSTEM_PROMPT3,
+        HAIKU_JUDGE_SYSTEM_PROMPT4,
     ]
 
     for model in models:

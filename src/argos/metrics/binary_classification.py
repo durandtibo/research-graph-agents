@@ -49,20 +49,25 @@ class BinaryClassificationResults:
             ("Accuracy", self.accuracy),
             ("Precision", self.precision),
             ("Recall", self.recall),
-            ("F1 Score", self.f1_score),
             ("Specificity", self.specificity),
+            ("F1 Score", self.f1_score),
         ]
 
         header = f"Classification Results (n={self.n_samples})"
         separator = "-" * len(header)
 
-        metric_lines = "\n".join(
-            f"{name:<11} {make_bar(value)}  {value:.4f}" for name, value in metrics
-        )
+        metric_lines = [
+            f"{name:<11} {make_bar(value, length=20)}  {value:.4f}" for name, value in metrics
+        ]
+        metric_lines[0] = metric_lines[0] + f"  ({self.tp + self.tn:,}/{self.n_samples:,})"
+        metric_lines[1] = metric_lines[1] + f"  ({self.tp:,}/{self.tp + self.fp:,})"
+        metric_lines[2] = metric_lines[2] + f"  ({self.tp:,}/{self.tp + self.fn:,})"
+        metric_lines[3] = metric_lines[3] + f"  ({self.tn:,}/{self.tn + self.fp:,})"
+        metric_text = "\n".join(metric_lines)
 
         confusion = f"Confusion Matrix: TP={self.tp}  TN={self.tn}  FP={self.fp}  FN={self.fn}"
 
-        return f"{header}\n{separator}\n{metric_lines}\n\n{confusion}"
+        return f"{header}\n{separator}\n{metric_text}\n\n{confusion}"
 
 
 def compute_binary_classification_metrics(

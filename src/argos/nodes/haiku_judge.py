@@ -29,6 +29,21 @@ class HaikuJudgeResult(BaseModel):
     ``reasoning`` are populated by the LLM via structured output.
     ``passed`` is always derived automatically from those fields by the
     model validator, so it is guaranteed to be consistent.
+
+    Attributes:
+        structure_passed: ``True`` only if the haiku has exactly three
+            lines with syllable counts of 5, 7, and 5 respectively.
+        topic_passed: ``True`` if the haiku meaningfully addresses the
+            target topic, otherwise ``False``.
+        score: Quality score from 1 to 10 based on imagery, emotional
+            resonance, and word choice. Constrained to the range
+            ``[1, 10]``.
+        reasoning: A brief explanation justifying the score, topic
+            adherence, and structure evaluation.
+        passed: Derived automatically: ``True`` only if
+            ``structure_passed`` and ``topic_passed`` are both ``True``
+            and ``score >= 7``. Any LLM-provided value is overwritten
+            by the :meth:`compute_passed` model validator.
     """
 
     structure_passed: bool = Field(

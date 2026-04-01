@@ -13,14 +13,32 @@ T = TypeVar("T")
 
 
 def batchify(items: Sequence[T], *, size: int) -> list[tuple[T, ...]]:
-    r"""Generate batches of items.
+    r"""Generate batches of items from a sequence.
+
+    Splits ``items`` into consecutive non-overlapping tuples of length
+    ``size``. The last batch may be shorter than ``size`` if the
+    sequence length is not evenly divisible.
 
     Args:
-        items: List of items to batch.
-        size: Size of each batch.
+        items: The sequence of items to batch.
+        size: The maximum number of items per batch. Must be >= 1.
 
     Returns:
-        Batched list of items.
+        A list of tuples, each containing at most ``size`` items. An
+            empty list is returned when ``items`` is empty.
+
+    Raises:
+        ValueError: If ``size`` is less than 1.
+
+    Example:
+        ```pycon
+        >>> from argos.utils.batching import batchify
+        >>> batchify([1, 2, 3, 4, 5], size=2)
+        [(1, 2), (3, 4), (5,)]
+        >>> batchify([], size=3)
+        []
+
+        ```
     """
     if size < 1:
         msg = "size must be >= 1"

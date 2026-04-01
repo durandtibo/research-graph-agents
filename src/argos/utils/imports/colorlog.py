@@ -90,5 +90,12 @@ def raise_colorlog_missing_error() -> NoReturn:
     Raises:
         RuntimeError: Always, with a message indicating that the
             ``colorlog`` package is not installed.
+
+    Example:
+        ```pycon
+        >>> from argos.utils.imports import raise_colorlog_missing_error
+        >>> raise_colorlog_missing_error()  # doctest: +SKIP
+
+        ```
     """
     raise_package_missing_error("colorlog", "colorlog")

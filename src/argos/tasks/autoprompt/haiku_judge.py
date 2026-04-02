@@ -2,7 +2,7 @@ r"""Contain code to run the autoprompt on the haiku dataset."""
 
 from __future__ import annotations
 
-__all__ = ["create_graph", "prepare_dataset"]
+__all__ = ["create_graph", "evaluate_metrics", "prepare_dataset"]
 
 import logging
 from typing import TYPE_CHECKING
@@ -14,6 +14,10 @@ from langgraph.constants import END, START
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 
 from argos.datasets import generate_haiku_dataset
+from argos.metrics import (
+    BinaryClassificationResults,
+    compute_binary_classification_metrics,
+)
 from argos.nodes import HaikuJudgeState, make_haiku_judge_node
 from argos.utils.dataframe import summarize_boolean_columns
 
@@ -31,7 +35,7 @@ def create_graph(model: str, judge_system_prompt: str) -> CompiledStateGraph:
         judge_system_prompt: The prompt of the judge-system-prompt.
 
     Returns:
-        The graph of the haiku generator-judge.
+        The graph of the haiku judge.
     """
     llm: BaseChatModel = init_chat_model(model=model, temperature=0, max_retries=9999)
     model_version = getattr(llm, "model", getattr(llm, "model_name", "Unknown"))
@@ -46,8 +50,37 @@ def create_graph(model: str, judge_system_prompt: str) -> CompiledStateGraph:
     graph_builder.add_edge(START, "judge")
     graph_builder.add_edge("judge", END)
 
-    # Compile the graph into a runnable app
     return graph_builder.compile()
+
+
+def evaluate_metrics(results: pl.DataFrame) -> dict[str, BinaryClassificationResults]:
+    r"""Evaluate the metrics of the haiku generator-judge.
+
+    Args:
+        results: The results of the haiku generator-judge.
+
+    Returns:
+        The evaluated metrics.
+    """
+    logger.info(
+        f"\n{summarize_boolean_columns(results.select(['target', 'structure_target', 'topic_target']))}"
+    )
+
+    overall = compute_binary_classification_metrics(
+        results, target_col="target", predict_col="passed"
+    )
+    logger.info(f"overall\n{overall.to_str()}")
+
+    structure = compute_binary_classification_metrics(
+        results, target_col="structure_target", predict_col="structure_passed"
+    )
+    logger.info(f"structure\n{structure.to_str()}")
+
+    topic = compute_binary_classification_metrics(
+        results, target_col="topic_target", predict_col="topic_passed"
+    )
+    logger.info(f"topic\n{topic.to_str()}")
+    return {"overall": overall, "structure": structure, "topic": topic}
 
 
 def prepare_dataset() -> pl.DataFrame:

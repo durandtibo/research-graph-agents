@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import Mock, patch
 
 import polars as pl
@@ -9,10 +10,12 @@ from langgraph.graph.state import CompiledStateGraph
 from polars.testing import assert_frame_equal
 
 from argos.metrics import BinaryClassificationResults
+from argos.nodes.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.haiku_judge import (
     create_graph,
     evaluate_metrics,
     prepare_dataset,
+    prepare_results,
 )
 
 MODULE = "argos.tasks.autoprompt.haiku_judge"
@@ -66,6 +69,41 @@ def mock_llm() -> BaseChatModel:
 
 
 @pytest.fixture
+def mock_outputs() -> list[dict[str, Any]]:
+    return [
+        {
+            "topic": "rain",
+            "haiku": (
+                "Gray sky descends slow,\n"
+                "Cool drops kiss the thirsty ground,\n"
+                "Silence finds the leaf."
+            ),
+            "evaluation": HaikuJudgeResult(
+                structure_passed=True, topic_passed=True, score=10, reasoning="reason1", passed=True
+            ),
+        },
+        {
+            "topic": "cat",
+            "haiku": (
+                "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
+            ),
+            "evaluation": HaikuJudgeResult(
+                structure_passed=True, topic_passed=True, score=9, reasoning="reason2", passed=True
+            ),
+        },
+        {
+            "topic": "mountain",
+            "haiku": (
+                "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
+            ),
+            "evaluation": HaikuJudgeResult(
+                structure_passed=True, topic_passed=True, score=8, reasoning="reason3", passed=True
+            ),
+        },
+    ]
+
+
+@pytest.fixture
 def mock_results() -> pl.DataFrame:
     return pl.from_dicts(
         [
@@ -76,12 +114,14 @@ def mock_results() -> pl.DataFrame:
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                "score": 10,
                 "passed": True,
+                "target": True,
                 "structure_passed": True,
+                "structure_target": True,
                 "topic_passed": True,
+                "topic_target": True,
+                "reasoning": "reason1",
             },
             {
                 "topic": "cat",
@@ -90,24 +130,28 @@ def mock_results() -> pl.DataFrame:
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                "score": 9,
                 "passed": True,
+                "target": True,
                 "structure_passed": True,
+                "structure_target": True,
                 "topic_passed": True,
+                "topic_target": True,
+                "reasoning": "reason2",
             },
             {
                 "topic": "mountain",
                 "haiku": (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                "score": 8,
                 "passed": True,
+                "target": True,
                 "structure_passed": True,
+                "structure_target": True,
                 "topic_passed": True,
+                "topic_target": True,
+                "reasoning": "reason3",
             },
         ]
     )
@@ -123,6 +167,7 @@ def test_create_graph_returns_compiled_state_graph(mock_llm: BaseChatModel) -> N
     with patch(f"{MODULE}.init_chat_model", return_value=mock_llm):
         graph = create_graph("gpt-4o", "You are a haiku judge.")
         assert isinstance(graph, CompiledStateGraph)
+        assert "judge" in graph.nodes
 
 
 def test_create_graph_init_chat_model_called_with_correct_model(mock_llm: BaseChatModel) -> None:
@@ -288,3 +333,14 @@ def test_evaluate_metrics_mixed_results() -> None:
 def test_prepare_dataset_returns_dataframe(mock_dataset: pl.DataFrame) -> None:
     with patch(f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset):
         assert_frame_equal(prepare_dataset(), mock_dataset)
+
+
+#####################################
+#     Tests for prepare_results     #
+#####################################
+
+
+def test_prepare_results_returns_dataframe(
+    mock_dataset: pl.DataFrame, mock_outputs: list, mock_results: pl.DataFrame
+) -> None:
+    assert_frame_equal(prepare_results(dataset=mock_dataset, outputs=mock_outputs), mock_results)

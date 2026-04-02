@@ -2,10 +2,16 @@ r"""Contain code to run the autoprompt on the haiku dataset."""
 
 from __future__ import annotations
 
-__all__ = ["create_graph", "evaluate_metrics", "prepare_dataset"]
+__all__ = [
+    "create_graph",
+    "evaluate_metrics",
+    "prepare_dataset",
+    "prepare_results",
+    "run_inference",
+]
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import polars as pl
 from coola.utils.timing import timeblock
@@ -19,7 +25,8 @@ from argos.metrics import (
     compute_binary_classification_metrics,
 )
 from argos.nodes import HaikuJudgeState, make_haiku_judge_node
-from argos.utils.dataframe import summarize_boolean_columns
+from argos.utils.batching import batchify
+from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
 
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
@@ -102,3 +109,58 @@ def prepare_dataset() -> pl.DataFrame:
     )
     logger.info(f"statistics about the dataset\n{stats}")
     return dataset
+
+
+def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.DataFrame:
+    r"""Prepare results of haiku generator-judge.
+
+    Args:
+        dataset: The dataset of haiku examples.
+        outputs: The results of the haiku generator-judge.
+
+    Returns:
+        The results of the haiku generator-judge in a DataFrame.
+    """
+    cols = [
+        "topic",
+        "haiku",
+        "score",
+        "passed",
+        "target",
+        "structure_passed",
+        "structure_target",
+        "topic_passed",
+        "topic_target",
+        "reasoning",
+    ]
+    flat_data = [
+        {**{k: v for k, v in row.items() if k != "evaluation"}, **row["evaluation"].model_dump()}
+        for row in outputs
+    ]
+    return concat_and_merge(pl.DataFrame(flat_data), dataset).select(cols)
+
+
+def run_inference(
+    dataset: pl.DataFrame, model_graph: CompiledStateGraph, batch_size: int = 20
+) -> pl.DataFrame:
+    r"""Run the inference and returns the results in a DataFrame.
+
+    Args:
+        dataset: The dataset to run inference on.
+        model_graph: The graph of the haiku judge.
+        batch_size: The batch size for inference.
+
+    Returns:
+        The results of the inference.
+    """
+    outputs = []
+    examples = list(dataset.iter_rows(named=True))
+
+    with timeblock(message="LLM inference time: {time}"):
+        for index, batch in enumerate(batchify(examples, size=batch_size)):
+            logger.info(f"--- Processing Batch {index + 1} ---")
+            output = model_graph.batch(batch, config={"max_concurrency": batch_size})
+            outputs.extend(output)
+
+    logger.info("Preparing results...")
+    return prepare_results(dataset, outputs)

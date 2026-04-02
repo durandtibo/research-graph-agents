@@ -8,6 +8,7 @@ __all__ = [
     "prepare_dataset",
     "prepare_results",
     "run_inference",
+    "run_inference_pipeline",
 ]
 
 import logging
@@ -29,21 +30,24 @@ from argos.utils.batching import batchify
 from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from langchain_core.language_models import BaseChatModel
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def create_graph(model: str, judge_system_prompt: str) -> CompiledStateGraph:
-    r"""Create the graph of the haiku generator-judge.
+def create_graph(model: str, system_prompt: str) -> CompiledStateGraph:
+    r"""Create the graph of the haiku judge.
 
     Args:
-        model: The model of the haiku generator-judge.
-        judge_system_prompt: The prompt of the judge-system-prompt.
+        model: The model of the haiku judge.
+        system_prompt: The prompt of the judge.
 
     Returns:
         The graph of the haiku judge.
     """
+    logger.info("Creating graph...")
     llm: BaseChatModel = init_chat_model(model=model, temperature=0, max_retries=9999)
     model_version = getattr(llm, "model", getattr(llm, "model_name", "Unknown"))
     logger.info(
@@ -52,7 +56,7 @@ def create_graph(model: str, judge_system_prompt: str) -> CompiledStateGraph:
 
     graph_builder = StateGraph(HaikuJudgeState)
 
-    graph_builder.add_node("judge", make_haiku_judge_node(llm, system_prompt=judge_system_prompt))
+    graph_builder.add_node("judge", make_haiku_judge_node(llm, system_prompt=system_prompt))
 
     graph_builder.add_edge(START, "judge")
     graph_builder.add_edge("judge", END)
@@ -69,6 +73,7 @@ def evaluate_metrics(results: pl.DataFrame) -> dict[str, BinaryClassificationRes
     Returns:
         The evaluated metrics.
     """
+    logger.info("Evaluating metrics...")
     logger.info(
         f"\n{summarize_boolean_columns(results.select(['target', 'structure_target', 'topic_target']))}"
     )
@@ -96,6 +101,7 @@ def prepare_dataset() -> pl.DataFrame:
     Returns:
         A DataFrame containing haiku examples.
     """
+    logger.info("Preparing dataset...")
     with timeblock(message="Dataset generation time: {time}"):
         dataset = generate_haiku_dataset()
 
@@ -141,18 +147,45 @@ def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.
 
 
 def run_inference(
-    dataset: pl.DataFrame, model_graph: CompiledStateGraph, batch_size: int = 20
+    model: str, system_prompt: str, path_results: Path, batch_size: int = 20
+) -> pl.DataFrame:
+    r"""Run inference and store the results in a parquet file.
+
+    Args:
+        model: The name of the model to run inference.
+        system_prompt: The prompt of the judge.
+        path_results: The path of the parquet file to store the results.
+        batch_size: The batch size for inference.
+
+    Returns:
+        The DataFrame containing the results of the inference.
+    """
+    graph = create_graph(model=model, system_prompt=system_prompt)
+    logger.info(f"\n{graph.get_graph().draw_ascii()}")
+
+    dataset = prepare_dataset()
+    results = run_inference_pipeline(dataset=dataset, graph=graph, batch_size=batch_size)
+
+    logger.info(f"Writing results ({results.shape}) in {path_results}")
+    path_results.parent.mkdir(parents=True, exist_ok=True)
+    results.write_parquet(path_results)
+    return results
+
+
+def run_inference_pipeline(
+    dataset: pl.DataFrame, graph: CompiledStateGraph, batch_size: int = 20
 ) -> pl.DataFrame:
     r"""Run the inference and returns the results in a DataFrame.
 
     Args:
         dataset: The dataset to run inference on.
-        model_graph: The graph of the haiku judge.
+        graph: The graph of the haiku judge.
         batch_size: The batch size for inference.
 
     Returns:
         The results of the inference.
     """
+    logger.info(f"Running inference with {batch_size:,} batches...")
     outputs = []
     examples = list(dataset.iter_rows(named=True))
     batches = batchify(examples, size=batch_size)
@@ -160,7 +193,7 @@ def run_inference(
     with timeblock(message="LLM inference time: {time}"):
         for index, batch in enumerate(batches):
             logger.info(f"--- Processing Batch {index + 1} ---")
-            output = model_graph.batch(batch, config={"max_concurrency": batch_size})
+            output = graph.batch(batch, config={"max_concurrency": batch_size})
             outputs.extend(output)
 
     logger.info("Preparing results...")

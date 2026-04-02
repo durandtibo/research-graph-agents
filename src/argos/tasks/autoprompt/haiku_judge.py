@@ -20,7 +20,7 @@ from argos.utils.dataframe import summarize_boolean_columns
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def create_graph(model: str, judge_system_prompt: str) -> CompiledStateGraph:

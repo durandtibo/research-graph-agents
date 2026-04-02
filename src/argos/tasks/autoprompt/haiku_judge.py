@@ -3,15 +3,18 @@ r"""Contain code to run the autoprompt on the haiku dataset."""
 from __future__ import annotations
 
 __all__ = [
+    "ExperimentConfig",
     "create_graph",
     "evaluate_metrics",
     "prepare_dataset",
     "prepare_results",
+    "run_experiment",
     "run_inference",
     "run_inference_pipeline",
 ]
 
 import logging
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
@@ -35,6 +38,19 @@ if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
 
 logger: logging.Logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ExperimentConfig:
+    r"""The experiment configuration."""
+
+    judge_model: str
+    path_experiment: Path
+    system_prompt: str
+    batch_size: int = 20
+    iteration: int = 0
+    # path_history: Path
+    # prompt_model: str
 
 
 def create_graph(model: str, system_prompt: str) -> CompiledStateGraph:
@@ -144,6 +160,30 @@ def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.
         for row in outputs
     ]
     return concat_and_merge(pl.DataFrame(flat_data), dataset).select(cols)
+
+
+def run_experiment(config: ExperimentConfig) -> dict[str, BinaryClassificationResults]:
+    r"""Run haiku generator-judge evaluation.
+
+    Args:
+        config: The experiment configuration.
+
+    Returns:
+        The evaluated metrics.
+    """
+    path_results = config.path_experiment.joinpath("results.parquet")
+    if not path_results.is_file():
+        logger.info(f"No results found at {path_results}")
+        run_inference(
+            model=config.judge_model, system_prompt=config.system_prompt, path_results=path_results
+        )
+
+    logger.info(f"Reading results from {path_results}")
+    results = pl.read_parquet(path_results)
+    with pl.Config(tbl_cols=-1, tbl_rows=10):
+        logger.info(f"\n{results}")
+
+    return evaluate_metrics(results)
 
 
 def run_inference(

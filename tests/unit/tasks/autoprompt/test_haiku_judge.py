@@ -12,10 +12,12 @@ from polars.testing import assert_frame_equal
 from argos.metrics import BinaryClassificationResults
 from argos.nodes.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.haiku_judge import (
+    ExperimentConfig,
     create_graph,
     evaluate_metrics,
     prepare_dataset,
     prepare_results,
+    run_experiment,
     run_inference,
     run_inference_pipeline,
 )
@@ -356,6 +358,128 @@ def test_prepare_results_returns_dataframe(
     mock_dataset: pl.DataFrame, mock_outputs: list, mock_results: pl.DataFrame
 ) -> None:
     assert_frame_equal(prepare_results(dataset=mock_dataset, outputs=mock_outputs), mock_results)
+
+
+####################################
+#     Tests for run_experiment     #
+####################################
+
+
+def test_run_experiment_results_file_does_not_exist(
+    tmp_path: Path, mock_results: pl.DataFrame
+) -> None:
+    path_results = tmp_path.joinpath("data").joinpath("results.parquet")
+
+    def fake_run_inference(
+        model: str,  # noqa: ARG001
+        system_prompt: str,  # noqa: ARG001
+        path_results: Path,
+        batch_size: int = 20,  # noqa: ARG001
+    ) -> None:
+        path_results.parent.mkdir(parents=True, exist_ok=True)
+        mock_results.write_parquet(path_results)
+
+    config = ExperimentConfig(
+        judge_model="gpt-4o",
+        system_prompt="You are a haiku judge",
+        path_experiment=path_results.parent,
+    )
+    with patch(f"{MODULE}.run_inference", side_effect=fake_run_inference) as run_inference_mock:
+        metrics = run_experiment(config)
+    run_inference_mock.assert_called_once_with(
+        model="gpt-4o", system_prompt="You are a haiku judge", path_results=path_results
+    )
+    assert metrics == {
+        "overall": BinaryClassificationResults(
+            n_samples=3,
+            accuracy=1.0,
+            tp=3,
+            tn=0,
+            fp=0,
+            fn=0,
+            precision=1.0,
+            recall=1.0,
+            f1_score=1.0,
+            specificity=0.0,
+        ),
+        "structure": BinaryClassificationResults(
+            n_samples=3,
+            accuracy=1.0,
+            tp=3,
+            tn=0,
+            fp=0,
+            fn=0,
+            precision=1.0,
+            recall=1.0,
+            f1_score=1.0,
+            specificity=0.0,
+        ),
+        "topic": BinaryClassificationResults(
+            n_samples=3,
+            accuracy=1.0,
+            tp=3,
+            tn=0,
+            fp=0,
+            fn=0,
+            precision=1.0,
+            recall=1.0,
+            f1_score=1.0,
+            specificity=0.0,
+        ),
+    }
+
+
+def test_run_experiment_results_file_exists(tmp_path: Path, mock_results: pl.DataFrame) -> None:
+    path_results = tmp_path.joinpath("data").joinpath("results.parquet")
+    path_results.parent.mkdir(parents=True, exist_ok=True)
+    mock_results.write_parquet(path_results)
+
+    config = ExperimentConfig(
+        judge_model="gpt-4o",
+        system_prompt="You are a haiku judge",
+        path_experiment=path_results.parent,
+    )
+    with patch(f"{MODULE}.run_inference") as run_inference_mock:
+        metrics = run_experiment(config)
+    run_inference_mock.assert_not_called()
+    assert metrics == {
+        "overall": BinaryClassificationResults(
+            n_samples=3,
+            accuracy=1.0,
+            tp=3,
+            tn=0,
+            fp=0,
+            fn=0,
+            precision=1.0,
+            recall=1.0,
+            f1_score=1.0,
+            specificity=0.0,
+        ),
+        "structure": BinaryClassificationResults(
+            n_samples=3,
+            accuracy=1.0,
+            tp=3,
+            tn=0,
+            fp=0,
+            fn=0,
+            precision=1.0,
+            recall=1.0,
+            f1_score=1.0,
+            specificity=0.0,
+        ),
+        "topic": BinaryClassificationResults(
+            n_samples=3,
+            accuracy=1.0,
+            tp=3,
+            tn=0,
+            fp=0,
+            fn=0,
+            precision=1.0,
+            recall=1.0,
+            f1_score=1.0,
+            specificity=0.0,
+        ),
+    }
 
 
 ###################################

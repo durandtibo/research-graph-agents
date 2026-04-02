@@ -39,11 +39,10 @@ def read_jsonl_in_batches(
         ```pycon
         >>> import pathlib, tempfile, json
         >>> from argos.utils.io import read_jsonl_in_batches
-        >>> with tempfile.NamedTemporaryFile(
-        ...     mode="w", suffix=".jsonl", delete=False
-        ... ) as f:
+        >>> with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f:
         ...     _ = f.write('{"a": 1}\n{"a": 2}\n{"a": 3}\n')
         ...     path = pathlib.Path(f.name)
+        ...
         >>> list(read_jsonl_in_batches(path, batch_size=2))
         [[{'a': 1}, {'a': 2}], [{'a': 3}]]
 
@@ -84,10 +83,9 @@ def write_jsonl(path: Path, records: list[dict[Any, Any]]) -> None:
         ```pycon
         >>> import pathlib, tempfile
         >>> from argos.utils.io import write_jsonl, read_jsonl_in_batches
-        >>> with tempfile.NamedTemporaryFile(
-        ...     suffix=".jsonl", delete=False
-        ... ) as f:
+        >>> with tempfile.NamedTemporaryFile(suffix=".jsonl", delete=False) as f:
         ...     path = pathlib.Path(f.name)
+        ...
         >>> write_jsonl(path, [{"x": 1}, {"x": 2}])
         >>> list(read_jsonl_in_batches(path, batch_size=10))
         [[{'x': 1}, {'x': 2}]]

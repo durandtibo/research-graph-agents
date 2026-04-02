@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import Mock, patch
 
 import polars as pl
@@ -17,7 +17,11 @@ from argos.tasks.autoprompt.haiku_judge import (
     prepare_dataset,
     prepare_results,
     run_inference,
+    run_inference_pipeline,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 MODULE = "argos.tasks.autoprompt.haiku_judge"
 
@@ -70,7 +74,7 @@ def mock_llm() -> BaseChatModel:
 
 
 @pytest.fixture
-def mock_model_graph(mock_outputs: list[dict[str, Any]]) -> CompiledStateGraph:
+def mock_graph(mock_outputs: list[dict[str, Any]]) -> CompiledStateGraph:
     graph = Mock(spec=CompiledStateGraph)
     graph.batch.side_effect = [mock_outputs]
     return graph
@@ -360,15 +364,89 @@ def test_prepare_results_returns_dataframe(
 
 
 def test_run_inference(
-    mock_dataset: pl.DataFrame, mock_model_graph: CompiledStateGraph, mock_results: pl.DataFrame
+    tmp_path: Path,
+    mock_dataset: pl.DataFrame,
+    mock_graph: CompiledStateGraph,
+    mock_results: pl.DataFrame,
 ) -> None:
-    result = run_inference(dataset=mock_dataset, model_graph=mock_model_graph)
+    path_results = tmp_path.joinpath("data").joinpath("results.parquet")
+    with (
+        patch(f"{MODULE}.create_graph", return_value=mock_graph) as create_graph_mock,
+        patch(
+            f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset
+        ) as generate_haiku_dataset_mock,
+        patch(
+            f"{MODULE}.run_inference_pipeline", return_value=mock_results
+        ) as run_inference_pipeline_mock,
+    ):
+        result = run_inference(
+            model="gpt-4o", system_prompt="You are a haiku judge", path_results=path_results
+        )
+        assert_frame_equal(result, mock_results)
+        create_graph_mock.assert_called_once_with(
+            model="gpt-4o", system_prompt="You are a haiku judge"
+        )
+        generate_haiku_dataset_mock.assert_called_once_with()
+        run_inference_pipeline_mock.assert_called_once_with(
+            dataset=mock_dataset, graph=mock_graph, batch_size=20
+        )
+
+    assert path_results.is_file()
+    assert_frame_equal(pl.read_parquet(path_results), mock_results)
+
+
+@pytest.mark.parametrize("batch_size", [1, 2, 3])
+def test_run_inference_batch_size(
+    tmp_path: Path,
+    mock_dataset: pl.DataFrame,
+    mock_graph: CompiledStateGraph,
+    mock_results: pl.DataFrame,
+    batch_size: int,
+) -> None:
+    path_results = tmp_path.joinpath("data").joinpath("results.parquet")
+    with (
+        patch(f"{MODULE}.create_graph", return_value=mock_graph) as create_graph_mock,
+        patch(
+            f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset
+        ) as generate_haiku_dataset_mock,
+        patch(
+            f"{MODULE}.run_inference_pipeline", return_value=mock_results
+        ) as run_inference_pipeline_mock,
+    ):
+        result = run_inference(
+            model="gpt-4o",
+            system_prompt="You are a haiku judge",
+            path_results=path_results,
+            batch_size=batch_size,
+        )
+        assert_frame_equal(result, mock_results)
+        assert path_results.is_file()
+        create_graph_mock.assert_called_once_with(
+            model="gpt-4o", system_prompt="You are a haiku judge"
+        )
+        generate_haiku_dataset_mock.assert_called_once_with()
+        run_inference_pipeline_mock.assert_called_once_with(
+            dataset=mock_dataset, graph=mock_graph, batch_size=batch_size
+        )
+
+
+############################################
+#     Tests for run_inference_pipeline     #
+############################################
+
+
+def test_run_inference_pipeline(
+    mock_dataset: pl.DataFrame, mock_graph: CompiledStateGraph, mock_results: pl.DataFrame
+) -> None:
+    result = run_inference_pipeline(dataset=mock_dataset, graph=mock_graph)
     assert_frame_equal(result, mock_results)
 
 
-def test_run_inference_batch_size_1(mock_dataset: pl.DataFrame, mock_results: pl.DataFrame) -> None:
-    mock_model_graph = Mock(spec=CompiledStateGraph)
-    mock_model_graph.batch.side_effect = [
+def test_run_inference_pipeline_batch_size_1(
+    mock_dataset: pl.DataFrame, mock_results: pl.DataFrame
+) -> None:
+    mock_graph = Mock(spec=CompiledStateGraph)
+    mock_graph.batch.side_effect = [
         [
             {
                 "topic": "rain",
@@ -417,13 +495,15 @@ def test_run_inference_batch_size_1(mock_dataset: pl.DataFrame, mock_results: pl
             },
         ],
     ]
-    result = run_inference(dataset=mock_dataset, model_graph=mock_model_graph, batch_size=1)
+    result = run_inference_pipeline(dataset=mock_dataset, graph=mock_graph, batch_size=1)
     assert_frame_equal(result, mock_results)
 
 
-def test_run_inference_batch_size_2(mock_dataset: pl.DataFrame, mock_results: pl.DataFrame) -> None:
-    mock_model_graph = Mock(spec=CompiledStateGraph)
-    mock_model_graph.batch.side_effect = [
+def test_run_inference_pipeline_batch_size_2(
+    mock_dataset: pl.DataFrame, mock_results: pl.DataFrame
+) -> None:
+    mock_graph = Mock(spec=CompiledStateGraph)
+    mock_graph.batch.side_effect = [
         [
             {
                 "topic": "rain",
@@ -470,5 +550,5 @@ def test_run_inference_batch_size_2(mock_dataset: pl.DataFrame, mock_results: pl
             },
         ],
     ]
-    result = run_inference(dataset=mock_dataset, model_graph=mock_model_graph, batch_size=2)
+    result = run_inference_pipeline(dataset=mock_dataset, graph=mock_graph, batch_size=2)
     assert_frame_equal(result, mock_results)

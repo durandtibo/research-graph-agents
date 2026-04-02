@@ -9,19 +9,50 @@ import polars as pl
 
 
 def generate_haiku_dataset() -> pl.DataFrame:
-    r"""Generate a dataset of haiku examples.
+    r"""Generate a labeled dataset of haiku examples.
+
+    The dataset combines positive examples (valid haiku that follow the
+    5-7-5 syllable structure and match the topic) with negative
+    examples (haiku that fail on structure, topic, or both).
 
     Returns:
-        A dataset of haiku examples.
+        A :class:`~polars.DataFrame` with the following columns:
+
+        - ``topic`` (``Utf8``): The subject or theme for the haiku.
+        - ``haiku`` (``Utf8``): The haiku text, with lines separated
+          by newlines.
+        - ``structure_target`` (``Boolean``): ``True`` if the haiku
+          follows the 5-7-5 syllable structure.
+        - ``topic_target`` (``Boolean``): ``True`` if the haiku
+          clearly reflects the specified topic.
+        - ``target`` (``Boolean``): ``True`` only if both
+          ``structure_target`` and ``topic_target`` are ``True``
+          (i.e. the overall quality label).
+
+    Example:
+        ```pycon
+        >>> from argos.datasets import generate_haiku_dataset
+        >>> df = generate_haiku_dataset()
+        >>> df.columns
+        ['topic', 'haiku', 'structure_target', 'topic_target', 'target']
+
+        ```
     """
     return pl.concat([_generate_positive_examples(), _generate_negative_examples()], how="vertical")
 
 
 def _generate_positive_examples() -> pl.DataFrame:
-    r"""Generate a list of positive examples.
+    r"""Generate positive (valid) haiku examples.
+
+    Each example in the returned DataFrame has a haiku that correctly
+    follows the 5-7-5 syllable structure and meaningfully reflects the
+    specified topic. All label columns are ``True``.
 
     Returns:
-        A list of positive examples.
+        A :class:`~polars.DataFrame` with columns ``topic``, ``haiku``,
+            ``structure_target``, ``topic_target``, and ``target``.
+            All rows have ``structure_target=True``,
+            ``topic_target=True``, and ``target=True``.
     """
     return pl.from_dicts(
         [
@@ -466,10 +497,21 @@ def _generate_positive_examples() -> pl.DataFrame:
 
 
 def _generate_negative_examples() -> pl.DataFrame:
-    r"""Generate a list of negative examples.
+    r"""Generate negative (invalid) haiku examples.
+
+    The negative examples are grouped into three failure modes,
+    combined vertically:
+
+    1. Incorrect topic — correct 5-7-5 structure but haiku does not
+       match the specified topic.
+    2. Incorrect structure — haiku addresses the topic but does not
+       follow the 5-7-5 syllable structure.
+    3. Incorrect topic and structure — haiku fails on both criteria.
 
     Returns:
-        A list of negative examples.
+        A :class:`~polars.DataFrame` with columns ``topic``, ``haiku``,
+            ``structure_target``, ``topic_target``, and ``target``.
+            All rows have ``target=False``.
     """
     return pl.concat(
         [
@@ -482,10 +524,18 @@ def _generate_negative_examples() -> pl.DataFrame:
 
 
 def _generate_negative_examples_incorrect_topic() -> pl.DataFrame:
-    r"""Generate a list of negative examples.
+    r"""Generate negative examples where the topic is incorrect.
+
+    Each example has a haiku with a valid 5-7-5 syllable structure,
+    but the haiku was written for a *different* topic than the one
+    specified. ``structure_target`` is therefore ``True`` while
+    ``topic_target`` and ``target`` are ``False``.
 
     Returns:
-        A list of negative examples.
+        A :class:`~polars.DataFrame` with columns ``topic``, ``haiku``,
+            ``structure_target``, ``topic_target``, and ``target``.
+            All rows have ``structure_target=True``,
+            ``topic_target=False``, and ``target=False``.
     """
     return pl.from_dicts(
         [
@@ -542,10 +592,18 @@ def _generate_negative_examples_incorrect_topic() -> pl.DataFrame:
 
 
 def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
-    r"""Generate a list of negative examples.
+    r"""Generate negative examples where the syllable structure is incorrect.
+
+    Each example has a haiku that addresses the specified topic but
+    does not follow the 5-7-5 syllable structure. ``topic_target`` is
+    therefore ``True`` while ``structure_target`` and ``target`` are
+    ``False``.
 
     Returns:
-        A list of negative examples.
+        A :class:`~polars.DataFrame` with columns ``topic``, ``haiku``,
+            ``structure_target``, ``topic_target``, and ``target``.
+            All rows have ``structure_target=False``,
+            ``topic_target=True``, and ``target=False``.
     """
     return pl.from_dicts(
         [
@@ -747,10 +805,17 @@ def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
 
 
 def _generate_negative_examples_incorrect_topic_and_structure() -> pl.DataFrame:
-    r"""Generate a list of negative examples.
+    r"""Generate negative examples where both topic and structure are incorrect.
+
+    Each example has a haiku that neither follows the 5-7-5 syllable
+    structure nor addresses the specified topic. Both
+    ``structure_target`` and ``topic_target`` are ``False``.
 
     Returns:
-        A list of negative examples.
+        A :class:`~polars.DataFrame` with columns ``topic``, ``haiku``,
+            ``structure_target``, ``topic_target``, and ``target``.
+            All rows have ``structure_target=False``,
+            ``topic_target=False``, and ``target=False``.
     """
     return pl.from_dicts(
         [

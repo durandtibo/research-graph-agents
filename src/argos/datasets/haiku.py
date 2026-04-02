@@ -592,7 +592,8 @@ def _generate_negative_examples_incorrect_topic() -> pl.DataFrame:
 
 
 def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
-    r"""Generate negative examples where the syllable structure is incorrect.
+    r"""Generate negative examples where the syllable structure is
+    incorrect.
 
     Each example has a haiku that addresses the specified topic but
     does not follow the 5-7-5 syllable structure. ``topic_target`` is
@@ -805,7 +806,8 @@ def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
 
 
 def _generate_negative_examples_incorrect_topic_and_structure() -> pl.DataFrame:
-    r"""Generate negative examples where both topic and structure are incorrect.
+    r"""Generate negative examples where both topic and structure are
+    incorrect.
 
     Each example has a haiku that neither follows the 5-7-5 syllable
     structure nor addresses the specified topic. Both

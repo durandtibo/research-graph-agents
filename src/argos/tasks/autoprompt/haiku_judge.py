@@ -155,9 +155,10 @@ def run_inference(
     """
     outputs = []
     examples = list(dataset.iter_rows(named=True))
+    batches = batchify(examples, size=batch_size)
 
     with timeblock(message="LLM inference time: {time}"):
-        for index, batch in enumerate(batchify(examples, size=batch_size)):
+        for index, batch in enumerate(batches):
             logger.info(f"--- Processing Batch {index + 1} ---")
             output = model_graph.batch(batch, config={"max_concurrency": batch_size})
             outputs.extend(output)

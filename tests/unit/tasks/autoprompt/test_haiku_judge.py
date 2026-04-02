@@ -16,6 +16,7 @@ from argos.tasks.autoprompt.haiku_judge import (
     evaluate_metrics,
     prepare_dataset,
     prepare_results,
+    run_inference,
 )
 
 MODULE = "argos.tasks.autoprompt.haiku_judge"
@@ -66,6 +67,13 @@ def mock_llm() -> BaseChatModel:
     llm.model = "gpt-4o"
     llm.temperature = 0
     return llm
+
+
+@pytest.fixture
+def mock_model_graph(mock_outputs: list[dict[str, Any]]) -> CompiledStateGraph:
+    graph = Mock(spec=CompiledStateGraph)
+    graph.batch.side_effect = [mock_outputs]
+    return graph
 
 
 @pytest.fixture
@@ -344,3 +352,123 @@ def test_prepare_results_returns_dataframe(
     mock_dataset: pl.DataFrame, mock_outputs: list, mock_results: pl.DataFrame
 ) -> None:
     assert_frame_equal(prepare_results(dataset=mock_dataset, outputs=mock_outputs), mock_results)
+
+
+###################################
+#     Tests for run_inference     #
+###################################
+
+
+def test_run_inference(
+    mock_dataset: pl.DataFrame, mock_model_graph: CompiledStateGraph, mock_results: pl.DataFrame
+) -> None:
+    result = run_inference(dataset=mock_dataset, model_graph=mock_model_graph)
+    assert_frame_equal(result, mock_results)
+
+
+def test_run_inference_batch_size_1(mock_dataset: pl.DataFrame, mock_results: pl.DataFrame) -> None:
+    mock_model_graph = Mock(spec=CompiledStateGraph)
+    mock_model_graph.batch.side_effect = [
+        [
+            {
+                "topic": "rain",
+                "haiku": (
+                    "Gray sky descends slow,\n"
+                    "Cool drops kiss the thirsty ground,\n"
+                    "Silence finds the leaf."
+                ),
+                "evaluation": HaikuJudgeResult(
+                    structure_passed=True,
+                    topic_passed=True,
+                    score=10,
+                    reasoning="reason1",
+                    passed=True,
+                ),
+            }
+        ],
+        [
+            {
+                "topic": "cat",
+                "haiku": (
+                    "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
+                ),
+                "evaluation": HaikuJudgeResult(
+                    structure_passed=True,
+                    topic_passed=True,
+                    score=9,
+                    reasoning="reason2",
+                    passed=True,
+                ),
+            },
+        ],
+        [
+            {
+                "topic": "mountain",
+                "haiku": (
+                    "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
+                ),
+                "evaluation": HaikuJudgeResult(
+                    structure_passed=True,
+                    topic_passed=True,
+                    score=8,
+                    reasoning="reason3",
+                    passed=True,
+                ),
+            },
+        ],
+    ]
+    result = run_inference(dataset=mock_dataset, model_graph=mock_model_graph, batch_size=1)
+    assert_frame_equal(result, mock_results)
+
+
+def test_run_inference_batch_size_2(mock_dataset: pl.DataFrame, mock_results: pl.DataFrame) -> None:
+    mock_model_graph = Mock(spec=CompiledStateGraph)
+    mock_model_graph.batch.side_effect = [
+        [
+            {
+                "topic": "rain",
+                "haiku": (
+                    "Gray sky descends slow,\n"
+                    "Cool drops kiss the thirsty ground,\n"
+                    "Silence finds the leaf."
+                ),
+                "evaluation": HaikuJudgeResult(
+                    structure_passed=True,
+                    topic_passed=True,
+                    score=10,
+                    reasoning="reason1",
+                    passed=True,
+                ),
+            },
+            {
+                "topic": "cat",
+                "haiku": (
+                    "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
+                ),
+                "evaluation": HaikuJudgeResult(
+                    structure_passed=True,
+                    topic_passed=True,
+                    score=9,
+                    reasoning="reason2",
+                    passed=True,
+                ),
+            },
+        ],
+        [
+            {
+                "topic": "mountain",
+                "haiku": (
+                    "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
+                ),
+                "evaluation": HaikuJudgeResult(
+                    structure_passed=True,
+                    topic_passed=True,
+                    score=8,
+                    reasoning="reason3",
+                    passed=True,
+                ),
+            },
+        ],
+    ]
+    result = run_inference(dataset=mock_dataset, model_graph=mock_model_graph, batch_size=2)
+    assert_frame_equal(result, mock_results)

@@ -30,12 +30,10 @@ from argos.metrics import (
 )
 from argos.nodes import HaikuJudgeState, make_haiku_judge_node
 from argos.tasks.autoprompt.analysis import (
-    format_incorrect_structure_haiku,
-    format_incorrect_topic_haiku,
+    analyze_errors,
 )
 from argos.utils.batching import batchify
 from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
-from argos.utils.logging import log_markdown
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -190,10 +188,7 @@ def run_experiment(config: ExperimentConfig) -> dict[str, BinaryClassificationRe
     with pl.Config(tbl_cols=-1, tbl_rows=10):
         logger.info(f"\n{results}")
 
-    logger.info("Haikus with incorrect structure predictions")
-    log_markdown(format_incorrect_structure_haiku(results))
-    logger.info("Haikus with incorrect topic predictions")
-    log_markdown(format_incorrect_topic_haiku(results))
+    analyze_errors(results, path=config.path_experiment)
 
     return evaluate_metrics(results)
 

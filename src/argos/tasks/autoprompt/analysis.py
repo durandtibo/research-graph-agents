@@ -5,6 +5,7 @@ from __future__ import annotations
 __all__ = [
     "analyze_errors",
     "find_errors",
+    "format_errors_as_markdown_table",
     "format_incorrect_structure_haiku",
     "format_incorrect_topic_haiku",
 ]
@@ -32,9 +33,11 @@ def analyze_errors(results: pl.DataFrame, path: Path) -> None:
         path: The path where to store the analyses.
     """
     logger.info("Haikus with incorrect structure predictions")
-    structure = format_incorrect_structure_haiku(results)
-    log_markdown(structure)
-    save_text(structure, path.joinpath("error_analysis_structure.md"))
+    structure_errors = find_errors(
+        results=results, col_target="structure_target", col_prediction="structure_passed"
+    )
+    log_markdown(format_errors_as_markdown_table(structure_errors))
+    save_text(structure_errors, path.joinpath("error_analysis_structure.json"))
 
     logger.info("Haikus with incorrect topic predictions")
     topic = format_incorrect_topic_haiku(results)
@@ -58,6 +61,7 @@ def find_errors(
     return (
         results.filter(pl.col(col_target) != pl.col(col_prediction))
         .select(["haiku", col_target, col_prediction])
+        .rename({col_target: "target", col_prediction: "prediction"})
         .to_dicts()
     )
 
@@ -100,3 +104,19 @@ def format_incorrect_topic_haiku(results: pl.DataFrame) -> str:
         f"and the predicted label (target):\n"
         f"```json\n[\n{haikus_str}\n]\n```\n"
     )
+
+
+def format_errors_as_markdown_table(errors: list[dict]) -> str:
+    r"""Format the list of errors to a markdown table.
+
+    Args:
+        errors: The list of errors.
+
+    Returns:
+        The formatted list of errors to a markdown table.
+    """
+    lines = ["| # | Haiku | Target | Prediction |", "|----|----|----|----|"]
+    for i, example in enumerate(errors, start=1):
+        haiku = example["haiku"].replace("\n", " / ")
+        lines.append(f"| {i} | {haiku} | {example['target']} | {example['prediction']} |")
+    return "\n".join(lines)

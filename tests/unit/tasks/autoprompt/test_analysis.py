@@ -8,6 +8,7 @@ from iden.io import load_text
 from argos.tasks.autoprompt.analysis import (
     analyze_errors,
     find_errors,
+    format_errors_as_markdown_table,
     format_incorrect_structure_haiku,
     format_incorrect_topic_haiku,
 )
@@ -153,10 +154,10 @@ def test_find_errors_all_incorrect() -> None:
         col_target="target",
         col_prediction="passed",
     ) == [
-        {"haiku": "A", "target": False, "passed": True},
-        {"haiku": "B", "target": False, "passed": True},
-        {"haiku": "C", "target": True, "passed": False},
-        {"haiku": "D", "target": True, "passed": False},
+        {"haiku": "A", "target": False, "prediction": True},
+        {"haiku": "B", "target": False, "prediction": True},
+        {"haiku": "C", "target": True, "prediction": False},
+        {"haiku": "D", "target": True, "prediction": False},
     ]
 
 
@@ -172,8 +173,8 @@ def test_find_errors_partially_incorrect() -> None:
         col_target="target",
         col_prediction="passed",
     ) == [
-        {"haiku": "A", "target": False, "passed": True},
-        {"haiku": "D", "target": True, "passed": False},
+        {"haiku": "A", "target": False, "prediction": True},
+        {"haiku": "D", "target": True, "prediction": False},
     ]
 
 
@@ -303,4 +304,60 @@ def test_format_incorrect_topic_haiku_empty() -> None:
             results=pl.DataFrame({"haiku": [], "topic_target": [], "topic_passed": []})
         )
         == TOPIC_MSG_EMPTY
+    )
+
+
+#####################################################
+#     Tests for format_errors_as_markdown_table     #
+#####################################################
+
+SINGLE_ERROR = [
+    {
+        "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
+        "target": False,
+        "prediction": True,
+    }
+]
+
+MULTIPLE_ERRORS = [
+    {
+        "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
+        "target": False,
+        "prediction": True,
+    },
+    {
+        "haiku": "Eyes of glowing green\nWatching from the dark\nReady for a pounce",
+        "target": True,
+        "prediction": False,
+    },
+    {
+        "haiku": "Tail is standing high\nRubbing on my leg\nBegging for a treat",
+        "target": False,
+        "prediction": False,
+    },
+]
+
+
+def test_format_errors_as_markdown_table_empty_list() -> None:
+    assert (
+        format_errors_as_markdown_table([])
+        == "| # | Haiku | Target | Prediction |\n|----|----|----|----|"
+    )
+
+
+def test_format_errors_as_markdown_table_single_error() -> None:
+    assert format_errors_as_markdown_table(SINGLE_ERROR) == (
+        "| # | Haiku | Target | Prediction |\n"
+        "|----|----|----|----|\n"
+        "| 1 | Soft paws on the rug / Purring in her sleep / Dreaming of a mouse | False | True |"
+    )
+
+
+def test_format_errors_as_markdown_table_multiple_errors() -> None:
+    assert format_errors_as_markdown_table(MULTIPLE_ERRORS) == (
+        "| # | Haiku | Target | Prediction |\n"
+        "|----|----|----|----|\n"
+        "| 1 | Soft paws on the rug / Purring in her sleep / Dreaming of a mouse | False | True |\n"
+        "| 2 | Eyes of glowing green / Watching from the dark / Ready for a pounce | True | False |\n"
+        "| 3 | Tail is standing high / Rubbing on my leg / Begging for a treat | False | False |"
     )

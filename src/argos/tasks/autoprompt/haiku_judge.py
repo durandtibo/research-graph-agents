@@ -6,6 +6,8 @@ __all__ = [
     "ExperimentConfig",
     "create_graph",
     "evaluate_metrics",
+    "find_incorrect_predictions",
+    "format_incorrect_structure_haiku",
     "prepare_dataset",
     "prepare_results",
     "run_experiment",
@@ -185,6 +187,8 @@ def run_experiment(config: ExperimentConfig) -> dict[str, BinaryClassificationRe
     with pl.Config(tbl_cols=-1, tbl_rows=10):
         logger.info(f"\n{results}")
 
+    logger.info(format_incorrect_structure_haiku(results))
+
     return evaluate_metrics(results)
 
 
@@ -256,3 +260,19 @@ def find_incorrect_predictions(
         The list of haikus with incorrect predictions.
     """
     return results.filter(pl.col(col_target) != pl.col(col_prediction))["haiku"].to_list()
+
+
+def format_incorrect_structure_haiku(results: pl.DataFrame) -> str:
+    r"""Format the list of haikus with incorrect structure predictions.
+
+    Args:
+        results: The results of the haiku judge.
+
+    Returns:
+        The formatted list of haikus with incorrect structure predictions.
+    """
+    haikus = find_incorrect_predictions(
+        results=results, col_target="structure_target", col_prediction="structure_passed"
+    )
+    haikus_str = "\n- ".join(["", *haikus])
+    return f"{len(haikus)} haikus have incorrect structure predictions:{haikus_str}\n"

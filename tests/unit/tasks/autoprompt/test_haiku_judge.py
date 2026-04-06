@@ -16,6 +16,7 @@ from argos.tasks.autoprompt.haiku_judge import (
     create_graph,
     evaluate_metrics,
     find_incorrect_predictions,
+    format_incorrect_structure_haiku,
     prepare_dataset,
     prepare_results,
     run_experiment,
@@ -721,7 +722,7 @@ def test_find_incorrect_predictions_partially_incorrect() -> None:
     ) == ["A", "D"]
 
 
-def test_find_incorrect_predictions_empty() -> None:
+def test_find_incorrect_structure_haiku_empty() -> None:
     assert (
         find_incorrect_predictions(
             results=pl.DataFrame({"haiku": [], "passed": [], "target": []}),
@@ -729,4 +730,77 @@ def test_find_incorrect_predictions_empty() -> None:
             col_prediction="passed",
         )
         == []
+    )
+
+
+######################################################
+#     Tests for format_incorrect_structure_haiku     #
+######################################################
+
+
+def test_format_incorrect_structure_haiku_all_correct() -> None:
+    output = """0 haikus have incorrect structure predictions:
+"""
+    assert (
+        format_incorrect_structure_haiku(
+            results=pl.DataFrame(
+                {
+                    "haiku": ["A", "B", "C", "D"],
+                    "structure_passed": [True, True, False, False],
+                    "structure_target": [True, True, False, False],
+                }
+            )
+        )
+        == output
+    )
+
+
+def test_format_incorrect_structure_haiku_all_incorrect() -> None:
+    output = """4 haikus have incorrect structure predictions:
+- A
+- B
+- C
+- D
+"""
+    assert (
+        format_incorrect_structure_haiku(
+            results=pl.DataFrame(
+                {
+                    "haiku": ["A", "B", "C", "D"],
+                    "structure_passed": [True, True, False, False],
+                    "structure_target": [False, False, True, True],
+                }
+            )
+        )
+        == output
+    )
+
+
+def test_format_incorrect_structure_haiku_partially_incorrect() -> None:
+    output = """2 haikus have incorrect structure predictions:
+- A
+- D
+"""
+    assert (
+        format_incorrect_structure_haiku(
+            results=pl.DataFrame(
+                {
+                    "haiku": ["A", "B", "C", "D"],
+                    "structure_passed": [True, True, False, False],
+                    "structure_target": [False, True, False, True],
+                }
+            )
+        )
+        == output
+    )
+
+
+def test_format_incorrect_structure_haiku_empty() -> None:
+    output = """0 haikus have incorrect structure predictions:
+"""
+    assert (
+        format_incorrect_structure_haiku(
+            results=pl.DataFrame({"haiku": [], "structure_target": [], "structure_passed": []})
+        )
+        == output
     )

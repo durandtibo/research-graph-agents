@@ -11,6 +11,7 @@ from argos.tasks.autoprompt.analysis import (
     format_errors_as_markdown_table,
     format_incorrect_structure_haiku,
     format_incorrect_topic_haiku,
+    format_structure_errors_as_markdown,
 )
 
 if TYPE_CHECKING:
@@ -319,6 +320,12 @@ SINGLE_ERROR = [
     }
 ]
 
+SINGLE_ERROR_TABLE = (
+    "| # | Haiku | Target | Prediction |\n"
+    "|----|----|----|----|\n"
+    "| 1 | Soft paws on the rug / Purring in her sleep / Dreaming of a mouse | False | True |"
+)
+
 MULTIPLE_ERRORS = [
     {
         "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
@@ -337,6 +344,14 @@ MULTIPLE_ERRORS = [
     },
 ]
 
+MULTIPLE_ERRORS_TABLE = (
+    "| # | Haiku | Target | Prediction |\n"
+    "|----|----|----|----|\n"
+    "| 1 | Soft paws on the rug / Purring in her sleep / Dreaming of a mouse | False | True |\n"
+    "| 2 | Eyes of glowing green / Watching from the dark / Ready for a pounce | True | False |\n"
+    "| 3 | Tail is standing high / Rubbing on my leg / Begging for a treat | False | False |"
+)
+
 
 def test_format_errors_as_markdown_table_empty_list() -> None:
     assert (
@@ -346,18 +361,35 @@ def test_format_errors_as_markdown_table_empty_list() -> None:
 
 
 def test_format_errors_as_markdown_table_single_error() -> None:
-    assert format_errors_as_markdown_table(SINGLE_ERROR) == (
-        "| # | Haiku | Target | Prediction |\n"
-        "|----|----|----|----|\n"
-        "| 1 | Soft paws on the rug / Purring in her sleep / Dreaming of a mouse | False | True |"
-    )
+    assert format_errors_as_markdown_table(SINGLE_ERROR) == SINGLE_ERROR_TABLE
 
 
 def test_format_errors_as_markdown_table_multiple_errors() -> None:
-    assert format_errors_as_markdown_table(MULTIPLE_ERRORS) == (
-        "| # | Haiku | Target | Prediction |\n"
-        "|----|----|----|----|\n"
-        "| 1 | Soft paws on the rug / Purring in her sleep / Dreaming of a mouse | False | True |\n"
-        "| 2 | Eyes of glowing green / Watching from the dark / Ready for a pounce | True | False |\n"
-        "| 3 | Tail is standing high / Rubbing on my leg / Begging for a treat | False | False |"
+    assert format_errors_as_markdown_table(MULTIPLE_ERRORS) == MULTIPLE_ERRORS_TABLE
+
+
+#########################################################
+#     Tests for format_structure_errors_as_markdown     #
+#########################################################
+
+
+def test_format_structure_errors_single_error() -> None:
+    assert format_structure_errors_as_markdown(SINGLE_ERROR) == (
+        "1 haikus have incorrect structure predictions. "
+        "The table below details these errors:\n"
+        "- **Haiku**: The evaluated text, with line breaks (`\\n`) replaced by slashes (` / `)\n"
+        "- **Target**: The true, correct label.\n"
+        "- **Prediction**: The model's output label.\n"
+        f"\n{SINGLE_ERROR_TABLE}\n"
+    )
+
+
+def test_format_structure_errors_multiple_errors() -> None:
+    assert format_structure_errors_as_markdown(MULTIPLE_ERRORS) == (
+        "3 haikus have incorrect structure predictions. "
+        "The table below details these errors:\n"
+        "- **Haiku**: The evaluated text, with line breaks (`\\n`) replaced by slashes (` / `)\n"
+        "- **Target**: The true, correct label.\n"
+        "- **Prediction**: The model's output label.\n"
+        f"\n{MULTIPLE_ERRORS_TABLE}\n"
     )

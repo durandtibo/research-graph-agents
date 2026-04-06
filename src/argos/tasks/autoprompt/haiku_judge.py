@@ -266,14 +266,13 @@ def find_incorrect_predictions(
     """
     return (
         results.filter(pl.col(col_target) != pl.col(col_prediction))
-        .select(["haiku", col_target, col_prediction])
         .select(
             pl.format(
                 "(haiku): {} (target): {} (prediction): {}",
                 pl.col("haiku"),
                 pl.col(col_target),
                 pl.col(col_prediction),
-            ).alias("formatted")
+            )
         )
         .to_series()
         .to_list()

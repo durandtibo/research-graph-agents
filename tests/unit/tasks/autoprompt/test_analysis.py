@@ -7,7 +7,7 @@ from iden.io import load_text
 
 from argos.tasks.autoprompt.analysis import (
     analyze_errors,
-    find_incorrect_predictions,
+    find_errors,
     format_incorrect_structure_haiku,
     format_incorrect_topic_haiku,
 )
@@ -119,14 +119,14 @@ def test_analyze_errors_empty(tmp_path: Path) -> None:
     assert load_text(file_topic) == TOPIC_MSG_EMPTY
 
 
-################################################
-#     Tests for find_incorrect_predictions     #
-################################################
+#################################
+#     Tests for find_errors     #
+#################################
 
 
-def test_find_incorrect_predictions_all_correct() -> None:
+def test_find_errors_all_correct() -> None:
     assert (
-        find_incorrect_predictions(
+        find_errors(
             results=pl.DataFrame(
                 {
                     "haiku": ["A", "B", "C", "D"],
@@ -141,8 +141,8 @@ def test_find_incorrect_predictions_all_correct() -> None:
     )
 
 
-def test_find_incorrect_predictions_all_incorrect() -> None:
-    assert find_incorrect_predictions(
+def test_find_errors_all_incorrect() -> None:
+    assert find_errors(
         results=pl.DataFrame(
             {
                 "haiku": ["A", "B", "C", "D"],
@@ -153,15 +153,15 @@ def test_find_incorrect_predictions_all_incorrect() -> None:
         col_target="target",
         col_prediction="passed",
     ) == [
-        "(haiku): A (target): false (prediction): true",
-        "(haiku): B (target): false (prediction): true",
-        "(haiku): C (target): true (prediction): false",
-        "(haiku): D (target): true (prediction): false",
+        {"haiku": "A", "target": False, "passed": True},
+        {"haiku": "B", "target": False, "passed": True},
+        {"haiku": "C", "target": True, "passed": False},
+        {"haiku": "D", "target": True, "passed": False},
     ]
 
 
-def test_find_incorrect_predictions_partially_incorrect() -> None:
-    assert find_incorrect_predictions(
+def test_find_errors_partially_incorrect() -> None:
+    assert find_errors(
         results=pl.DataFrame(
             {
                 "haiku": ["A", "B", "C", "D"],
@@ -172,14 +172,14 @@ def test_find_incorrect_predictions_partially_incorrect() -> None:
         col_target="target",
         col_prediction="passed",
     ) == [
-        "(haiku): A (target): false (prediction): true",
-        "(haiku): D (target): true (prediction): false",
+        {"haiku": "A", "target": False, "passed": True},
+        {"haiku": "D", "target": True, "passed": False},
     ]
 
 
 def test_find_incorrect_structure_haiku_empty() -> None:
     assert (
-        find_incorrect_predictions(
+        find_errors(
             results=pl.DataFrame({"haiku": [], "passed": [], "target": []}),
             col_target="target",
             col_prediction="passed",

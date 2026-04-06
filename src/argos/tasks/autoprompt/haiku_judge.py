@@ -8,6 +8,7 @@ __all__ = [
     "evaluate_metrics",
     "find_incorrect_predictions",
     "format_incorrect_structure_haiku",
+    "format_incorrect_topic_haiku",
     "prepare_dataset",
     "prepare_results",
     "run_experiment",
@@ -33,6 +34,7 @@ from argos.metrics import (
 from argos.nodes import HaikuJudgeState, make_haiku_judge_node
 from argos.utils.batching import batchify
 from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
+from argos.utils.logging import log_markdown
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -187,7 +189,8 @@ def run_experiment(config: ExperimentConfig) -> dict[str, BinaryClassificationRe
     with pl.Config(tbl_cols=-1, tbl_rows=10):
         logger.info(f"\n{results}")
 
-    logger.info(format_incorrect_structure_haiku(results))
+    log_markdown(format_incorrect_structure_haiku(results))
+    log_markdown(format_incorrect_topic_haiku(results))
 
     return evaluate_metrics(results)
 
@@ -276,3 +279,19 @@ def format_incorrect_structure_haiku(results: pl.DataFrame) -> str:
     )
     haikus_str = "\n- ".join(["", *haikus])
     return f"{len(haikus)} haikus have incorrect structure predictions:{haikus_str}\n"
+
+
+def format_incorrect_topic_haiku(results: pl.DataFrame) -> str:
+    r"""Format the list of haikus with incorrect topic predictions.
+
+    Args:
+        results: The results of the haiku judge.
+
+    Returns:
+        The formatted list of haikus with incorrect topic predictions.
+    """
+    haikus = find_incorrect_predictions(
+        results=results, col_target="topic_target", col_prediction="topic_passed"
+    )
+    haikus_str = "\n- ".join(["", *haikus])
+    return f"{len(haikus)} haikus have incorrect topic predictions:{haikus_str}\n"

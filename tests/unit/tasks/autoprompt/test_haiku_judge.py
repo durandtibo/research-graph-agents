@@ -17,6 +17,7 @@ from argos.tasks.autoprompt.haiku_judge import (
     evaluate_metrics,
     find_incorrect_predictions,
     format_incorrect_structure_haiku,
+    format_incorrect_topic_haiku,
     prepare_dataset,
     prepare_results,
     run_experiment,
@@ -801,6 +802,79 @@ def test_format_incorrect_structure_haiku_empty() -> None:
     assert (
         format_incorrect_structure_haiku(
             results=pl.DataFrame({"haiku": [], "structure_target": [], "structure_passed": []})
+        )
+        == output
+    )
+
+
+######################################################
+#     Tests for format_incorrect_topic_haiku     #
+######################################################
+
+
+def test_format_incorrect_topic_haiku_all_correct() -> None:
+    output = """0 haikus have incorrect topic predictions:
+"""
+    assert (
+        format_incorrect_topic_haiku(
+            results=pl.DataFrame(
+                {
+                    "haiku": ["A", "B", "C", "D"],
+                    "topic_passed": [True, True, False, False],
+                    "topic_target": [True, True, False, False],
+                }
+            )
+        )
+        == output
+    )
+
+
+def test_format_incorrect_topic_haiku_all_incorrect() -> None:
+    output = """4 haikus have incorrect topic predictions:
+- A
+- B
+- C
+- D
+"""
+    assert (
+        format_incorrect_topic_haiku(
+            results=pl.DataFrame(
+                {
+                    "haiku": ["A", "B", "C", "D"],
+                    "topic_passed": [True, True, False, False],
+                    "topic_target": [False, False, True, True],
+                }
+            )
+        )
+        == output
+    )
+
+
+def test_format_incorrect_topic_haiku_partially_incorrect() -> None:
+    output = """2 haikus have incorrect topic predictions:
+- A
+- D
+"""
+    assert (
+        format_incorrect_topic_haiku(
+            results=pl.DataFrame(
+                {
+                    "haiku": ["A", "B", "C", "D"],
+                    "topic_passed": [True, True, False, False],
+                    "topic_target": [False, True, False, True],
+                }
+            )
+        )
+        == output
+    )
+
+
+def test_format_incorrect_topic_haiku_empty() -> None:
+    output = """0 haikus have incorrect topic predictions:
+"""
+    assert (
+        format_incorrect_topic_haiku(
+            results=pl.DataFrame({"haiku": [], "topic_target": [], "topic_passed": []})
         )
         == output
     )

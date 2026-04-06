@@ -9,7 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from argos.nodes.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
-from argos.tasks.autoprompt.haiku_judge import (
+from argos.tasks.autoprompt.judge import (
     ExperimentConfig,
     run_experiment,
 )

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "analyze_errors",
-    "find_incorrect_predictions",
+    "find_errors",
     "format_incorrect_structure_haiku",
     "format_incorrect_topic_haiku",
 ]
@@ -42,9 +42,9 @@ def analyze_errors(results: pl.DataFrame, path: Path) -> None:
     save_text(topic, path.joinpath("error_analysis_topic.md"))
 
 
-def find_incorrect_predictions(
+def find_errors(
     results: pl.DataFrame, col_target: str, col_prediction: str
-) -> list[str]:
+) -> list[dict[str, str | bool]]:
     r"""Find the haiku with incorrect predictions.
 
     Args:
@@ -57,16 +57,8 @@ def find_incorrect_predictions(
     """
     return (
         results.filter(pl.col(col_target) != pl.col(col_prediction))
-        .select(
-            pl.format(
-                "(haiku): {} (target): {} (prediction): {}",
-                pl.col("haiku"),
-                pl.col(col_target),
-                pl.col(col_prediction),
-            )
-        )
-        .to_series()
-        .to_list()
+        .select(["haiku", col_target, col_prediction])
+        .to_dicts()
     )
 
 
@@ -79,14 +71,15 @@ def format_incorrect_structure_haiku(results: pl.DataFrame) -> str:
     Returns:
         The formatted list of haikus with incorrect structure predictions.
     """
-    haikus = find_incorrect_predictions(
+    haikus = find_errors(
         results=results, col_target="structure_target", col_prediction="structure_passed"
     )
-    haikus_str = "\n- ".join(["", *haikus])
+    haikus_str = "\n".join(map(str, haikus))
     return (
         f"{len(haikus)} haikus have incorrect structure predictions. "
         f"Here is the list of haikus with the true label (target) "
-        f"and the predicted label (target):{haikus_str}\n"
+        f"and the predicted label (target):\n"
+        f"```jsonl\n\n{haikus_str}\n\n```\n"
     )
 
 
@@ -99,12 +92,11 @@ def format_incorrect_topic_haiku(results: pl.DataFrame) -> str:
     Returns:
         The formatted list of haikus with incorrect topic predictions.
     """
-    haikus = find_incorrect_predictions(
-        results=results, col_target="topic_target", col_prediction="topic_passed"
-    )
-    haikus_str = "\n- ".join(["", *haikus])
+    haikus = find_errors(results=results, col_target="topic_target", col_prediction="topic_passed")
+    haikus_str = "\n".join(map(str, haikus))
     return (
         f"{len(haikus)} haikus have incorrect topic predictions. "
         f"Here is the list of haikus with the true label (target) "
-        f"and the predicted label (target):{haikus_str}\n"
+        f"and the predicted label (target):\n"
+        f"```json\n[\n{haikus_str}\n]\n```\n"
     )

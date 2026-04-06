@@ -6,14 +6,13 @@ import hashlib
 import logging
 from pathlib import Path
 
-import polars as pl
 from dotenv import load_dotenv
 
 from argos.nodes import HaikuJudgeState
 from argos.nodes.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 from argos.tasks.autoprompt.haiku_judge import (
-    evaluate_metrics,
-    run_inference,
+    ExperimentConfig,
+    run_experiment,
 )
 from argos.utils.logging import configure_logging
 
@@ -474,37 +473,30 @@ class State(HaikuJudgeState):
     r"""Define the state of the haiku generator-judge system."""
 
 
-def run_evaluation(model: str, judge_system_prompt: str) -> None:
-    r"""Run haiku generator-judge evaluation.
+def run_evaluation(judge_model: str, judge_system_prompt: str) -> None:
+    r"""Run haiku judge evaluation.
 
     Args:
-        model: The name of the model to run inference.
+        judge_model: The name of the judge model.
         judge_system_prompt: The prompt of the judge-system-prompt.
     """
-    path_results = (
+    path_experiment = (
         Path(__file__)
         .resolve()
         .parent.parent.joinpath("results")
         .joinpath("haiku_judge")
         .joinpath(hashlib.sha256(bytes(str(judge_system_prompt), "utf-8")).hexdigest())
-        .joinpath(model.replace(":", "_"))
-        .joinpath("results.parquet")
+        .joinpath(judge_model.replace(":", "_"))
     )
-    path_results.parent.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"model: {model}")
-    logger.info(f"Judge system prompt:\n{judge_system_prompt}")
+    config = ExperimentConfig(
+        judge_model=judge_model,
+        judge_system_prompt=judge_system_prompt,
+        path_experiment=path_experiment,
+    )
+    metrics = run_experiment(config)
 
-    if not path_results.is_file():
-        logger.info(f"No results found at {path_results}")
-        run_inference(model=model, system_prompt=judge_system_prompt, path_results=path_results)
-
-    logger.info(f"Reading results from {path_results}")
-    results = pl.read_parquet(path_results)
-    with pl.Config(tbl_cols=-1, tbl_rows=10):
-        logger.info(f"\n{results}")
-
-    evaluate_metrics(results)
+    logger.info(metrics)
 
 
 def main() -> None:
@@ -545,7 +537,7 @@ def main() -> None:
 
     for model in models:
         for judge_system_prompt in judge_system_prompts:
-            run_evaluation(model=model, judge_system_prompt=judge_system_prompt)
+            run_evaluation(judge_model=model, judge_system_prompt=judge_system_prompt)
 
 
 if __name__ == "__main__":

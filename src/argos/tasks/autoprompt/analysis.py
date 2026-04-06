@@ -7,8 +7,6 @@ __all__ = [
     "find_errors",
     "format_errors_as_markdown",
     "format_errors_as_markdown_table",
-    "format_incorrect_structure_haiku",
-    "format_incorrect_topic_haiku",
 ]
 
 import logging
@@ -66,46 +64,6 @@ def find_errors(
         .select(["haiku", col_target, col_prediction])
         .rename({col_target: "target", col_prediction: "prediction"})
         .to_dicts()
-    )
-
-
-def format_incorrect_structure_haiku(results: pl.DataFrame) -> str:
-    r"""Format the list of haikus with incorrect structure predictions.
-
-    Args:
-        results: The results of the haiku judge.
-
-    Returns:
-        The formatted list of haikus with incorrect structure predictions.
-    """
-    haikus = find_errors(
-        results=results, col_target="structure_target", col_prediction="structure_passed"
-    )
-    haikus_str = "\n".join(map(str, haikus))
-    return (
-        f"{len(haikus)} haikus have incorrect structure predictions. "
-        f"Here is the list of haikus with the true label (target) "
-        f"and the predicted label (target):\n"
-        f"```jsonl\n\n{haikus_str}\n\n```\n"
-    )
-
-
-def format_incorrect_topic_haiku(results: pl.DataFrame) -> str:
-    r"""Format the list of haikus with incorrect topic predictions.
-
-    Args:
-        results: The results of the haiku judge.
-
-    Returns:
-        The formatted list of haikus with incorrect topic predictions.
-    """
-    haikus = find_errors(results=results, col_target="topic_target", col_prediction="topic_passed")
-    haikus_str = "\n".join(map(str, haikus))
-    return (
-        f"{len(haikus)} haikus have incorrect topic predictions. "
-        f"Here is the list of haikus with the true label (target) "
-        f"and the predicted label (target):\n"
-        f"```json\n[\n{haikus_str}\n]\n```\n"
     )
 
 

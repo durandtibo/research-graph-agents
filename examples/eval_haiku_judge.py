@@ -506,14 +506,14 @@ def main() -> None:
     # model = "anthropic:claude-opus-4-6"
 
     models = [
-        "ollama:smollm:135m",
+        # "ollama:smollm:135m",
         # "ollama:gemma3:1b",
         # "ollama:gemma3:4b",
         # "ollama:gemma3:12b",
         # "anthropic:claude-haiku-4-5-20251001",
         # "anthropic:claude-sonnet-4-6",
         # "anthropic:claude-opus-4-6",
-        # "google_genai:gemini-3.1-flash-lite-preview",
+        "google_genai:gemini-3.1-flash-lite-preview",
         # "google_genai:gemini-3-flash-preview",
         # "google_genai:gemini-3.1-pro-preview",
         # "openai:gpt-5.4-nano",

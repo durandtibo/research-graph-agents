@@ -189,7 +189,9 @@ def run_experiment(config: ExperimentConfig) -> dict[str, BinaryClassificationRe
     with pl.Config(tbl_cols=-1, tbl_rows=10):
         logger.info(f"\n{results}")
 
+    logger.info("Haikus with incorrect structure predictions")
     log_markdown(format_incorrect_structure_haiku(results))
+    logger.info("Haikus with incorrect topic predictions")
     log_markdown(format_incorrect_topic_haiku(results))
 
     return evaluate_metrics(results)
@@ -262,7 +264,20 @@ def find_incorrect_predictions(
     Returns:
         The list of haikus with incorrect predictions.
     """
-    return results.filter(pl.col(col_target) != pl.col(col_prediction))["haiku"].to_list()
+    return (
+        results.filter(pl.col(col_target) != pl.col(col_prediction))
+        .select(["haiku", col_target, col_prediction])
+        .select(
+            pl.format(
+                "(haiku): {} (target): {} (prediction): {}",
+                pl.col("haiku"),
+                pl.col(col_target),
+                pl.col(col_prediction),
+            ).alias("formatted")
+        )
+        .to_series()
+        .to_list()
+    )
 
 
 def format_incorrect_structure_haiku(results: pl.DataFrame) -> str:
@@ -278,7 +293,11 @@ def format_incorrect_structure_haiku(results: pl.DataFrame) -> str:
         results=results, col_target="structure_target", col_prediction="structure_passed"
     )
     haikus_str = "\n- ".join(["", *haikus])
-    return f"{len(haikus)} haikus have incorrect structure predictions:{haikus_str}\n"
+    return (
+        f"{len(haikus)} haikus have incorrect structure predictions. "
+        f"Here is the list of haikus with the true label (target) "
+        f"and the predicted label (target):{haikus_str}\n"
+    )
 
 
 def format_incorrect_topic_haiku(results: pl.DataFrame) -> str:
@@ -294,4 +313,8 @@ def format_incorrect_topic_haiku(results: pl.DataFrame) -> str:
         results=results, col_target="topic_target", col_prediction="topic_passed"
     )
     haikus_str = "\n- ".join(["", *haikus])
-    return f"{len(haikus)} haikus have incorrect topic predictions:{haikus_str}\n"
+    return (
+        f"{len(haikus)} haikus have incorrect topic predictions. "
+        f"Here is the list of haikus with the true label (target) "
+        f"and the predicted label (target):{haikus_str}\n"
+    )

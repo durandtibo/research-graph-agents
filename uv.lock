@@ -50,6 +50,7 @@ source = { editable = "." }
 dependencies = [
     { name = "coola" },
     { name = "grandalf" },
+    { name = "iden" },
     { name = "langchain" },
     { name = "langchain-anthropic" },
     { name = "langchain-core" },
@@ -98,6 +99,7 @@ requires-dist = [
     { name = "colorlog", marker = "extra == 'colorlog'", specifier = ">=6.10,<7.0" },
     { name = "coola", specifier = ">=1.1.3,<2.0" },
     { name = "grandalf", specifier = ">=0.8,<1.0" },
+    { name = "iden", specifier = ">=0.4,<1.0" },
     { name = "langchain", specifier = ">=1.2,<2.0" },
     { name = "langchain-anthropic", specifier = ">=1.4,<2.0" },
     { name = "langchain-core", specifier = ">=1.2,<2.0" },
@@ -811,6 +813,19 @@ wheels = [
 ]
 
 [[package]]
+name = "iden"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "coola" },
+    { name = "objectory" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6b/0f/0f6af91ed8766d42e984abffa8671a79a5a9579e2e2c251fb8775ed4b2f5/iden-0.4.0.tar.gz", hash = "sha256:7bbf81da24f2f2544e27b2a4b767768640c4eb754f94e800516625be34c0a317", size = 41446, upload-time = "2026-01-24T16:33:11.763Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8a/06/d435fdc7308fa95997ae1372e6c59d1b1834be9fecfc406a2d46ce36fbf0/iden-0.4.0-py3-none-any.whl", hash = "sha256:a822c4e65de72129d86372441a49d888bb197232c0bd7ecb1dceebcd00c7c476", size = 92441, upload-time = "2026-01-24T16:33:12.916Z" },
+]
+
+[[package]]
 name = "identify"
 version = "2.6.18"
 source = { registry = "https://pypi.org/simple" }
@@ -1428,6 +1443,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/24/bf/d1bda4f6168e0b2e9e5958945e01910052158313224ada5ce1fb2e1113b8/nodeenv-1.10.0.tar.gz", hash = "sha256:996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb", size = 55611, upload-time = "2025-12-20T14:08:54.006Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/88/b2/d0896bdcdc8d28a7fc5717c305f1a861c26e18c05047949fb371034d98bd/nodeenv-1.10.0-py2.py3-none-any.whl", hash = "sha256:5bb13e3eed2923615535339b3c620e76779af4cb4c6a90deccc9e36b274d3827", size = 23438, upload-time = "2025-12-20T14:08:52.782Z" },
+]
+
+[[package]]
+name = "objectory"
+version = "0.3.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/20/38/f46a0603c7f59ffea5c44d0bd2f484c1ed2ecbd44a0c3b6cd61ef41d781e/objectory-0.3.1.tar.gz", hash = "sha256:c3b4f387db31470058d8b34d930daeaacb25eb09384c1e266eaf62ca5b15fc8b", size = 16595, upload-time = "2025-12-19T09:13:32.658Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d5/4d/35db369f225cc44df8fd1a7b06b332da3aefe5ed5b9db512046bf195d0a8/objectory-0.3.1-py3-none-any.whl", hash = "sha256:663a433c7c8ac4971617a61be4f0a9c258bd518bea00bf9eb3f337504ac4c7ce", size = 20701, upload-time = "2025-12-19T09:13:33.809Z" },
 ]
 
 [[package]]

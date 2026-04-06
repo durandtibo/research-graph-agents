@@ -15,6 +15,7 @@ from argos.tasks.autoprompt.haiku_judge import (
     ExperimentConfig,
     create_graph,
     evaluate_metrics,
+    find_incorrect_predictions,
     prepare_dataset,
     prepare_results,
     run_experiment,
@@ -676,3 +677,56 @@ def test_run_inference_pipeline_batch_size_2(
     ]
     result = run_inference_pipeline(dataset=mock_dataset, graph=mock_graph, batch_size=2)
     assert_frame_equal(result, mock_results)
+
+
+################################################
+#     Tests for find_incorrect_predictions     #
+################################################
+
+
+def test_find_incorrect_predictions_all_correct(mock_results: pl.DataFrame) -> None:
+    assert (
+        find_incorrect_predictions(
+            results=mock_results, col_target="target", col_prediction="passed"
+        )
+        == []
+    )
+
+
+def test_find_incorrect_predictions_all_incorrect() -> None:
+    assert find_incorrect_predictions(
+        results=pl.DataFrame(
+            {
+                "haiku": ["A", "B", "C", "D"],
+                "passed": [True, True, False, False],
+                "target": [False, False, True, True],
+            }
+        ),
+        col_target="target",
+        col_prediction="passed",
+    ) == ["A", "B", "C", "D"]
+
+
+def test_find_incorrect_predictions_partially_incorrect() -> None:
+    assert find_incorrect_predictions(
+        results=pl.DataFrame(
+            {
+                "haiku": ["A", "B", "C", "D"],
+                "passed": [True, True, False, False],
+                "target": [False, True, False, True],
+            }
+        ),
+        col_target="target",
+        col_prediction="passed",
+    ) == ["A", "D"]
+
+
+def test_find_incorrect_predictions_empty() -> None:
+    assert (
+        find_incorrect_predictions(
+            results=pl.DataFrame({"haiku": [], "passed": [], "target": []}),
+            col_target="target",
+            col_prediction="passed",
+        )
+        == []
+    )

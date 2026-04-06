@@ -3,14 +3,19 @@ library."""
 
 from __future__ import annotations
 
-__all__ = ["configure_logging"]
+__all__ = ["configure_logging", "log_markdown"]
 
 import logging
 
-from argos.utils.imports import is_colorlog_available
+from argos.utils.imports import is_colorlog_available, is_rich_available
 
 if is_colorlog_available():  # pragma: no cover
     import colorlog
+if is_rich_available():  # pragma: no cover
+    from rich.console import Console
+    from rich.markdown import Markdown
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def configure_logging(level: int = logging.INFO) -> None:
@@ -62,3 +67,17 @@ def configure_logging(level: int = logging.INFO) -> None:
     handler.setFormatter(formatter)
 
     logging.basicConfig(level=level, handlers=[handler])
+
+
+def log_markdown(msg: str, level: int = logging.INFO) -> None:
+    r"""Log a message with markdown formatting if rich is available.
+
+    Args:
+        msg: The message to log.
+        level: The minimum log level to capture.
+    """
+    if is_rich_available():
+        console = Console()
+        console.print(Markdown(msg))
+    else:
+        logger.log(level, msg)

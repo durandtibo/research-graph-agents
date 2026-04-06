@@ -494,9 +494,7 @@ def run_evaluation(judge_model: str, judge_system_prompt: str) -> None:
         judge_system_prompt=judge_system_prompt,
         path_experiment=path_experiment,
     )
-    metrics = run_experiment(config)
-
-    logger.info(metrics)
+    run_experiment(config)
 
 
 def main() -> None:

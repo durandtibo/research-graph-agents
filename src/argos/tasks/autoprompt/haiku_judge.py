@@ -4,7 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "ExperimentConfig",
-    "create_graph",
+    "create_judge_graph",
     "evaluate_metrics",
     "find_incorrect_predictions",
     "format_incorrect_structure_haiku",
@@ -57,7 +57,7 @@ class ExperimentConfig:
     # prompt_model: str
 
 
-def create_graph(model: str, system_prompt: str) -> CompiledStateGraph:
+def create_judge_graph(model: str, system_prompt: str) -> CompiledStateGraph:
     r"""Create the graph of the haiku judge.
 
     Args:
@@ -211,7 +211,7 @@ def run_inference(
     Returns:
         The DataFrame containing the results of the inference.
     """
-    graph = create_graph(model=model, system_prompt=system_prompt)
+    graph = create_judge_graph(model=model, system_prompt=system_prompt)
     logger.info(f"\n{graph.get_graph().draw_ascii()}")
 
     dataset = prepare_dataset()

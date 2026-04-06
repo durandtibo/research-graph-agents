@@ -8,7 +8,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from argos.nodes import HaikuJudgeState
 from argos.nodes.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 from argos.tasks.autoprompt.haiku_judge import (
     ExperimentConfig,
@@ -467,10 +466,6 @@ Assign a score based on the following poetic merits:
 - State the specific syllable counts found per line if the structure fails.
 - Do not calculate the `passed` field; it will be handled by the system validator.
 - Return your evaluation in the requested structured format."""
-
-
-class State(HaikuJudgeState):
-    r"""Define the state of the haiku generator-judge system."""
 
 
 def run_evaluation(judge_model: str, judge_system_prompt: str) -> None:

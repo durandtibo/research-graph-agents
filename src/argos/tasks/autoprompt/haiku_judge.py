@@ -240,3 +240,19 @@ def run_inference_pipeline(
 
     logger.info("Preparing results...")
     return prepare_results(dataset, outputs)
+
+
+def find_incorrect_predictions(
+    results: pl.DataFrame, col_target: str, col_prediction: str
+) -> list[str]:
+    r"""Find the haiku with incorrect predictions.
+
+    Args:
+        results: The results of the haiku judge.
+        col_target: The column name of the targets.
+        col_prediction: The column name of the predictions.
+
+    Returns:
+        The list of haikus with incorrect predictions.
+    """
+    return results.filter(pl.col(col_target) != pl.col(col_prediction))["haiku"].to_list()

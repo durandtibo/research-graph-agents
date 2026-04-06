@@ -13,7 +13,7 @@ from argos.metrics import BinaryClassificationResults
 from argos.nodes.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.haiku_judge import (
     ExperimentConfig,
-    create_graph,
+    create_judge_graph,
     evaluate_metrics,
     find_incorrect_predictions,
     format_incorrect_structure_haiku,
@@ -174,28 +174,31 @@ def mock_results() -> pl.DataFrame:
     )
 
 
-##################################
-#     Tests for create_graph     #
-##################################
+########################################
+#     Tests for create_judge_graph     #
+########################################
 
 
-def test_create_graph_returns_compiled_state_graph(mock_llm: BaseChatModel) -> None:
-    """create_graph should return a CompiledStateGraph instance."""
+def test_create_judge_graph_returns_compiled_state_graph(mock_llm: BaseChatModel) -> None:
+    """create_judge_graph should return a CompiledStateGraph
+    instance."""
     with patch(f"{MODULE}.init_chat_model", return_value=mock_llm):
-        graph = create_graph("gpt-4o", "You are a haiku judge.")
+        graph = create_judge_graph("gpt-4o", "You are a haiku judge.")
         assert isinstance(graph, CompiledStateGraph)
         assert "judge" in graph.nodes
 
 
-def test_create_graph_init_chat_model_called_with_correct_model(mock_llm: BaseChatModel) -> None:
+def test_create_judge_graph_init_chat_model_called_with_correct_model(
+    mock_llm: BaseChatModel,
+) -> None:
     """init_chat_model must be called with the model name passed to
-    create_graph."""
+    create_judge_graph."""
     with patch(f"{MODULE}.init_chat_model", return_value=mock_llm) as mock_init:
-        create_graph("gpt-4o", "You are a haiku judge.")
+        create_judge_graph("gpt-4o", "You are a haiku judge.")
         mock_init.assert_called_once_with(model="gpt-4o", temperature=0, max_retries=9999)
 
 
-def test_create_graph_make_haiku_judge_node_receives_llm_and_system_prompt(
+def test_create_judge_graph_make_haiku_judge_node_receives_llm_and_system_prompt(
     mock_llm: BaseChatModel,
 ) -> None:
     """make_haiku_judge_node must be called with the LLM and the judge
@@ -205,16 +208,16 @@ def test_create_graph_make_haiku_judge_node_receives_llm_and_system_prompt(
         patch(f"{MODULE}.make_haiku_judge_node") as mock_node_factory,
     ):
         prompt = "You are a strict haiku judge."
-        create_graph("gpt-4o", prompt)
+        create_judge_graph("gpt-4o", prompt)
         mock_node_factory.assert_called_once_with(mock_llm, system_prompt=prompt)
 
 
-def test_create_graph_multiple_calls_return_distinct_graphs(mock_llm: BaseChatModel) -> None:
+def test_create_judge_graph_multiple_calls_return_distinct_graphs(mock_llm: BaseChatModel) -> None:
     """Each invocation must return a new, independent
     CompiledStateGraph."""
     with patch(f"{MODULE}.init_chat_model", return_value=mock_llm):
-        graph_a = create_graph("gpt-4o", "prompt A")
-        graph_b = create_graph("gpt-4o", "prompt B")
+        graph_a = create_judge_graph("gpt-4o", "prompt A")
+        graph_b = create_judge_graph("gpt-4o", "prompt B")
         assert graph_a is not graph_b
 
 
@@ -498,7 +501,7 @@ def test_run_inference(
 ) -> None:
     path_results = tmp_path.joinpath("data").joinpath("results.parquet")
     with (
-        patch(f"{MODULE}.create_graph", return_value=mock_graph) as create_graph_mock,
+        patch(f"{MODULE}.create_judge_graph", return_value=mock_graph) as create_judge_graph_mock,
         patch(
             f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset
         ) as generate_haiku_dataset_mock,
@@ -510,7 +513,7 @@ def test_run_inference(
             model="gpt-4o", system_prompt="You are a haiku judge", path_results=path_results
         )
         assert_frame_equal(result, mock_results)
-        create_graph_mock.assert_called_once_with(
+        create_judge_graph_mock.assert_called_once_with(
             model="gpt-4o", system_prompt="You are a haiku judge"
         )
         generate_haiku_dataset_mock.assert_called_once_with()
@@ -532,7 +535,7 @@ def test_run_inference_batch_size(
 ) -> None:
     path_results = tmp_path.joinpath("data").joinpath("results.parquet")
     with (
-        patch(f"{MODULE}.create_graph", return_value=mock_graph) as create_graph_mock,
+        patch(f"{MODULE}.create_judge_graph", return_value=mock_graph) as create_judge_graph_mock,
         patch(
             f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset
         ) as generate_haiku_dataset_mock,
@@ -548,7 +551,7 @@ def test_run_inference_batch_size(
         )
         assert_frame_equal(result, mock_results)
         assert path_results.is_file()
-        create_graph_mock.assert_called_once_with(
+        create_judge_graph_mock.assert_called_once_with(
             model="gpt-4o", system_prompt="You are a haiku judge"
         )
         generate_haiku_dataset_mock.assert_called_once_with()

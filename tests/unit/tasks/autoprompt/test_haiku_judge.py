@@ -381,7 +381,7 @@ def test_run_experiment_results_file_does_not_exist(
 
     config = ExperimentConfig(
         judge_model="gpt-4o",
-        system_prompt="You are a haiku judge",
+        judge_system_prompt="You are a haiku judge",
         path_experiment=path_results.parent,
     )
     with patch(f"{MODULE}.run_inference", side_effect=fake_run_inference) as run_inference_mock:
@@ -436,7 +436,7 @@ def test_run_experiment_results_file_exists(tmp_path: Path, mock_results: pl.Dat
 
     config = ExperimentConfig(
         judge_model="gpt-4o",
-        system_prompt="You are a haiku judge",
+        judge_system_prompt="You are a haiku judge",
         path_experiment=path_results.parent,
     )
     with patch(f"{MODULE}.run_inference") as run_inference_mock:

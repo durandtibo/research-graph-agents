@@ -45,8 +45,8 @@ class ExperimentConfig:
     r"""The experiment configuration."""
 
     judge_model: str
+    judge_system_prompt: str
     path_experiment: Path
-    system_prompt: str
     batch_size: int = 20
     iteration: int = 0
     # path_history: Path
@@ -175,7 +175,9 @@ def run_experiment(config: ExperimentConfig) -> dict[str, BinaryClassificationRe
     if not path_results.is_file():
         logger.info(f"No results found at {path_results}")
         run_inference(
-            model=config.judge_model, system_prompt=config.system_prompt, path_results=path_results
+            model=config.judge_model,
+            system_prompt=config.judge_system_prompt,
+            path_results=path_results,
         )
 
     logger.info(f"Reading results from {path_results}")

@@ -10,38 +10,10 @@ from argos.tasks.autoprompt.analysis import (
     find_errors,
     format_errors_as_markdown,
     format_errors_as_markdown_table,
-    format_incorrect_structure_haiku,
-    format_incorrect_topic_haiku,
 )
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-STRUCTURE_MSG_4 = """4 haikus have incorrect structure predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
-- (haiku): A (target): false (prediction): true
-- (haiku): B (target): false (prediction): true
-- (haiku): C (target): true (prediction): false
-- (haiku): D (target): true (prediction): false
-"""
-STRUCTURE_MSG_2 = """2 haikus have incorrect structure predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
-- (haiku): A (target): false (prediction): true
-- (haiku): D (target): true (prediction): false
-"""
-STRUCTURE_MSG_EMPTY = """0 haikus have incorrect structure predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
-"""
-
-TOPIC_MSG_4 = """4 haikus have incorrect topic predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
-- (haiku): A (target): false (prediction): true
-- (haiku): B (target): false (prediction): true
-- (haiku): C (target): true (prediction): false
-- (haiku): D (target): true (prediction): false
-"""
-TOPIC_MSG_2 = """2 haikus have incorrect topic predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
-- (haiku): A (target): false (prediction): true
-- (haiku): D (target): true (prediction): false
-"""
-TOPIC_MSG_EMPTY = """0 haikus have incorrect topic predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
-"""
 
 
 SINGLE_ERROR = [
@@ -107,11 +79,11 @@ def test_analyze_errors_all_correct(tmp_path: Path) -> None:
     )
     file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.md")
     assert file_struct.is_file()
-    assert load_text(file_struct) == STRUCTURE_MSG_EMPTY
+    assert load_text(file_struct) == []
 
     file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.md")
     assert file_topic.is_file()
-    assert load_text(file_topic) == TOPIC_MSG_EMPTY
+    assert load_text(file_topic) == []
 
 
 def test_analyze_errors_all_incorrect(tmp_path: Path) -> None:
@@ -131,11 +103,11 @@ def test_analyze_errors_all_incorrect(tmp_path: Path) -> None:
     )
     file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.md")
     assert file_struct.is_file()
-    assert load_text(file_struct) == STRUCTURE_MSG_4
+    assert load_text(file_struct) == []
 
     file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.md")
     assert file_topic.is_file()
-    assert load_text(file_topic) == TOPIC_MSG_4
+    assert load_text(file_topic) == []
 
 
 def test_analyze_errors_empty(tmp_path: Path) -> None:
@@ -155,11 +127,11 @@ def test_analyze_errors_empty(tmp_path: Path) -> None:
     )
     file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.md")
     assert file_struct.is_file()
-    assert load_text(file_struct) == STRUCTURE_MSG_EMPTY
+    assert load_text(file_struct) == []
 
     file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.md")
     assert file_topic.is_file()
-    assert load_text(file_topic) == TOPIC_MSG_EMPTY
+    assert load_text(file_topic) == []
 
 
 #################################
@@ -228,124 +200,6 @@ def test_find_incorrect_structure_haiku_empty() -> None:
             col_prediction="passed",
         )
         == []
-    )
-
-
-######################################################
-#     Tests for format_incorrect_structure_haiku     #
-######################################################
-
-
-def test_format_incorrect_structure_haiku_all_correct() -> None:
-    assert (
-        format_incorrect_structure_haiku(
-            results=pl.DataFrame(
-                {
-                    "haiku": ["A", "B", "C", "D"],
-                    "structure_passed": [True, True, False, False],
-                    "structure_target": [True, True, False, False],
-                }
-            )
-        )
-        == STRUCTURE_MSG_EMPTY
-    )
-
-
-def test_format_incorrect_structure_haiku_all_incorrect() -> None:
-    assert (
-        format_incorrect_structure_haiku(
-            results=pl.DataFrame(
-                {
-                    "haiku": ["A", "B", "C", "D"],
-                    "structure_passed": [True, True, False, False],
-                    "structure_target": [False, False, True, True],
-                }
-            )
-        )
-        == STRUCTURE_MSG_4
-    )
-
-
-def test_format_incorrect_structure_haiku_partially_incorrect() -> None:
-    assert (
-        format_incorrect_structure_haiku(
-            results=pl.DataFrame(
-                {
-                    "haiku": ["A", "B", "C", "D"],
-                    "structure_passed": [True, True, False, False],
-                    "structure_target": [False, True, False, True],
-                }
-            )
-        )
-        == STRUCTURE_MSG_2
-    )
-
-
-def test_format_incorrect_structure_haiku_empty() -> None:
-    assert (
-        format_incorrect_structure_haiku(
-            results=pl.DataFrame({"haiku": [], "structure_target": [], "structure_passed": []})
-        )
-        == STRUCTURE_MSG_EMPTY
-    )
-
-
-##################################################
-#     Tests for format_incorrect_topic_haiku     #
-##################################################
-
-
-def test_format_incorrect_topic_haiku_all_correct() -> None:
-    assert (
-        format_incorrect_topic_haiku(
-            results=pl.DataFrame(
-                {
-                    "haiku": ["A", "B", "C", "D"],
-                    "topic_passed": [True, True, False, False],
-                    "topic_target": [True, True, False, False],
-                }
-            )
-        )
-        == TOPIC_MSG_EMPTY
-    )
-
-
-def test_format_incorrect_topic_haiku_all_incorrect() -> None:
-    assert (
-        format_incorrect_topic_haiku(
-            results=pl.DataFrame(
-                {
-                    "haiku": ["A", "B", "C", "D"],
-                    "topic_passed": [True, True, False, False],
-                    "topic_target": [False, False, True, True],
-                }
-            )
-        )
-        == TOPIC_MSG_4
-    )
-
-
-def test_format_incorrect_topic_haiku_partially_incorrect() -> None:
-    assert (
-        format_incorrect_topic_haiku(
-            results=pl.DataFrame(
-                {
-                    "haiku": ["A", "B", "C", "D"],
-                    "topic_passed": [True, True, False, False],
-                    "topic_target": [False, True, False, True],
-                }
-            )
-        )
-        == TOPIC_MSG_2
-    )
-
-
-def test_format_incorrect_topic_haiku_empty() -> None:
-    assert (
-        format_incorrect_topic_haiku(
-            results=pl.DataFrame({"haiku": [], "topic_target": [], "topic_passed": []})
-        )
-        == TOPIC_MSG_EMPTY
     )
 
 

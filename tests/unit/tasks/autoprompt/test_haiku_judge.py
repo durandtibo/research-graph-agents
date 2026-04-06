@@ -706,7 +706,12 @@ def test_find_incorrect_predictions_all_incorrect() -> None:
         ),
         col_target="target",
         col_prediction="passed",
-    ) == ["A", "B", "C", "D"]
+    ) == [
+        "(haiku): A (target): false (prediction): true",
+        "(haiku): B (target): false (prediction): true",
+        "(haiku): C (target): true (prediction): false",
+        "(haiku): D (target): true (prediction): false",
+    ]
 
 
 def test_find_incorrect_predictions_partially_incorrect() -> None:
@@ -720,7 +725,10 @@ def test_find_incorrect_predictions_partially_incorrect() -> None:
         ),
         col_target="target",
         col_prediction="passed",
-    ) == ["A", "D"]
+    ) == [
+        "(haiku): A (target): false (prediction): true",
+        "(haiku): D (target): true (prediction): false",
+    ]
 
 
 def test_find_incorrect_structure_haiku_empty() -> None:
@@ -740,7 +748,7 @@ def test_find_incorrect_structure_haiku_empty() -> None:
 
 
 def test_format_incorrect_structure_haiku_all_correct() -> None:
-    output = """0 haikus have incorrect structure predictions:
+    output = """0 haikus have incorrect structure predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
 """
     assert (
         format_incorrect_structure_haiku(
@@ -757,11 +765,11 @@ def test_format_incorrect_structure_haiku_all_correct() -> None:
 
 
 def test_format_incorrect_structure_haiku_all_incorrect() -> None:
-    output = """4 haikus have incorrect structure predictions:
-- A
-- B
-- C
-- D
+    output = """4 haikus have incorrect structure predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
+- (haiku): A (target): false (prediction): true
+- (haiku): B (target): false (prediction): true
+- (haiku): C (target): true (prediction): false
+- (haiku): D (target): true (prediction): false
 """
     assert (
         format_incorrect_structure_haiku(
@@ -778,9 +786,9 @@ def test_format_incorrect_structure_haiku_all_incorrect() -> None:
 
 
 def test_format_incorrect_structure_haiku_partially_incorrect() -> None:
-    output = """2 haikus have incorrect structure predictions:
-- A
-- D
+    output = """2 haikus have incorrect structure predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
+- (haiku): A (target): false (prediction): true
+- (haiku): D (target): true (prediction): false
 """
     assert (
         format_incorrect_structure_haiku(
@@ -797,7 +805,7 @@ def test_format_incorrect_structure_haiku_partially_incorrect() -> None:
 
 
 def test_format_incorrect_structure_haiku_empty() -> None:
-    output = """0 haikus have incorrect structure predictions:
+    output = """0 haikus have incorrect structure predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
 """
     assert (
         format_incorrect_structure_haiku(
@@ -807,13 +815,13 @@ def test_format_incorrect_structure_haiku_empty() -> None:
     )
 
 
-######################################################
+##################################################
 #     Tests for format_incorrect_topic_haiku     #
-######################################################
+##################################################
 
 
 def test_format_incorrect_topic_haiku_all_correct() -> None:
-    output = """0 haikus have incorrect topic predictions:
+    output = """0 haikus have incorrect topic predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
 """
     assert (
         format_incorrect_topic_haiku(
@@ -830,11 +838,11 @@ def test_format_incorrect_topic_haiku_all_correct() -> None:
 
 
 def test_format_incorrect_topic_haiku_all_incorrect() -> None:
-    output = """4 haikus have incorrect topic predictions:
-- A
-- B
-- C
-- D
+    output = """4 haikus have incorrect topic predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
+- (haiku): A (target): false (prediction): true
+- (haiku): B (target): false (prediction): true
+- (haiku): C (target): true (prediction): false
+- (haiku): D (target): true (prediction): false
 """
     assert (
         format_incorrect_topic_haiku(
@@ -851,9 +859,9 @@ def test_format_incorrect_topic_haiku_all_incorrect() -> None:
 
 
 def test_format_incorrect_topic_haiku_partially_incorrect() -> None:
-    output = """2 haikus have incorrect topic predictions:
-- A
-- D
+    output = """2 haikus have incorrect topic predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
+- (haiku): A (target): false (prediction): true
+- (haiku): D (target): true (prediction): false
 """
     assert (
         format_incorrect_topic_haiku(
@@ -870,7 +878,7 @@ def test_format_incorrect_topic_haiku_partially_incorrect() -> None:
 
 
 def test_format_incorrect_topic_haiku_empty() -> None:
-    output = """0 haikus have incorrect topic predictions:
+    output = """0 haikus have incorrect topic predictions. Here is the list of haikus with the true label (target) and the predicted label (target):
 """
     assert (
         format_incorrect_topic_haiku(

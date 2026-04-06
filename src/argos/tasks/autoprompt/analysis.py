@@ -8,6 +8,7 @@ __all__ = [
     "format_errors_as_markdown_table",
     "format_incorrect_structure_haiku",
     "format_incorrect_topic_haiku",
+    "format_structure_errors_as_markdown",
 ]
 
 import logging
@@ -36,7 +37,7 @@ def analyze_errors(results: pl.DataFrame, path: Path) -> None:
     structure_errors = find_errors(
         results=results, col_target="structure_target", col_prediction="structure_passed"
     )
-    log_markdown(format_errors_as_markdown_table(structure_errors))
+    log_markdown(format_structure_errors_as_markdown(structure_errors))
     save_text(structure_errors, path.joinpath("error_analysis_structure.json"))
 
     logger.info("Haikus with incorrect topic predictions")
@@ -120,3 +121,23 @@ def format_errors_as_markdown_table(errors: list[dict]) -> str:
         haiku = example["haiku"].replace("\n", " / ")
         lines.append(f"| {i} | {haiku} | {example['target']} | {example['prediction']} |")
     return "\n".join(lines)
+
+
+def format_structure_errors_as_markdown(errors: list[dict]) -> str:
+    r"""Format the list of errors to a markdown table.
+
+    Args:
+        errors: The list of errors.
+
+    Returns:
+        The formatted list of errors to a markdown table.
+    """
+    table = format_errors_as_markdown_table(errors)
+    return (
+        f"{len(errors)} haikus have incorrect structure predictions. "
+        f"The table below details these errors:\n"
+        f"- **Haiku**: The evaluated text, with line breaks (`\\n`) replaced by slashes (` / `)\n"
+        f"- **Target**: The true, correct label.\n"
+        f"- **Prediction**: The model's output label.\n"
+        f"\n{table}\n"
+    )

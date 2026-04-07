@@ -12,9 +12,9 @@ from polars.testing import assert_frame_equal
 from argos.metrics import BinaryClassificationResults
 from argos.nodes.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.config import ExperimentConfig
+from argos.tasks.autoprompt.evaluation import evaluate_metrics
 from argos.tasks.autoprompt.judge import (
     create_judge_graph,
-    evaluate_metrics,
     prepare_dataset,
     prepare_results,
     run_experiment,

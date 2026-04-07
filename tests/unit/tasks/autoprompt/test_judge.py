@@ -15,7 +15,6 @@ from argos.tasks.autoprompt.config import ExperimentConfig
 from argos.tasks.autoprompt.evaluation import evaluate_metrics
 from argos.tasks.autoprompt.judge import (
     create_judge_graph,
-    prepare_results,
     run_experiment,
     run_inference,
     run_inference_pipeline,
@@ -339,17 +338,6 @@ def test_evaluate_metrics_mixed_results() -> None:
             specificity=0.0,
         ),
     }
-
-
-#####################################
-#     Tests for prepare_results     #
-#####################################
-
-
-def test_prepare_results_returns_dataframe(
-    mock_dataset: pl.DataFrame, mock_outputs: list, mock_results: pl.DataFrame
-) -> None:
-    assert_frame_equal(prepare_results(dataset=mock_dataset, outputs=mock_outputs), mock_results)
 
 
 ####################################

@@ -2,43 +2,67 @@ r"""Contain utility functions to manage the history."""
 
 from __future__ import annotations
 
-__all__ = ["append_to_history", "create_history"]
+__all__ = ["BaseHistory", "JsonHistory"]
 
 import logging
-from typing import TYPE_CHECKING
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any
 
 from feu.utils.io import load_json, save_json
 
 if TYPE_CHECKING:
-    from argos.tasks.autoprompt.config import ExperimentConfig
+    from pathlib import Path
+
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def append_to_history(config: ExperimentConfig, data: dict) -> None:
-    r"""Append data to the history file.
+class BaseHistory(ABC):
+    """Define the base class to implement a history."""
+
+    @abstractmethod
+    def append(self, data: dict[Any, Any]) -> None:
+        r"""Append data to the history.
+
+        Args:
+            data: The data to append to the history.
+        """
+
+    @abstractmethod
+    def get_values(self) -> list[dict[Any, Any]]:
+        r"""Return the history values.
+
+        Returns:
+            The history values.
+        """
+
+
+class JsonHistory(BaseHistory):
+    r"""Implement a history that stores data in a JSON file.
 
     Args:
-        config: The experiment config.
-        data: The data to append to the history file.
+        path: The path to the history file.
     """
-    if not config.path_history.is_file():
-        create_history(config)
 
-    logger.info("Appending data to the history...")
-    history = load_json(config.path_history)
-    history.append(data)
-    save_json(history, config.path_history, exist_ok=True)
-    logger.info(f"The new history length is {len(history):,}")
+    def __init__(self, path: Path) -> None:
+        self._path = path
 
+        if self._path.is_file():
+            logger.info(f"A history file already exists at {self._path}")
+        else:
+            logger.info(f"Creating the history file ({self._path}) because it did not exist...")
+            save_json([], self._path)
 
-def create_history(config: ExperimentConfig) -> None:
-    r"""Create the history file if it does not exist.
+    @property
+    def path(self) -> Path:
+        return self._path
 
-    Args:
-        config: The experiment config.
-    """
-    if config.path_history.is_file():
-        return
-    logger.info("Creating the history file because it did not exist...")
-    save_json([], config.path_history)
+    def append(self, data: dict[Any, Any]) -> None:
+        logger.info("Appending data to the history...")
+        history = load_json(self._path)
+        history.append(data)
+        save_json(history, self._path, exist_ok=True)
+        logger.info(f"The new history length is {len(history):,}")
+
+    def get_values(self) -> list[dict[Any, Any]]:
+        return load_json(self._path)

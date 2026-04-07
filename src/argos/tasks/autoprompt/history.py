@@ -36,6 +36,10 @@ class BaseHistory(ABC):
             The history values.
         """
 
+    @abstractmethod
+    def clear(self) -> None:
+        r"""Clear the history."""
+
 
 class JsonHistory(BaseHistory):
     r"""Implement a history that stores data in a JSON file.
@@ -66,3 +70,6 @@ class JsonHistory(BaseHistory):
 
     def get_values(self) -> list[dict[Any, Any]]:
         return load_json(self._path)
+
+    def clear(self) -> None:
+        save_json([], self._path, exist_ok=True)

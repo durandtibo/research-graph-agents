@@ -4,7 +4,6 @@ from __future__ import annotations
 
 __all__ = [
     "create_judge_graph",
-    "prepare_dataset",
     "prepare_results",
     "run_experiment",
     "run_inference",
@@ -20,14 +19,14 @@ from langchain.chat_models import init_chat_model
 from langgraph.constants import END, START
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 
-from argos.datasets import generate_haiku_dataset
 from argos.nodes import HaikuJudgeState, make_haiku_judge_node
 from argos.tasks.autoprompt.analysis import (
     analyze_errors,
 )
+from argos.tasks.autoprompt.dataset import prepare_dataset
 from argos.tasks.autoprompt.evaluation import evaluate_metrics
 from argos.utils.batching import batchify
-from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
+from argos.utils.dataframe import concat_and_merge
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -65,28 +64,6 @@ def create_judge_graph(model: str, system_prompt: str) -> CompiledStateGraph:
     graph_builder.add_edge("judge", END)
 
     return graph_builder.compile()
-
-
-def prepare_dataset() -> pl.DataFrame:
-    r"""Prepare a dataset of haiku examples.
-
-    Returns:
-        A DataFrame containing haiku examples.
-    """
-    logger.info("Preparing dataset...")
-    with timeblock(message="Dataset generation time: {time}"):
-        dataset = generate_haiku_dataset()
-
-    # uncomment this line to sample a smaller version of the dataset.
-    # dataset = dataset.sample(n=5, seed=42)
-    with pl.Config(tbl_cols=-1, tbl_rows=10):
-        logger.info(f"\n{dataset}")
-
-    stats = summarize_boolean_columns(
-        dataset.select(["target", "structure_target", "topic_target"])
-    )
-    logger.info(f"statistics about the dataset\n{stats}")
-    return dataset
 
 
 def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.DataFrame:

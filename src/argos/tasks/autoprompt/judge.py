@@ -3,7 +3,6 @@ r"""Contain code to run the autoprompt on the haiku dataset."""
 from __future__ import annotations
 
 __all__ = [
-    "ExperimentConfig",
     "create_judge_graph",
     "evaluate_metrics",
     "prepare_dataset",
@@ -14,7 +13,6 @@ __all__ = [
 ]
 
 import logging
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
@@ -40,20 +38,9 @@ if TYPE_CHECKING:
 
     from langchain_core.language_models import BaseChatModel
 
+    from argos.tasks.autoprompt.config import ExperimentConfig
+
 logger: logging.Logger = logging.getLogger(__name__)
-
-
-@dataclass
-class ExperimentConfig:
-    r"""The experiment configuration."""
-
-    judge_model: str
-    judge_system_prompt: str
-    path_experiment: Path
-    batch_size: int = 20
-    iteration: int = 0
-    # path_history: Path
-    # prompt_model: str
 
 
 def create_judge_graph(model: str, system_prompt: str) -> CompiledStateGraph:

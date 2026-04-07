@@ -12,7 +12,6 @@ from polars.testing import assert_frame_equal
 from argos.metrics import BinaryClassificationResults
 from argos.nodes.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.config import ExperimentConfig
-from argos.tasks.autoprompt.dataset import prepare_dataset
 from argos.tasks.autoprompt.evaluation import evaluate_metrics
 from argos.tasks.autoprompt.judge import (
     create_judge_graph,
@@ -343,16 +342,6 @@ def test_evaluate_metrics_mixed_results() -> None:
 
 
 #####################################
-#     Tests for prepare_dataset     #
-#####################################
-
-
-def test_prepare_dataset_returns_dataframe(mock_dataset: pl.DataFrame) -> None:
-    with patch(f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset):
-        assert_frame_equal(prepare_dataset(), mock_dataset)
-
-
-#####################################
 #     Tests for prepare_results     #
 #####################################
 
@@ -500,7 +489,7 @@ def test_run_inference(
     with (
         patch(f"{MODULE}.create_judge_graph", return_value=mock_graph) as create_judge_graph_mock,
         patch(
-            f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset
+            "argos.tasks.autoprompt.dataset.generate_haiku_dataset", return_value=mock_dataset
         ) as generate_haiku_dataset_mock,
         patch(
             f"{MODULE}.run_inference_pipeline", return_value=mock_results
@@ -534,7 +523,7 @@ def test_run_inference_batch_size(
     with (
         patch(f"{MODULE}.create_judge_graph", return_value=mock_graph) as create_judge_graph_mock,
         patch(
-            f"{MODULE}.generate_haiku_dataset", return_value=mock_dataset
+            "argos.tasks.autoprompt.dataset.generate_haiku_dataset", return_value=mock_dataset
         ) as generate_haiku_dataset_mock,
         patch(
             f"{MODULE}.run_inference_pipeline", return_value=mock_results

@@ -4,12 +4,15 @@ from __future__ import annotations
 
 __all__ = ["prepare_dataset"]
 
+import logging
+
 import polars as pl
 from coola.utils.timing import timeblock
 
 from argos.datasets import generate_haiku_dataset
-from argos.tasks.autoprompt.judge import logger
 from argos.utils.dataframe import summarize_boolean_columns
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def prepare_dataset() -> pl.DataFrame:

@@ -32,7 +32,13 @@ class BaseInferencePipeline(ABC):
 
 
 class InferencePipeline(BaseInferencePipeline):
-    r"""Implement a simple inference pipeline."""
+    r"""Implement a simple inference pipeline.
+
+    Args:
+        dataset: The dataset to use for inference.
+        predictor: The predictor to use for inference.
+        path_results: Path to the results file to write the results.
+    """
 
     def __init__(
         self,

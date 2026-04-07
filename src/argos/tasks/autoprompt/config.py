@@ -33,13 +33,16 @@ class ExperimentConfig:
     path_experiment: Path
     batch_size: int = 20
     iteration: int = 0
-    # path_history: Path
-    # prompt_model: str
-    # judge: LlmConfig
-    # prompt: LlmConfig
-    # analyzer: LlmConfig
+    judge: LlmConfig = None
+    prompt_generator: LlmConfig = None
+    error_analyzer: LlmConfig = None
 
     @property
     def path_history(self) -> Path:
         r"""Path to the history."""
         return self.path_experiment.joinpath("history.json")
+
+    @property
+    def path_artifact(self) -> Path:
+        r"""Path to the artifacts."""
+        return self.path_experiment.joinpath(f"artifacts/{self.iteration:04d}")

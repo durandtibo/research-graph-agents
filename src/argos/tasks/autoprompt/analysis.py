@@ -13,7 +13,7 @@ import logging
 from typing import TYPE_CHECKING
 
 import polars as pl
-from iden.io import save_text
+from iden.io import save_json
 
 from argos.utils.logging import log_markdown
 
@@ -36,14 +36,14 @@ def analyze_errors(results: pl.DataFrame, path: Path) -> None:
         results=results, col_target="structure_target", col_prediction="structure_passed"
     )
     log_markdown(format_errors_as_markdown(structure_errors, error_type="structure"))
-    save_text(structure_errors, path.joinpath("error_analysis_structure.json"))
+    save_json(structure_errors, path.joinpath("error_analysis_structure.json"))
 
     logger.info("Haikus with incorrect topic predictions")
     topic_errors = find_errors(
         results=results, col_target="topic_target", col_prediction="topic_passed"
     )
     log_markdown(format_errors_as_markdown(topic_errors, error_type="topic"))
-    save_text(topic_errors, path.joinpath("error_analysis_topic.json"))
+    save_json(topic_errors, path.joinpath("error_analysis_topic.json"))
 
 
 def find_errors(

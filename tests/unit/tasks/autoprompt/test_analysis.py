@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import polars as pl
-from iden.io import load_text
+from iden.io import load_json
 
 from argos.tasks.autoprompt.analysis import (
     analyze_errors,
@@ -77,13 +77,13 @@ def test_analyze_errors_all_correct(tmp_path: Path) -> None:
         ),
         path=tmp_path.joinpath("data"),
     )
-    file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.md")
+    file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.json")
     assert file_struct.is_file()
-    assert load_text(file_struct) == []
+    assert load_json(file_struct) == []
 
-    file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.md")
+    file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.json")
     assert file_topic.is_file()
-    assert load_text(file_topic) == []
+    assert load_json(file_topic) == []
 
 
 def test_analyze_errors_all_incorrect(tmp_path: Path) -> None:
@@ -101,13 +101,23 @@ def test_analyze_errors_all_incorrect(tmp_path: Path) -> None:
         ),
         path=tmp_path.joinpath("data"),
     )
-    file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.md")
+    file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.json")
     assert file_struct.is_file()
-    assert load_text(file_struct) == []
+    assert load_json(file_struct) == [
+        {"haiku": "A", "target": False, "prediction": True},
+        {"haiku": "B", "target": False, "prediction": True},
+        {"haiku": "C", "target": True, "prediction": False},
+        {"haiku": "D", "target": True, "prediction": False},
+    ]
 
-    file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.md")
+    file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.json")
     assert file_topic.is_file()
-    assert load_text(file_topic) == []
+    assert load_json(file_topic) == [
+        {"haiku": "A", "target": False, "prediction": True},
+        {"haiku": "B", "target": False, "prediction": True},
+        {"haiku": "C", "target": True, "prediction": False},
+        {"haiku": "D", "target": True, "prediction": False},
+    ]
 
 
 def test_analyze_errors_empty(tmp_path: Path) -> None:
@@ -125,13 +135,13 @@ def test_analyze_errors_empty(tmp_path: Path) -> None:
         ),
         path=tmp_path.joinpath("data"),
     )
-    file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.md")
+    file_struct = tmp_path.joinpath("data").joinpath("error_analysis_structure.json")
     assert file_struct.is_file()
-    assert load_text(file_struct) == []
+    assert load_json(file_struct) == []
 
-    file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.md")
+    file_topic = tmp_path.joinpath("data").joinpath("error_analysis_topic.json")
     assert file_topic.is_file()
-    assert load_text(file_topic) == []
+    assert load_json(file_topic) == []
 
 
 #################################

@@ -4,14 +4,13 @@ from __future__ import annotations
 
 __all__ = [
     "create_judge_graph",
-    "prepare_results",
     "run_experiment",
     "run_inference",
     "run_inference_pipeline",
 ]
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import polars as pl
 from coola.utils.timing import timeblock
@@ -25,8 +24,8 @@ from argos.tasks.autoprompt.analysis import (
 )
 from argos.tasks.autoprompt.dataset import prepare_dataset
 from argos.tasks.autoprompt.evaluation import evaluate_metrics
+from argos.tasks.autoprompt.predictor import prepare_results
 from argos.utils.batching import batchify
-from argos.utils.dataframe import concat_and_merge
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -64,35 +63,6 @@ def create_judge_graph(model: str, system_prompt: str) -> CompiledStateGraph:
     graph_builder.add_edge("judge", END)
 
     return graph_builder.compile()
-
-
-def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.DataFrame:
-    r"""Prepare results of haiku generator-judge.
-
-    Args:
-        dataset: The dataset of haiku examples.
-        outputs: The results of the haiku generator-judge.
-
-    Returns:
-        The results of the haiku generator-judge in a DataFrame.
-    """
-    cols = [
-        "topic",
-        "haiku",
-        "score",
-        "passed",
-        "target",
-        "structure_passed",
-        "structure_target",
-        "topic_passed",
-        "topic_target",
-        "reasoning",
-    ]
-    flat_data = [
-        {**{k: v for k, v in row.items() if k != "evaluation"}, **row["evaluation"].model_dump()}
-        for row in outputs
-    ]
-    return concat_and_merge(pl.DataFrame(flat_data), dataset).select(cols)
 
 
 def run_experiment(config: ExperimentConfig) -> dict[str, BinaryClassificationResults]:

@@ -1,3 +1,5 @@
+r"""Contain code to generate predictions."""
+
 from __future__ import annotations
 
 __all__ = ["BasePredictor", "Predictor", "generate_predictions", "prepare_results"]

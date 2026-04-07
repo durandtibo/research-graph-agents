@@ -10,7 +10,7 @@ __all__ = [
 ]
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import polars as pl
 from iden.io import save_json
@@ -67,7 +67,7 @@ def find_errors(
     )
 
 
-def format_errors_as_markdown(errors: list[dict], error_type: str) -> str:
+def format_errors_as_markdown(errors: list[dict[Any, Any]], error_type: str) -> str:
     r"""Format the list of errors to a markdown table.
 
     Args:
@@ -89,7 +89,7 @@ def format_errors_as_markdown(errors: list[dict], error_type: str) -> str:
     )
 
 
-def format_errors_as_markdown_table(errors: list[dict]) -> str:
+def format_errors_as_markdown_table(errors: list[dict[Any, Any]]) -> str:
     r"""Format the list of errors to a markdown table.
 
     Args:

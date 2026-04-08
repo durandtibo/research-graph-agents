@@ -6,6 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from argos.testing.fixtures import colorlog_available, rich_available
+from argos.utils.imports import is_rich_available
 from argos.utils.logging import configure_logging, log_markdown
 
 MODULE = "argos.utils.logging"
@@ -14,6 +15,11 @@ MODULE = "argos.utils.logging"
 @pytest.fixture(autouse=True)
 def _reset_logging() -> None:
     logging.basicConfig()
+
+
+@pytest.fixture(autouse=True)
+def _cache_clear() -> None:
+    is_rich_available.cache_clear()
 
 
 #######################################

@@ -7,6 +7,8 @@ __all__ = ["configure_logging", "log_markdown"]
 
 import logging
 
+from rich.panel import Panel
+
 from argos.utils.imports import is_colorlog_available, is_rich_available
 
 if is_colorlog_available():  # pragma: no cover
@@ -69,15 +71,18 @@ def configure_logging(level: int = logging.INFO) -> None:
     logging.basicConfig(level=level, handlers=[handler])
 
 
-def log_markdown(msg: str, level: int = logging.INFO) -> None:
+def log_markdown(msg: str, level: int = logging.INFO, title: str | None = None) -> None:
     r"""Log a message with markdown formatting if rich is available.
 
     Args:
         msg: The message to log.
         level: The minimum log level to capture.
+        title: The title of the log message.
     """
     if is_rich_available():
         console = Console()
-        console.print(Markdown(msg))
+        console.print(Panel(Markdown(msg), title=title))
     else:
+        if title:
+            msg = f"{title}:\n{msg}"
         logger.log(level, msg)

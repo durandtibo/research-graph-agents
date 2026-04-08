@@ -51,6 +51,14 @@ def test_log_markdown_with_rich() -> None:
     mock_logger.log.assert_not_called()
 
 
+@rich_available
+def test_log_markdown_with_rich_with_title() -> None:
+    with patch(f"{MODULE}.logger") as mock_logger:
+        log_markdown("# Hello", title="cats")
+
+    mock_logger.log.assert_not_called()
+
+
 def test_log_markdown_without_rich() -> None:
     with (
         patch(f"{MODULE}.is_rich_available", return_value=False),
@@ -59,6 +67,16 @@ def test_log_markdown_without_rich() -> None:
         log_markdown("# Hello")
 
     mock_logger.log.assert_called_once_with(logging.INFO, "# Hello")
+
+
+def test_log_markdown_with_title_without_rich() -> None:
+    with (
+        patch(f"{MODULE}.is_rich_available", return_value=False),
+        patch(f"{MODULE}.logger") as mock_logger,
+    ):
+        log_markdown("# Hello", title="cats")
+
+    mock_logger.log.assert_called_once_with(logging.INFO, "cats:\n# Hello")
 
 
 def test_log_markdown_passes_custom_level_to_logger() -> None:

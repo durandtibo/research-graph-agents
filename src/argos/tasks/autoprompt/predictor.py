@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
+from coola.utils.format import repr_indent, repr_mapping
 from coola.utils.timing import timeblock
 
 from argos.utils.batching import batchify
@@ -47,6 +48,10 @@ class Predictor(BasePredictor):
     def __init__(self, graph: CompiledStateGraph, batch_size: int = 20) -> None:
         self._graph = graph
         self._batch_size = batch_size
+
+    def __repr__(self) -> str:
+        args = repr_indent(repr_mapping({"graph": self._graph, "batch_size": self._batch_size}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
         return generate_predictions(dataset=dataset, graph=self._graph, batch_size=self._batch_size)

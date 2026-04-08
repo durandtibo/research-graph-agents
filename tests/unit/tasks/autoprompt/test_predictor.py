@@ -167,6 +167,14 @@ def mock_results() -> pl.DataFrame:
 ###############################
 
 
+def test_predictor_repr(mock_graph: CompiledStateGraph) -> None:
+    assert repr(Predictor(graph=mock_graph)).startswith("Predictor(")
+
+
+def test_predictor_str(mock_graph: CompiledStateGraph) -> None:
+    assert str(Predictor(graph=mock_graph)).startswith("Predictor(")
+
+
 def test_predictor_predict(
     mock_dataset: pl.DataFrame, mock_graph: CompiledStateGraph, mock_results: pl.DataFrame
 ) -> None:
@@ -289,9 +297,9 @@ def test_predictor_predict_batch_size_2(
     assert_frame_equal(results, mock_results)
 
 
-############################################
+##########################################
 #     Tests for generate_predictions     #
-############################################
+##########################################
 
 
 def test_generate_predictions(

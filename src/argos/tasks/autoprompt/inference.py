@@ -64,7 +64,17 @@ class InferencePipeline(BaseInferencePipeline):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def process(self) -> pl.DataFrame:
-        if self._path and self._path.is_file():
+        r"""Run inference and return the results.
+
+        If a predictions file already exists at ``path``, it is loaded
+        and returned directly without re-running the predictor.
+        Otherwise, the predictor is invoked on the dataset, the results
+        are written to ``path`` (if provided), and then returned.
+
+        Returns:
+            A :class:`~polars.DataFrame` containing the inference
+                results produced by the predictor.
+        """
             logger.info(f"Reading predictions from {self._path}...")
             return pl.read_parquet(self._path)
 

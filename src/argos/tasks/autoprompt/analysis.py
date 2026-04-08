@@ -24,12 +24,22 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 def analyze_errors(results: pl.DataFrame, path: Path) -> None:
-    r"""Analyze the haikus with errors and save the results in markdown
-    files.
+    r"""Analyze prediction errors for both structure and topic tasks.
+
+    Finds haiku examples where the judge's predictions do not match
+    the ground-truth labels for structure and topic adherence,
+    then logs a markdown summary and saves the error details as JSON
+    files under ``path``.
 
     Args:
-        results: The results of the haiku judge.
-        path: The path where to store the analyses.
+        results: A :class:`~polars.DataFrame` produced by the haiku
+            judge, expected to contain the columns ``topic``,
+            ``haiku``, ``structure_target``, ``structure_passed``,
+            ``topic_target``, and ``topic_passed``.
+        path: Directory where the error analysis JSON files are saved.
+            Two files are written:
+            ``error_analysis_structure.json`` and
+            ``error_analysis_topic.json``.
     """
     logger.info("Haikus with incorrect structure predictions")
     structure_errors = find_errors(
@@ -49,15 +59,19 @@ def analyze_errors(results: pl.DataFrame, path: Path) -> None:
 def find_errors(
     results: pl.DataFrame, col_target: str, col_prediction: str
 ) -> list[dict[str, str | bool]]:
-    r"""Find the haiku with incorrect predictions.
+    r"""Find haiku examples where the prediction does not match the
+    ground-truth label.
 
     Args:
-        results: The results of the haiku judge.
-        col_target: The column name of the targets.
-        col_prediction: The column name of the predictions.
+        results: A :class:`~polars.DataFrame` produced by the haiku
+            judge, expected to contain the columns ``topic``,
+            ``haiku``, ``col_target``, and ``col_prediction``.
+        col_target: The column name containing the ground-truth labels.
+        col_prediction: The column name containing the predicted labels.
 
     Returns:
-        The list of haikus with incorrect predictions.
+        A list of dicts, one per mispredicted example, each with the
+            keys ``topic``, ``haiku``, ``target``, and ``prediction``.
     """
     return (
         results.filter(pl.col(col_target) != pl.col(col_prediction))
@@ -68,14 +82,20 @@ def find_errors(
 
 
 def format_errors_as_markdown(errors: list[dict[Any, Any]], error_type: str) -> str:
-    r"""Format the list of errors to a markdown table.
+    r"""Format an error list as a markdown report with a summary header
+    and a table.
 
     Args:
-        errors: The list of errors.
-        error_type: The type of errors.
+        errors: A list of error dicts as returned by
+            :func:`find_errors`, each containing ``topic``, ``haiku``,
+            ``target``, and ``prediction``.
+        error_type: A human-readable label for the type of error
+            (e.g. ``"structure"`` or ``"topic"``), used in the summary
+            text and column descriptions.
 
     Returns:
-        The formatted list of errors to a markdown table.
+        A markdown string with a brief summary sentence followed by a
+            legend and the formatted error table.
     """
     table = format_errors_as_markdown_table(errors)
     return (
@@ -90,13 +110,17 @@ def format_errors_as_markdown(errors: list[dict[Any, Any]], error_type: str) -> 
 
 
 def format_errors_as_markdown_table(errors: list[dict[Any, Any]]) -> str:
-    r"""Format the list of errors to a markdown table.
+    r"""Format an error list as a markdown table.
 
     Args:
-        errors: The list of errors.
+        errors: A list of error dicts as returned by
+            :func:`find_errors`, each containing ``topic``, ``haiku``,
+            ``target``, and ``prediction``. Newlines in ``haiku``
+            values are replaced with `` / `` for readability.
 
     Returns:
-        The formatted list of errors to a markdown table.
+        A markdown table string with columns ``#``, ``Topic``,
+            ``Haiku``, ``Target``, and ``Prediction``.
     """
     lines = ["| # | Topic | Haiku | Target | Prediction |", "|----|----|----|----|----|"]
     for i, example in enumerate(errors, start=1):

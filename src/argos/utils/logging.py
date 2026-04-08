@@ -72,9 +72,15 @@ def configure_logging(level: int = logging.INFO) -> None:
 def log_markdown(msg: str, level: int = logging.INFO) -> None:
     r"""Log a message with markdown formatting if rich is available.
 
+    If the ``rich`` package is installed, the message is rendered as
+    markdown and printed to the console via
+    :class:`~rich.console.Console`. Otherwise, the message is logged
+    with the standard :mod:`logging` module at the specified level.
+
     Args:
-        msg: The message to log.
-        level: The minimum log level to capture.
+        msg: The message to log. May contain markdown syntax.
+        level: The log level used when ``rich`` is not available.
+            Defaults to ``logging.INFO``.
     """
     if is_rich_available():
         console = Console()

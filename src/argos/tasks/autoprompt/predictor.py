@@ -54,6 +54,15 @@ class Predictor(BasePredictor):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
+        r"""Compute the predictions for the given dataset.
+
+        Args:
+            dataset: The dataset to predict on.
+
+        Returns:
+            A :class:`~polars.DataFrame` containing the predictions
+                for each row in ``dataset``.
+        """
         return generate_predictions(dataset=dataset, graph=self._graph, batch_size=self._batch_size)
 
 

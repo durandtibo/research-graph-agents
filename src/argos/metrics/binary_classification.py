@@ -12,7 +12,7 @@ from coola.utils.format import make_bar
 
 @dataclass
 class BinaryClassificationResults:
-    """Store classification metrics.
+    r"""Store classification metrics.
 
     Attributes:
         n_samples: The total number of samples in the DataFrame.
@@ -39,7 +39,7 @@ class BinaryClassificationResults:
     specificity: float
 
     def to_str(self) -> str:
-        """Return a human-friendly text representation of the
+        r"""Return a human-friendly text representation of the
         classification results.
 
         Returns:
@@ -75,7 +75,7 @@ def compute_binary_classification_metrics(
     target_col: str,
     predict_col: str,
 ) -> BinaryClassificationResults:
-    """Compute accuracy, confusion matrix, and core classification
+    r"""Compute accuracy, confusion matrix, and core classification
     metrics from a Polars DataFrame.
 
     Args:
@@ -84,8 +84,9 @@ def compute_binary_classification_metrics(
         predict_col: The name of the column containing the predicted binary values.
 
     Returns:
-        A ClassificationResults dataclass containing n_samples, accuracy, TP, TN, FP, FN,
-        precision, recall, F1 score, and specificity.
+        A :class:`BinaryClassificationResults` containing n_samples,
+            accuracy, TP, TN, FP, FN, precision, recall, F1 score, and
+            specificity.
 
     Raises:
         ValueError: If the DataFrame is empty or the columns contain non-binary values.

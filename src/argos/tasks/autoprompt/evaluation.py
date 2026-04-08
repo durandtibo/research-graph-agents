@@ -22,11 +22,24 @@ logger: logging.Logger = logging.getLogger(__name__)
 def evaluate_metrics(results: pl.DataFrame) -> dict[str, BinaryClassificationResults]:
     r"""Evaluate the metrics of the haiku judge.
 
+    Computes binary classification metrics for three prediction tasks:
+    overall pass/fail, structure adherence, and topic relevance.
+
     Args:
-        results: The results of the haiku judge.
+        results: A :class:`~polars.DataFrame` produced by the haiku
+            judge, expected to contain the columns ``target``,
+            ``passed``, ``structure_target``, ``structure_passed``,
+            ``topic_target``, and ``topic_passed``.
 
     Returns:
-        The evaluated metrics.
+        A dict with three keys mapping to
+            :class:`~argos.metrics.BinaryClassificationResults`:
+
+            - ``"overall"``: metrics comparing ``target`` vs ``passed``.
+            - ``"structure"``: metrics comparing ``structure_target``
+              vs ``structure_passed``.
+            - ``"topic"``: metrics comparing ``topic_target`` vs
+              ``topic_passed``.
     """
     logger.info("Evaluating metrics...")
     logger.info(

@@ -18,7 +18,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BaseHistory(ABC):
-    """Define the base class to implement a history."""
+    r"""Define the base class to implement a history."""
 
     @abstractmethod
     def append(self, data: dict[Any, Any]) -> None:
@@ -59,9 +59,18 @@ class JsonHistory(BaseHistory):
 
     @property
     def path(self) -> Path:
+        r"""Return the path to the history JSON file."""
         return self._path
 
     def append(self, data: dict[Any, Any]) -> None:
+        r"""Append data to the history.
+
+        Loads the existing history from disk, appends ``data``, and
+        writes the updated list back to the file.
+
+        Args:
+            data: The data to append to the history.
+        """
         logger.info("Appending data to the history...")
         history = load_json(self._path)
         history.append(data)
@@ -69,7 +78,13 @@ class JsonHistory(BaseHistory):
         logger.info(f"The new history length is {len(history):,}")
 
     def get_values(self) -> list[dict[Any, Any]]:
+        r"""Return the history values loaded from the JSON file.
+
+        Returns:
+            The list of history entries persisted to disk.
+        """
         return load_json(self._path)
 
     def clear(self) -> None:
+        r"""Clear the history by writing an empty list to the JSON file."""
         save_json([], self._path, exist_ok=True)

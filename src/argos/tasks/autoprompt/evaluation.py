@@ -20,10 +20,10 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 def evaluate_metrics(results: pl.DataFrame) -> dict[str, BinaryClassificationResults]:
-    r"""Evaluate the metrics of the haiku generator-judge.
+    r"""Evaluate the metrics of the haiku judge.
 
     Args:
-        results: The results of the haiku generator-judge.
+        results: The results of the haiku judge.
 
     Returns:
         The evaluated metrics.

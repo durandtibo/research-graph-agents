@@ -7,8 +7,6 @@ __all__ = ["configure_logging", "log_markdown"]
 
 import logging
 
-from rich.panel import Panel
-
 from argos.utils.imports import is_colorlog_available, is_rich_available
 
 if is_colorlog_available():  # pragma: no cover
@@ -16,6 +14,7 @@ if is_colorlog_available():  # pragma: no cover
 if is_rich_available():  # pragma: no cover
     from rich.console import Console
     from rich.markdown import Markdown
+    from rich.panel import Panel
 
 logger: logging.Logger = logging.getLogger(__name__)
 

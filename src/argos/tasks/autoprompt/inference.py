@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import polars as pl
+from coola.utils.format import repr_indent, repr_mapping
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -24,7 +25,7 @@ class BaseInferencePipeline(ABC):
 
     @abstractmethod
     def process(self) -> pl.DataFrame:
-        r"""Process the results of the inference pipeline.
+        r"""Process the predictions of the inference pipeline.
 
         Returns:
             The result of the inference pipeline.
@@ -37,27 +38,39 @@ class InferencePipeline(BaseInferencePipeline):
     Args:
         dataset: The dataset to use for inference.
         predictor: The predictor to use for inference.
-        path_results: Path to the results file to write the results.
+        path: Path where to read/write the predictions.
     """
 
     def __init__(
         self,
         dataset: pl.DataFrame,
         predictor: BasePredictor,
-        path_results: Path | None = None,
+        path: Path | None = None,
     ) -> None:
         self._dataset = dataset
         self._predictor = predictor
-        self._path_results = path_results
+        self._path = path
+
+    def __repr__(self) -> str:
+        args = repr_indent(
+            repr_mapping(
+                {
+                    "dataset": f"shape: {self._dataset.shape}",
+                    "predictor": self._predictor,
+                    "path": self._path,
+                }
+            )
+        )
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def process(self) -> pl.DataFrame:
-        if self._path_results and self._path_results.is_file():
-            logger.info(f"Reading results from {self._path_results}...")
-            return pl.read_parquet(self._path_results)
+        if self._path and self._path.is_file():
+            logger.info(f"Reading predictions from {self._path}...")
+            return pl.read_parquet(self._path)
 
-        results = self._predictor.predict(self._dataset)
-        if self._path_results:
-            logger.info(f"Writing results ({results.shape}) in {self._path_results}...")
-            self._path_results.parent.mkdir(parents=True, exist_ok=True)
-            results.write_parquet(self._path_results)
-        return results
+        predictions = self._predictor.predict(self._dataset)
+        if self._path:
+            logger.info(f"Writing predictions ({predictions.shape}) in {self._path}...")
+            self._path.parent.mkdir(parents=True, exist_ok=True)
+            predictions.write_parquet(self._path)
+        return predictions

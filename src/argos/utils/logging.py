@@ -14,6 +14,7 @@ if is_colorlog_available():  # pragma: no cover
 if is_rich_available():  # pragma: no cover
     from rich.console import Console
     from rich.markdown import Markdown
+    from rich.panel import Panel
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -69,7 +70,7 @@ def configure_logging(level: int = logging.INFO) -> None:
     logging.basicConfig(level=level, handlers=[handler])
 
 
-def log_markdown(msg: str, level: int = logging.INFO) -> None:
+def log_markdown(msg: str, level: int = logging.INFO, title: str | None = None) -> None:
     r"""Log a message with markdown formatting if rich is available.
 
     If the ``rich`` package is installed, the message is rendered as
@@ -81,9 +82,12 @@ def log_markdown(msg: str, level: int = logging.INFO) -> None:
         msg: The message to log. May contain markdown syntax.
         level: The log level used when ``rich`` is not available.
             Defaults to ``logging.INFO``.
+        title: The title of the log message.
     """
     if is_rich_available():
         console = Console()
-        console.print(Markdown(msg))
+        console.print(Panel(Markdown(msg), title=title))
     else:
+        if title:
+            msg = f"{title}:\n{msg}"
         logger.log(level, msg)

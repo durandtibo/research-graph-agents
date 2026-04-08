@@ -112,6 +112,22 @@ def mock_results() -> pl.DataFrame:
 #######################################
 
 
+def test_inference_pipeline_repr(mock_dataset: pl.DataFrame, mock_results: pl.DataFrame) -> None:
+    inferpipe = InferencePipeline(
+        dataset=mock_dataset,
+        predictor=Mock(spec=BasePredictor, predict=Mock(return_value=mock_results)),
+    )
+    assert repr(inferpipe).startswith("InferencePipeline(")
+
+
+def test_inference_pipeline_str(mock_dataset: pl.DataFrame, mock_results: pl.DataFrame) -> None:
+    inferpipe = InferencePipeline(
+        dataset=mock_dataset,
+        predictor=Mock(spec=BasePredictor, predict=Mock(return_value=mock_results)),
+    )
+    assert str(inferpipe).startswith("InferencePipeline(")
+
+
 def test_inference_pipeline_process(mock_dataset: pl.DataFrame, mock_results: pl.DataFrame) -> None:
     inferpipe = InferencePipeline(
         dataset=mock_dataset,
@@ -121,34 +137,34 @@ def test_inference_pipeline_process(mock_dataset: pl.DataFrame, mock_results: pl
     assert_frame_equal(out, mock_results)
 
 
-def test_inference_pipeline_process_with_path_results(
+def test_inference_pipeline_process_with_path(
     mock_dataset: pl.DataFrame, mock_results: pl.DataFrame, tmp_path: Path
 ) -> None:
-    path_results = tmp_path.joinpath("data").joinpath("results.parquet")
+    path = tmp_path.joinpath("data").joinpath("results.parquet")
     inferpipe = InferencePipeline(
         dataset=mock_dataset,
         predictor=Mock(spec=BasePredictor, predict=Mock(return_value=mock_results)),
-        path_results=path_results,
+        path=path,
     )
     out = inferpipe.process()
     assert_frame_equal(out, mock_results)
 
-    assert path_results.is_file()
-    assert_frame_equal(pl.read_parquet(path_results), mock_results)
+    assert path.is_file()
+    assert_frame_equal(pl.read_parquet(path), mock_results)
 
 
 def test_inference_pipeline_process_with_existing_results(
     mock_dataset: pl.DataFrame, mock_results: pl.DataFrame, tmp_path: Path
 ) -> None:
-    path_results = tmp_path.joinpath("results.parquet")
-    pl.DataFrame({"name": ["a", "b", "c"]}).write_parquet(path_results)
+    path = tmp_path.joinpath("results.parquet")
+    pl.DataFrame({"name": ["a", "b", "c"]}).write_parquet(path)
     inferpipe = InferencePipeline(
         dataset=mock_dataset,
         predictor=Mock(spec=BasePredictor, predict=Mock(return_value=mock_results)),
-        path_results=path_results,
+        path=path,
     )
     out = inferpipe.process()
     assert_frame_equal(out, pl.DataFrame({"name": ["a", "b", "c"]}))
 
-    assert path_results.is_file()
-    assert_frame_equal(pl.read_parquet(path_results), pl.DataFrame({"name": ["a", "b", "c"]}))
+    assert path.is_file()
+    assert_frame_equal(pl.read_parquet(path), pl.DataFrame({"name": ["a", "b", "c"]}))

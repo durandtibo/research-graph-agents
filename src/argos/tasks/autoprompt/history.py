@@ -18,7 +18,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BaseHistory(ABC):
-    """Define the base class to implement a history."""
+    r"""Define the base class to implement a history."""
 
     @abstractmethod
     def append(self, data: dict[Any, Any]) -> None:

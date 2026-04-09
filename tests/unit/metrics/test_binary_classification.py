@@ -84,6 +84,298 @@ def test_binary_classification_results_instantiation(
     assert typical_results.specificity == 0.842
 
 
+def test_binary_classification_results_allclose_true() -> None:
+    assert BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).allclose(
+        BinaryClassificationResults(
+            n_samples=100,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9,
+        )
+    )
+
+
+def test_binary_classification_results_allclose_true_atol() -> None:
+    assert BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).allclose(
+        BinaryClassificationResults(
+            n_samples=100,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9009,
+        ),
+        atol=1e-3,
+    )
+
+
+def test_binary_classification_results_allclose_true_rtol() -> None:
+    assert BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).allclose(
+        BinaryClassificationResults(
+            n_samples=100,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9009,
+        ),
+        rtol=1e-3,
+    )
+
+
+def test_binary_classification_results_allclose_true_same_object() -> None:
+    results = BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    )
+    assert results.allclose(results)
+
+
+def test_binary_classification_results_allclose_false_different_value() -> None:
+    assert not BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).allclose(
+        BinaryClassificationResults(
+            n_samples=101,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9,
+        )
+    )
+
+
+def test_binary_classification_results_allclose_false_different_type() -> None:
+    assert not BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).allclose(42)
+
+
+def test_binary_classification_results_allclose_false_different_type_child() -> None:
+    class MyChild(BinaryClassificationResults): ...
+
+    assert not BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).allclose(
+        MyChild(
+            n_samples=100,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9,
+        )
+    )
+
+
+def test_binary_classification_results_equal_true() -> None:
+    assert BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).equal(
+        BinaryClassificationResults(
+            n_samples=100,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9,
+        )
+    )
+
+
+def test_binary_classification_results_equal_true_same_object() -> None:
+    results = BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    )
+    assert results.equal(results)
+
+
+def test_binary_classification_results_equal_false_different_value() -> None:
+    assert not BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).equal(
+        BinaryClassificationResults(
+            n_samples=101,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9,
+        )
+    )
+
+
+def test_binary_classification_results_equal_false_different_type() -> None:
+    assert not BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).equal(42)
+
+
+def test_binary_classification_results_equal_false_different_type_child() -> None:
+    class MyChild(BinaryClassificationResults): ...
+
+    assert not BinaryClassificationResults(
+        n_samples=100,
+        accuracy=0.9,
+        true_positive=50,
+        true_negative=40,
+        false_positive=5,
+        false_negative=5,
+        precision=0.9,
+        recall=0.9,
+        f1_score=0.9,
+        specificity=0.9,
+    ).equal(
+        MyChild(
+            n_samples=100,
+            accuracy=0.9,
+            true_positive=50,
+            true_negative=40,
+            false_positive=5,
+            false_negative=5,
+            precision=0.9,
+            recall=0.9,
+            f1_score=0.9,
+            specificity=0.9,
+        )
+    )
+
+
 def test_binary_classification_results_is_mutable() -> None:
     results = BinaryClassificationResults(
         n_samples=100,
@@ -216,17 +508,20 @@ def test_binary_classification_results_to_str_single_sample() -> None:
 
 def test_compute_binary_classification_metrics_balanced(dataframe: pl.DataFrame) -> None:
     result = compute_binary_classification_metrics(dataframe, "target", "predicted")
-    assert result == BinaryClassificationResults(
-        n_samples=10,
-        true_positive=3,
-        true_negative=4,
-        false_positive=1,
-        false_negative=2,
-        accuracy=0.7,
-        precision=0.75,
-        recall=0.6,
-        f1_score=pytest.approx(0.6666, abs=1e-3),
-        specificity=0.8,
+    assert result.allclose(
+        BinaryClassificationResults(
+            n_samples=10,
+            true_positive=3,
+            true_negative=4,
+            false_positive=1,
+            false_negative=2,
+            accuracy=0.7,
+            precision=0.75,
+            recall=0.6,
+            f1_score=2 / 3,
+            specificity=0.8,
+        ),
+        atol=1e-6,
     )
 
 

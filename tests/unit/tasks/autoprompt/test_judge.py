@@ -71,12 +71,12 @@ def mock_llm() -> BaseChatModel:
 
 
 @pytest.fixture
-def mock_graph(mock_outputs: list[dict[str, Any]]) -> CompiledStateGraph:
-    return Mock(spec=CompiledStateGraph, batch=Mock(side_effect=[mock_outputs]))
+def mock_graph(mock_outrue_positiveuts: list[dict[str, Any]]) -> CompiledStateGraph:
+    return Mock(spec=CompiledStateGraph, batch=Mock(side_effect=[mock_outrue_positiveuts]))
 
 
 @pytest.fixture
-def mock_outputs() -> list[dict[str, Any]]:
+def mock_outrue_positiveuts() -> list[dict[str, Any]]:
     return [
         {
             "topic": "rain",
@@ -221,10 +221,10 @@ def test_evaluate_metrics(mock_results: pl.DataFrame) -> None:
         "overall": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -233,10 +233,10 @@ def test_evaluate_metrics(mock_results: pl.DataFrame) -> None:
         "structure": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -245,10 +245,10 @@ def test_evaluate_metrics(mock_results: pl.DataFrame) -> None:
         "topic": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -299,10 +299,10 @@ def test_evaluate_metrics_mixed_results() -> None:
         "overall": BinaryClassificationResults(
             n_samples=4,
             accuracy=0.25,
-            tp=1,
-            tn=0,
-            fp=0,
-            fn=3,
+            true_positive=1,
+            true_negative=0,
+            false_positive=0,
+            false_negative=3,
             precision=1.0,
             recall=0.25,
             f1_score=0.4,
@@ -311,10 +311,10 @@ def test_evaluate_metrics_mixed_results() -> None:
         "structure": BinaryClassificationResults(
             n_samples=4,
             accuracy=0.5,
-            tp=2,
-            tn=0,
-            fp=0,
-            fn=2,
+            true_positive=2,
+            true_negative=0,
+            false_positive=0,
+            false_negative=2,
             precision=1.0,
             recall=0.5,
             f1_score=pytest.approx(2.0 / 3.0, abs=1e-6),
@@ -323,10 +323,10 @@ def test_evaluate_metrics_mixed_results() -> None:
         "topic": BinaryClassificationResults(
             n_samples=4,
             accuracy=0.75,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=1,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=1,
             precision=1.0,
             recall=0.75,
             f1_score=pytest.approx(1.5 / 1.75, abs=1e-6),
@@ -368,10 +368,10 @@ def test_run_experiment_results_file_does_not_exist(
         "overall": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -380,10 +380,10 @@ def test_run_experiment_results_file_does_not_exist(
         "structure": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -392,10 +392,10 @@ def test_run_experiment_results_file_does_not_exist(
         "topic": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -421,10 +421,10 @@ def test_run_experiment_results_file_exists(tmp_path: Path, mock_results: pl.Dat
         "overall": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -433,10 +433,10 @@ def test_run_experiment_results_file_exists(tmp_path: Path, mock_results: pl.Dat
         "structure": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,
@@ -445,10 +445,10 @@ def test_run_experiment_results_file_exists(tmp_path: Path, mock_results: pl.Dat
         "topic": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
-            tp=3,
-            tn=0,
-            fp=0,
-            fn=0,
+            true_positive=3,
+            true_negative=0,
+            false_positive=0,
+            false_negative=0,
             precision=1.0,
             recall=1.0,
             f1_score=1.0,

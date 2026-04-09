@@ -11,6 +11,12 @@ class Point:
     y: float
 
 
+@dataclass
+class Line:
+    start: Point
+    end: Point
+
+
 #######################################
 #     Tests for dataclass_to_dict     #
 #######################################
@@ -29,3 +35,39 @@ def test_dataclass_to_dict_dict() -> None:
         "p1": {"x": 4, "y": 2},
         "p2": {"x": 3, "y": 7},
     }
+
+
+def test_dataclass_to_dict_non_dataclass_string() -> None:
+    assert dataclass_to_dict("hello") == "hello"
+
+
+def test_dataclass_to_dict_non_dataclass_int() -> None:
+    assert dataclass_to_dict(42) == 42
+
+
+def test_dataclass_to_dict_non_dataclass_none() -> None:
+    assert dataclass_to_dict(None) is None
+
+
+def test_dataclass_to_dict_empty_list() -> None:
+    assert dataclass_to_dict([]) == []
+
+
+def test_dataclass_to_dict_list_of_non_dataclass() -> None:
+    assert dataclass_to_dict([1, 2, 3]) == [1, 2, 3]
+
+
+def test_dataclass_to_dict_mixed_list() -> None:
+    assert dataclass_to_dict([Point(1, 2), "text", 99]) == [{"x": 1, "y": 2}, "text", 99]
+
+
+def test_dataclass_to_dict_list_of_multiple_dataclasses() -> None:
+    assert dataclass_to_dict([Point(1, 2), Point(3, 4)]) == [
+        {"x": 1, "y": 2},
+        {"x": 3, "y": 4},
+    ]
+
+
+def test_dataclass_to_dict_empty_dict() -> None:
+    assert dataclass_to_dict({}) == {}
+

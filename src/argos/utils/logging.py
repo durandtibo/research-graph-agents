@@ -3,14 +3,20 @@ library."""
 
 from __future__ import annotations
 
-__all__ = ["configure_logging"]
+__all__ = ["configure_logging", "log_markdown"]
 
 import logging
 
-from argos.utils.imports import is_colorlog_available
+from argos.utils.imports import is_colorlog_available, is_rich_available
 
 if is_colorlog_available():  # pragma: no cover
     import colorlog
+if is_rich_available():  # pragma: no cover
+    from rich.console import Console
+    from rich.markdown import Markdown
+    from rich.panel import Panel
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def configure_logging(level: int = logging.INFO) -> None:
@@ -62,3 +68,26 @@ def configure_logging(level: int = logging.INFO) -> None:
     handler.setFormatter(formatter)
 
     logging.basicConfig(level=level, handlers=[handler])
+
+
+def log_markdown(msg: str, level: int = logging.INFO, title: str | None = None) -> None:
+    r"""Log a message with markdown formatting if rich is available.
+
+    If the ``rich`` package is installed, the message is rendered as
+    markdown and printed to the console via
+    :class:`~rich.console.Console`. Otherwise, the message is logged
+    with the standard :mod:`logging` module at the specified level.
+
+    Args:
+        msg: The message to log. May contain markdown syntax.
+        level: The log level used when ``rich`` is not available.
+            Defaults to ``logging.INFO``.
+        title: The title of the log message.
+    """
+    if is_rich_available():
+        console = Console()
+        console.print(Panel(Markdown(msg), title=title))
+    else:
+        if title:
+            msg = f"{title}:\n{msg}"
+        logger.log(level, msg)

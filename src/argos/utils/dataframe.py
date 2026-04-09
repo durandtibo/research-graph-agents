@@ -10,7 +10,7 @@ _TEMP_SUFFIX = "_temp_right"
 
 
 def concat_and_merge(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
-    """Horizontally concatenate two DataFrames, coalescing any shared
+    r"""Horizontally concatenate two DataFrames, coalescing any shared
     columns.
 
     Columns that exist only in one DataFrame are included as-is. Columns that
@@ -26,7 +26,7 @@ def concat_and_merge(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
         set equal to the union of both column sets.
 
     Raises:
-        ShapeError: If ``df1`` and ``df2`` have a different number of rows.
+        ValueError: If ``df1`` and ``df2`` have a different number of rows.
 
     Example:
         ```pycon
@@ -64,7 +64,7 @@ def concat_and_merge(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
 
 
 def summarize_boolean_columns(df: pl.DataFrame) -> pl.DataFrame:
-    """Summarize the count of True and False values for each boolean
+    r"""Summarize the count of True and False values for each boolean
     column.
 
     Each row in the output represents one column from the input DataFrame,

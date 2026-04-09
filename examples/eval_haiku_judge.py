@@ -2,155 +2,85 @@ r"""Define a script to test the performance of the haiku judge."""
 
 from __future__ import annotations
 
+import hashlib
 import logging
-from typing import TYPE_CHECKING, Any
+from pathlib import Path
 
-import polars as pl
-from coola.utils.timing import timeblock
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
-from langgraph.constants import END, START
-from langgraph.graph.state import CompiledStateGraph, StateGraph
 
-from argos.datasets import generate_haiku_dataset
-from argos.metrics import compute_binary_classification_metrics
-from argos.nodes import HaikuJudgeState, make_haiku_judge_node
-from argos.utils.batching import batchify
-from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
+from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
+from argos.tasks.autoprompt.config import ExperimentConfig
+from argos.tasks.autoprompt.judge import (
+    run_experiment,
+)
 from argos.utils.logging import configure_logging
-
-if TYPE_CHECKING:
-    from langchain_core.language_models import BaseChatModel
 
 logger = logging.getLogger(__name__)
 
 
-class State(HaikuJudgeState):
-    r"""Define the state of the haiku generator-judge system."""
-
-
-def create_graph(model: str = "gemma3:4b") -> CompiledStateGraph:
-    r"""Create the graph of the haiku generator-judge.
-
-    Returns:
-        The graph of the haiku generator-judge.
-    """
-    llm: BaseChatModel = ChatOllama(model=model, temperature=0)
-    logger.info(f"LLM model={llm.model}")
-
-    graph_builder = StateGraph(State)
-
-    graph_builder.add_node("judge", make_haiku_judge_node(llm))
-
-    graph_builder.add_edge(START, "judge")
-    graph_builder.add_edge("judge", END)
-
-    # Compile the graph into a runnable app
-    return graph_builder.compile()
-
-
-def evaluate_metrics(results: pl.DataFrame) -> None:
-    r"""Evaluate the metrics of the haiku generator-judge.
+def run_evaluation(judge_model: str, judge_system_prompt: str) -> None:
+    r"""Run haiku judge evaluation.
 
     Args:
-        results: The results of the haiku generator-judge.
+        judge_model: The name of the judge model.
+        judge_system_prompt: The prompt of the judge-system-prompt.
     """
-    logger.info(
-        f"\n{summarize_boolean_columns(results.select(['target', 'structure_target', 'topic_target']))}"
+    path_experiment = (
+        Path(__file__)
+        .resolve()
+        .parent.parent.joinpath("results")
+        .joinpath("haiku_judge")
+        .joinpath(hashlib.sha256(bytes(str(judge_system_prompt), "utf-8")).hexdigest())
+        .joinpath(judge_model.replace(":", "_"))
     )
 
-    overall = compute_binary_classification_metrics(
-        results, target_col="target", predict_col="passed"
+    config = ExperimentConfig(
+        judge_model=judge_model,
+        judge_system_prompt=judge_system_prompt,
+        path_experiment=path_experiment,
     )
-    logger.info(f"overall\n{overall.to_str()}")
-
-    structure = compute_binary_classification_metrics(
-        results, target_col="structure_target", predict_col="structure_passed"
-    )
-    logger.info(f"structure\n{structure.to_str()}")
-
-    topic = compute_binary_classification_metrics(
-        results, target_col="topic_target", predict_col="topic_passed"
-    )
-    logger.info(f"topic\n{topic.to_str()}")
-
-
-def prepare_dataset() -> pl.DataFrame:
-    r"""Prepare a dataset of haiku examples.
-
-    Returns:
-        A DataFrame containing haiku examples.
-    """
-    with timeblock(message="Dataset generation time: {time}"):
-        dataset = generate_haiku_dataset()
-    with pl.Config(tbl_cols=-1, tbl_rows=10):
-        logger.info(f"\n{dataset}")
-
-    stats = summarize_boolean_columns(
-        dataset.select(["target", "structure_target", "topic_target"])
-    )
-    logger.info(f"statistics about the dataset\n{stats}")
-    return dataset
-
-
-def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.DataFrame:
-    r"""Prepare results of haiku generator-judge.
-
-    Args:
-        dataset: The dataset of haiku examples.
-        outputs: The results of the haiku generator-judge.
-
-    Returns:
-        The results of the haiku generator-judge in a DataFrame.
-    """
-    cols = [
-        "topic",
-        "haiku",
-        "score",
-        "passed",
-        "target",
-        "structure_passed",
-        "structure_target",
-        "topic_passed",
-        "topic_target",
-        "reasoning",
-    ]
-    flat_data = [
-        {**{k: v for k, v in row.items() if k != "evaluation"}, **row["evaluation"].model_dump()}
-        for row in outputs
-    ]
-    return concat_and_merge(pl.DataFrame(flat_data), dataset).select(cols)
+    run_experiment(config)
 
 
 def main() -> None:
     r"""Define the main function to test the haiku judge system."""
-    # model = "olmo-3:7b"
-    model = "gemma3:12b"
-    # model = "gemma3n:e2b"
-    # model = "deepseek-r1:8b"
-    # model = "ministral-3:3b"
-    # model = "llama3.2:latest"
-    graph = create_graph(model=model)
-    logger.info(f"\n{graph.get_graph().draw_ascii()}")
+    # model = "ollama:smollm:135m"
+    # model = "ollama:gemma3:1b"
+    # model = "anthropic:claude-haiku-4-5-20251001"
+    # model = "anthropic:claude-sonnet-4-6"
+    # model = "anthropic:claude-opus-4-6"
 
-    dataset = prepare_dataset()
+    models = [
+        # "ollama:smollm:135m",
+        # "ollama:gemma3:1b",
+        # "ollama:gemma3:4b",
+        # "ollama:gemma3:12b",
+        # "anthropic:claude-haiku-4-5-20251001",
+        # "anthropic:claude-sonnet-4-6",
+        # "anthropic:claude-opus-4-6",
+        "google_genai:gemini-3.1-flash-lite-preview",
+        # "google_genai:gemini-3-flash-preview",
+        # "google_genai:gemini-3.1-pro-preview",
+        # "openai:gpt-5.4-nano",
+        # "openai:gpt-5.4-mini",
+        # "openai:gpt-5.4",
+    ]
+    judge_system_prompts = [
+        HAIKU_JUDGE_SYSTEM_PROMPT,
+        # HAIKU_JUDGE_SYSTEM_PROMPT1,
+        # HAIKU_JUDGE_SYSTEM_PROMPT2,
+        # HAIKU_JUDGE_SYSTEM_PROMPT3,
+        # HAIKU_JUDGE_SYSTEM_PROMPT4,
+        # HAIKU_JUDGE_SYSTEM_PROMPT_CLAUDE_HAIKU_4_6,
+        # HAIKU_JUDGE_SYSTEM_PROMPT_CLAUDE_SONNET_4_6,
+        # HAIKU_JUDGE_SYSTEM_PROMPT_GPT_5_3,
+        # HAIKU_JUDGE_SYSTEM_PROMPT_GEMINI_3_1_FAST,
+        # HAIKU_JUDGE_SYSTEM_PROMPT_GEMINI_3_1_PRO,
+    ]
 
-    outputs = []
-    examples = list(dataset.iter_rows(named=True))
-    with timeblock(message="LLM inference time: {time}"):
-        for index, batch in enumerate(batchify(examples, size=32)):
-            logger.info(f"--- Processing Batch {index + 1} ---")
-            outputs.extend(graph.batch(batch, config={"max_concurrency": 5}))
-
-    results = prepare_results(dataset, outputs)
-    with pl.Config(tbl_cols=-1, tbl_rows=10):
-        logger.info(f"\n{results}")
-
-    for row in results.iter_rows(named=True):
-        if row["score"] < 7:
-            logger.info(f"\n{row}")
-
-    evaluate_metrics(results)
+    for model in models:
+        for judge_system_prompt in judge_system_prompts:
+            run_evaluation(judge_model=model, judge_system_prompt=judge_system_prompt)
 
 
 if __name__ == "__main__":

@@ -4,9 +4,10 @@ from __future__ import annotations
 
 __all__ = ["BinaryClassificationResults", "compute_binary_classification_metrics"]
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 import polars as pl
+from coola.equality import objects_are_allclose, objects_are_equal
 from coola.utils.format import make_bar
 
 
@@ -37,6 +38,48 @@ class BinaryClassificationResults:
     recall: float
     f1_score: float
     specificity: float
+
+    def allclose(
+        self,
+        other: object,
+        *,
+        rtol: float = 1e-5,
+        atol: float = 1e-8,
+        equal_nan: bool = False,
+    ) -> bool:
+        r"""Indicate whether two objects are equal within a tolerance.
+
+        Args:
+            other: The object to be compared with.
+            rtol: The relative tolerance parameter. Must be non-negative.
+            atol: The absolute tolerance parameter. Must be non-negative.
+            equal_nan: If ``True``, then two ``NaN``s  will be considered
+                as equal.
+
+        Returns:
+            ``True`` if the two objects are (element-wise) equal within a
+                tolerance, otherwise ``False``
+        """
+        if type(other) is not type(self):
+            return False
+        return objects_are_allclose(
+            asdict(self), asdict(other), atol=atol, rtol=rtol, equal_nan=equal_nan
+        )
+
+    def equal(self, other: object, *, equal_nan: bool = False) -> bool:
+        r"""Indicate whether two objects are equal.
+
+        Args:
+            other: The object to be compared with.
+            equal_nan: If ``True``, then two ``NaN``s  will be considered
+                as equal.
+
+        Returns:
+            ``True`` if the two objects are (element-wise) equal, otherwise ``False``
+        """
+        if type(other) is not type(self):
+            return False
+        return objects_are_equal(asdict(self), asdict(other), equal_nan=equal_nan)
 
     def to_str(self) -> str:
         r"""Return a human-friendly text representation of the

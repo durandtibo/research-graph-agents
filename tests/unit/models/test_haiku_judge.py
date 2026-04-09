@@ -12,7 +12,7 @@ from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 
 
 @pytest.fixture
-def mock_judge_result() -> HaikuJudgeResult:
+def judge_result() -> HaikuJudgeResult:
     return HaikuJudgeResult(
         structure_passed=True,
         topic_passed=True,
@@ -23,11 +23,11 @@ def mock_judge_result() -> HaikuJudgeResult:
 
 
 @pytest.fixture
-def mock_llm(mock_judge_result: HaikuJudgeResult) -> BaseChatModel:
+def mock_llm(judge_result: HaikuJudgeResult) -> BaseChatModel:
     return Mock(
         spec=BaseChatModel,
         with_structured_output=Mock(
-            return_value=RunnableLambda(lambda x: mock_judge_result)  # noqa: ARG005
+            return_value=RunnableLambda(lambda x: judge_result)  # noqa: ARG005
         ),
     )
 
@@ -68,7 +68,7 @@ def test_create_haiku_judge_model_prompt_contains_expected_input_variables(
 
 
 def test_create_haiku_judge_model_invokes_with_topic_and_haiku(
-    mock_llm: BaseChatModel, mock_judge_result: HaikuJudgeResult
+    mock_llm: BaseChatModel, judge_result: HaikuJudgeResult
 ) -> None:
     model = create_haiku_judge_model(mock_llm)
     result = model.invoke(
@@ -77,4 +77,4 @@ def test_create_haiku_judge_model_invokes_with_topic_and_haiku(
             "haiku": "Leaves fall silently\nCrisp air and golden colors\nWinter is coming",
         }
     )
-    assert result == mock_judge_result
+    assert result == judge_result

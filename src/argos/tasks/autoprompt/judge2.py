@@ -11,7 +11,8 @@ from langchain.chat_models import init_chat_model
 from langgraph.constants import END, START
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 
-from argos.nodes import HaikuJudgeState, make_haiku_judge_node
+from argos.models.haiku_judge import create_haiku_judge_model
+from argos.nodes import HaikuJudgeState, HaikuState
 
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
@@ -44,10 +45,14 @@ def create_judge_graph(config: LlmConfig) -> CompiledStateGraph:
     logger.info(
         f"class: {type(llm).__name__} | model: {model_version} | temperature: {llm.temperature}"
     )
+    judge = create_haiku_judge_model(llm=llm, system_prompt=config.system_prompt)
+
+    def judge_node(state: HaikuState) -> dict:
+        return {"evaluation": judge.invoke({"topic": state["topic"], "haiku": state["haiku"]})}
 
     graph_builder = StateGraph(HaikuJudgeState)
 
-    graph_builder.add_node("judge", make_haiku_judge_node(llm, system_prompt=config.system_prompt))
+    graph_builder.add_node("judge", judge_node)
 
     graph_builder.add_edge(START, "judge")
     graph_builder.add_edge("judge", END)

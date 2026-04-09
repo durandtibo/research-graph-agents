@@ -59,13 +59,27 @@ class BinaryClassificationResults:
         metric_lines = [
             f"{name:<11} {make_bar(value, length=20)}  {value:.4f}" for name, value in metrics
         ]
-        metric_lines[0] = metric_lines[0] + f"  ({self.true_positive + self.true_negative:,}/{self.n_samples:,})"
-        metric_lines[1] = metric_lines[1] + f"  ({self.true_positive:,}/{self.true_positive + self.false_positive:,})"
-        metric_lines[2] = metric_lines[2] + f"  ({self.true_positive:,}/{self.true_positive + self.false_negative:,})"
-        metric_lines[3] = metric_lines[3] + f"  ({self.true_negative:,}/{self.true_negative + self.false_positive:,})"
+        metric_lines[0] = (
+            metric_lines[0] + f"  ({self.true_positive + self.true_negative:,}/{self.n_samples:,})"
+        )
+        metric_lines[1] = (
+            metric_lines[1]
+            + f"  ({self.true_positive:,}/{self.true_positive + self.false_positive:,})"
+        )
+        metric_lines[2] = (
+            metric_lines[2]
+            + f"  ({self.true_positive:,}/{self.true_positive + self.false_negative:,})"
+        )
+        metric_lines[3] = (
+            metric_lines[3]
+            + f"  ({self.true_negative:,}/{self.true_negative + self.false_positive:,})"
+        )
         metric_text = "\n".join(metric_lines)
 
-        confusion = f"Confusion Matrix: TP={self.true_positive}  TN={self.true_negative}  FP={self.false_positive}  FN={self.false_negative}"
+        confusion = (
+            f"Confusion Matrix: TP={self.true_positive}  TN={self.true_negative}  "
+            f"FP={self.false_positive}  FN={self.false_negative}"
+        )
 
         return f"{header}\n{separator}\n{metric_text}\n\n{confusion}"
 

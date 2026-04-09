@@ -17,10 +17,10 @@ class BinaryClassificationResults:
     Attributes:
         n_samples: The total number of samples in the DataFrame.
         accuracy: The proportion of correct predictions.
-        tp: True positives - correctly predicted positive cases.
-        tn: True negatives - correctly predicted negative cases.
-        fp: False positives - negative cases predicted as positive.
-        fn: False negatives - positive cases predicted as negative.
+        true_positive: True positives - correctly predicted positive cases.
+        true_negative: True negatives - correctly predicted negative cases.
+        false_positive: False positives - negative cases predicted as positive.
+        false_negative: False negatives - positive cases predicted as negative.
         precision: Of all positive predictions, how many were correct.
         recall: Of all target positives, how many were correctly predicted.
         f1_score: Harmonic mean of precision and recall.
@@ -29,10 +29,10 @@ class BinaryClassificationResults:
 
     n_samples: int
     accuracy: float
-    tp: int
-    tn: int
-    fp: int
-    fn: int
+    true_positive: int
+    true_negative: int
+    false_positive: int
+    false_negative: int
     precision: float
     recall: float
     f1_score: float
@@ -59,13 +59,13 @@ class BinaryClassificationResults:
         metric_lines = [
             f"{name:<11} {make_bar(value, length=20)}  {value:.4f}" for name, value in metrics
         ]
-        metric_lines[0] = metric_lines[0] + f"  ({self.tp + self.tn:,}/{self.n_samples:,})"
-        metric_lines[1] = metric_lines[1] + f"  ({self.tp:,}/{self.tp + self.fp:,})"
-        metric_lines[2] = metric_lines[2] + f"  ({self.tp:,}/{self.tp + self.fn:,})"
-        metric_lines[3] = metric_lines[3] + f"  ({self.tn:,}/{self.tn + self.fp:,})"
+        metric_lines[0] = metric_lines[0] + f"  ({self.true_positive + self.true_negative:,}/{self.n_samples:,})"
+        metric_lines[1] = metric_lines[1] + f"  ({self.true_positive:,}/{self.true_positive + self.false_positive:,})"
+        metric_lines[2] = metric_lines[2] + f"  ({self.true_positive:,}/{self.true_positive + self.false_negative:,})"
+        metric_lines[3] = metric_lines[3] + f"  ({self.true_negative:,}/{self.true_negative + self.false_positive:,})"
         metric_text = "\n".join(metric_lines)
 
-        confusion = f"Confusion Matrix: TP={self.tp}  TN={self.tn}  FP={self.fp}  FN={self.fn}"
+        confusion = f"Confusion Matrix: TP={self.true_positive}  TN={self.true_negative}  FP={self.false_positive}  FN={self.false_negative}"
 
         return f"{header}\n{separator}\n{metric_text}\n\n{confusion}"
 
@@ -130,10 +130,10 @@ def compute_binary_classification_metrics(
     return BinaryClassificationResults(
         n_samples=n_samples,
         accuracy=accuracy,
-        tp=tp,
-        tn=tn,
-        fp=fp,
-        fn=fn,
+        true_positive=tp,
+        true_negative=tn,
+        false_positive=fp,
+        false_negative=fn,
         precision=precision,
         recall=recall,
         f1_score=f1_score,

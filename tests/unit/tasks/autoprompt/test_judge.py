@@ -67,17 +67,12 @@ def mock_dataset() -> pl.DataFrame:
 
 @pytest.fixture
 def mock_llm() -> BaseChatModel:
-    llm = Mock(spec=BaseChatModel)
-    llm.model = "gpt-4o"
-    llm.temperature = 0
-    return llm
+    return Mock(spec=BaseChatModel, model="gpt-4o", temperature=0)
 
 
 @pytest.fixture
 def mock_graph(mock_outputs: list[dict[str, Any]]) -> CompiledStateGraph:
-    graph = Mock(spec=CompiledStateGraph)
-    graph.batch.side_effect = [mock_outputs]
-    return graph
+    return Mock(spec=CompiledStateGraph, batch=Mock(side_effect=[mock_outputs]))
 
 
 @pytest.fixture

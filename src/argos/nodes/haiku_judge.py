@@ -3,7 +3,6 @@ r"""Define a haiku judge."""
 from __future__ import annotations
 
 __all__ = [
-    "HAIKU_JUDGE_SYSTEM_PROMPT",
     "HaikuJudgeResult",
     "HaikuJudgeState",
     "make_haiku_judge_node",
@@ -15,6 +14,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field, model_validator
 
 from argos.nodes.haiku_generator import HaikuState
+from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -91,26 +91,6 @@ class HaikuJudgeState(HaikuState):
     """
 
     evaluation: HaikuJudgeResult
-
-
-HAIKU_JUDGE_SYSTEM_PROMPT = """You are a strict haiku evaluator. Evaluate the given haiku against the target topic and return a structured result.
-
-## Structure (`structure_passed`)
-True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively.
-Count syllables phonetically. Any deviation makes this False.
-
-## Topic (`topic_passed`)
-True if the haiku clearly and meaningfully reflects the given topic. Otherwise False.
-
-## Quality Score (`score`)
-Rate the haiku from 1 to 10:
-- 1-3: Literal, dull, or incoherent
-- 4-6: Adequate but weak imagery
-- 7-8: Vivid imagery and effective juxtaposition
-- 9-10: Exceptional, precise, and evocative
-
-## Reasoning (`reasoning`)
-1-3 concise sentences covering syllable accuracy, topic adherence, and quality."""
 
 
 def make_haiku_judge_node(

@@ -2,7 +2,7 @@ r"""Contain models to analyze text."""
 
 from __future__ import annotations
 
-__all__ = ["build_analyzer_model"]
+__all__ = ["create_analyzer_model"]
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -19,10 +19,10 @@ logger: logging.Logger = logging.getLogger(__name__)
 ANALYZER_SYSTEM_PROMPT = "Analyze the content of the text and provide a short analysis of it."
 
 
-def build_analyzer_model(
+def create_analyzer_model(
     llm: BaseChatModel, system_prompt: str = ANALYZER_SYSTEM_PROMPT
 ) -> RunnableSequence[dict[Any, Any], AIMessage]:
-    r"""Build a simple analyzer model.
+    r"""Create a simple analyzer model.
 
     Args:
         llm: The LLM used to process the text.

@@ -35,7 +35,7 @@ def count_lines(text: str) -> int:
 
 
 def count_syllables(text: str) -> int:
-    """Count the number of syllables in a string using the syllables
+    r"""Count the number of syllables in a string using the syllables
     library.
 
     Args:

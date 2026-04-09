@@ -1,4 +1,10 @@
-r"""Contain code to run the autoprompt on the haiku dataset."""
+r"""Contain an alternative LangGraph builder for the haiku judge.
+
+This module provides a :func:`create_judge_graph` function that
+constructs a compiled :class:`~langgraph.graph.StateGraph` using a
+fully configured :class:`~argos.models.haiku_judge.create_haiku_judge_model`
+chain, driven by an :class:`~argos.tasks.autoprompt.config.LlmConfig`.
+"""
 
 from __future__ import annotations
 

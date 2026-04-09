@@ -1,4 +1,4 @@
-r"""Contain models to analyze text."""
+r"""Contain model factory functions for the haiku judge."""
 
 from __future__ import annotations
 

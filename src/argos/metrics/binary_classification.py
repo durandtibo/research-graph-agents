@@ -158,6 +158,8 @@ def compute_binary_classification_metrics(
         4
         >>> results.accuracy
         0.5
+
+        ```
     """
     if df.is_empty():
         msg = "DataFrame is empty."

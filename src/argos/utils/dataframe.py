@@ -79,8 +79,8 @@ def summarize_boolean_columns(df: pl.DataFrame) -> pl.DataFrame:
         - ``column``: the name of the original column.
         - ``true_count``: number of True values.
         - ``false_count``: number of False values.
-        - ``true_pct``: percentage of True values (0-100), rounded to 2 decimal places.
-        - ``false_pct``: percentage of False values (0-100), rounded to 2 decimal places.
+        - ``true_pct``: percentage of True values (0-100).
+        - ``false_pct``: percentage of False values (0-100).
 
     Raises:
         ValueError: If any column in ``df`` is not of boolean dtype.

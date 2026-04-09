@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from argos.tasks.autoprompt.config import ExperimentConfig, LlmConfig
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 #############################
 #     Tests for LlmConfig   #

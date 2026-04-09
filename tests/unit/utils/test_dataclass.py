@@ -11,12 +11,6 @@ class Point:
     y: float
 
 
-@dataclass
-class Line:
-    start: Point
-    end: Point
-
-
 #######################################
 #     Tests for dataclass_to_dict     #
 #######################################
@@ -70,4 +64,3 @@ def test_dataclass_to_dict_list_of_multiple_dataclasses() -> None:
 
 def test_dataclass_to_dict_empty_dict() -> None:
     assert dataclass_to_dict({}) == {}
-

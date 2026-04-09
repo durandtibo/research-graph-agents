@@ -4,9 +4,10 @@ from __future__ import annotations
 
 __all__ = ["BinaryClassificationResults", "compute_binary_classification_metrics"]
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 import polars as pl
+from coola.equality import objects_are_allclose, objects_are_equal
 from coola.utils.format import make_bar
 
 
@@ -38,6 +39,48 @@ class BinaryClassificationResults:
     f1_score: float
     specificity: float
 
+    def allclose(
+        self,
+        other: object,
+        *,
+        rtol: float = 1e-5,
+        atol: float = 1e-8,
+        equal_nan: bool = False,
+    ) -> bool:
+        r"""Indicate whether two objects are equal within a tolerance.
+
+        Args:
+            other: The object to be compared with.
+            rtol: The relative tolerance parameter. Must be non-negative.
+            atol: The absolute tolerance parameter. Must be non-negative.
+            equal_nan: If ``True``, then two ``NaN``s  will be considered
+                as equal.
+
+        Returns:
+            ``True`` if the two objects are (element-wise) equal within a
+                tolerance, otherwise ``False``
+        """
+        if type(other) is not type(self):
+            return False
+        return objects_are_allclose(
+            asdict(self), asdict(other), atol=atol, rtol=rtol, equal_nan=equal_nan
+        )
+
+    def equal(self, other: object, *, equal_nan: bool = False) -> bool:
+        r"""Indicate whether two objects are equal.
+
+        Args:
+            other: The object to be compared with.
+            equal_nan: If ``True``, then two ``NaN``s  will be considered
+                as equal.
+
+        Returns:
+            ``True`` if the two objects are (element-wise) equal, otherwise ``False``
+        """
+        if type(other) is not type(self):
+            return False
+        return objects_are_equal(asdict(self), asdict(other), equal_nan=equal_nan)
+
     def to_str(self) -> str:
         r"""Return a human-friendly text representation of the
         classification results.
@@ -59,13 +102,27 @@ class BinaryClassificationResults:
         metric_lines = [
             f"{name:<11} {make_bar(value, length=20)}  {value:.4f}" for name, value in metrics
         ]
-        metric_lines[0] = metric_lines[0] + f"  ({self.true_positive + self.true_negative:,}/{self.n_samples:,})"
-        metric_lines[1] = metric_lines[1] + f"  ({self.true_positive:,}/{self.true_positive + self.false_positive:,})"
-        metric_lines[2] = metric_lines[2] + f"  ({self.true_positive:,}/{self.true_positive + self.false_negative:,})"
-        metric_lines[3] = metric_lines[3] + f"  ({self.true_negative:,}/{self.true_negative + self.false_positive:,})"
+        metric_lines[0] = (
+            metric_lines[0] + f"  ({self.true_positive + self.true_negative:,}/{self.n_samples:,})"
+        )
+        metric_lines[1] = (
+            metric_lines[1]
+            + f"  ({self.true_positive:,}/{self.true_positive + self.false_positive:,})"
+        )
+        metric_lines[2] = (
+            metric_lines[2]
+            + f"  ({self.true_positive:,}/{self.true_positive + self.false_negative:,})"
+        )
+        metric_lines[3] = (
+            metric_lines[3]
+            + f"  ({self.true_negative:,}/{self.true_negative + self.false_positive:,})"
+        )
         metric_text = "\n".join(metric_lines)
 
-        confusion = f"Confusion Matrix: TP={self.true_positive}  TN={self.true_negative}  FP={self.false_positive}  FN={self.false_negative}"
+        confusion = (
+            f"Confusion Matrix: TP={self.true_positive}  TN={self.true_negative}  "
+            f"FP={self.false_positive}  FN={self.false_negative}"
+        )
 
         return f"{header}\n{separator}\n{metric_text}\n\n{confusion}"
 

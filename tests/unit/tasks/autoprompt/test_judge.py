@@ -71,12 +71,12 @@ def mock_llm() -> BaseChatModel:
 
 
 @pytest.fixture
-def mock_graph(mock_outputs: list[dict[str, Any]]) -> CompiledStateGraph:
-    return Mock(spec=CompiledStateGraph, batch=Mock(side_effect=[mock_outputs]))
+def mock_graph(mock_outrue_positiveuts: list[dict[str, Any]]) -> CompiledStateGraph:
+    return Mock(spec=CompiledStateGraph, batch=Mock(side_effect=[mock_outrue_positiveuts]))
 
 
 @pytest.fixture
-def mock_outputs() -> list[dict[str, Any]]:
+def mock_outrue_positiveuts() -> list[dict[str, Any]]:
     return [
         {
             "topic": "rain",

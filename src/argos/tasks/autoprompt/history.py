@@ -62,14 +62,6 @@ class JsonHistory(BaseHistory):
         return self._path
 
     def append(self, data: dict[Any, Any]) -> None:
-        r"""Append data to the JSON history file.
-
-        Loads the current history from disk, appends ``data``, and
-        writes the updated list back to the file.
-
-        Args:
-            data: The data to append to the history.
-        """
         logger.info("Appending data to the history...")
         history = load_json(self._path)
         history.append(data)

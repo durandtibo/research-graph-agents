@@ -2,7 +2,7 @@ r"""Contain model factory functions for the haiku judge."""
 
 from __future__ import annotations
 
-__all__ = ["create_haiku_judge_model"]
+__all__ = ["HaikuJudgeResult", "create_haiku_judge_model"]
 
 import logging
 from typing import TYPE_CHECKING, Self

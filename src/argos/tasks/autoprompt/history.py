@@ -91,5 +91,4 @@ class JsonHistory(BaseHistory):
         return load_json(self._path)
 
     def clear(self) -> None:
-        r"""Clear the history by overwriting the JSON file with an empty list."""
         save_json([], self._path, exist_ok=True)

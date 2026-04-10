@@ -153,7 +153,9 @@ def compute_binary_classification_metrics(
         >>> import polars as pl
         >>> from argos.metrics import compute_binary_classification_metrics
         >>> df = pl.DataFrame({"target": [1, 0, 1, 0], "predicted": [1, 0, 0, 1]})
-        >>> results = compute_binary_classification_metrics(df, target_col="target", predict_col="predicted")
+        >>> results = compute_binary_classification_metrics(
+        ...     df, target_col="target", predict_col="predicted"
+        ... )
         >>> results.n_samples
         4
         >>> results.accuracy

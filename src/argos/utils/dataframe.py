@@ -6,7 +6,12 @@ from typing import Any
 
 import polars as pl
 
-__all__ = ["concat_and_merge", "list_of_dicts_to_dataframe", "summarize_boolean_columns"]
+__all__ = [
+    "concat_and_merge",
+    "list_of_dicts_to_dataframe",
+    "summarize_boolean_columns",
+    "unnest_struct_columns",
+]
 
 from argos.utils.mapping import recursive_to_dict
 
@@ -143,3 +148,21 @@ def summarize_boolean_columns(df: pl.DataFrame) -> pl.DataFrame:
             (pl.col("false_count") / n_rows * 100).alias("false_pct"),
         ]
     )
+
+
+def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> pl.DataFrame:
+    r"""Unnest all the struct columns in a DataFrame.
+
+    Args:
+        frame: A DataFrame that can have struct columns.
+        separator: Rename output column names as combination of the struct column name,
+            name separator and field name.
+
+    Returns:
+        A DataFrame where all the struct columns are unnested.
+    """
+    struct_columns = [
+        col_name for col_name, dtype in frame.schema.items() if isinstance(dtype, pl.Struct)
+    ]
+
+    return frame.unnest(struct_columns, separator=separator)

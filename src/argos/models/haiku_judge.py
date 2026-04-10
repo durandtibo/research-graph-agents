@@ -5,11 +5,11 @@ from __future__ import annotations
 __all__ = ["create_haiku_judge_model"]
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from langchain_core.prompts import ChatPromptTemplate
+from pydantic import BaseModel, Field, model_validator
 
-from argos.nodes.haiku_judge import HaikuJudgeResult
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 
 if TYPE_CHECKING:
@@ -17,6 +17,63 @@ if TYPE_CHECKING:
     from langchain_core.runnables import Runnable
 
 logger: logging.Logger = logging.getLogger(__name__)
+
+
+class HaikuJudgeResult(BaseModel):
+    r"""Define the structured result produced by the haiku judge LLM.
+
+    ``structure_passed``, ``topic_passed``, ``score``, and
+    ``reasoning`` are populated by the LLM via structured output.
+    ``passed`` is always derived automatically from those fields by the
+    model validator, so it is guaranteed to be consistent.
+
+    Attributes:
+        structure_passed: ``True`` only if the haiku has exactly three
+            lines with syllable counts of 5, 7, and 5 respectively.
+        topic_passed: ``True`` if the haiku meaningfully addresses the
+            target topic, otherwise ``False``.
+        score: Quality score from 1 to 10 based on imagery, emotional
+            resonance, and word choice. Constrained to the range
+            ``[1, 10]``.
+        reasoning: A brief explanation justifying the score, topic
+            adherence, and structure evaluation.
+        passed: Derived automatically: ``True`` only if
+            ``structure_passed`` and ``topic_passed`` are both ``True``
+            and ``score >= 7``. Any LLM-provided value is overwritten
+            by the :meth:`compute_passed` model validator.
+    """
+
+    structure_passed: bool = Field(
+        description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
+    )
+    topic_passed: bool = Field(
+        description="True if the haiku meaningfully addresses the target topic, otherwise False."
+    )
+    score: int = Field(
+        ge=1,
+        le=10,
+        description=(
+            "Quality score from 1-10 based on imagery, emotional resonance, and word choice."
+        ),
+    )
+    reasoning: str = Field(
+        description="A brief explanation justifying the score, topic adherence, and structure."
+    )
+    passed: bool = Field(
+        default=False,
+        description="Derived automatically: True ONLY if structure_passed AND topic_passed AND score >= 7.",
+    )
+
+    @model_validator(mode="after")
+    def compute_passed(self) -> Self:
+        r"""Compute ``passed`` from the contributing fields.
+
+        Overrides any LLM-provided value to guarantee that ``passed``
+        is always consistent with ``structure_passed``,
+        ``topic_passed``, and ``score``.
+        """
+        self.passed = self.structure_passed and self.topic_passed and self.score >= 7
+        return self
 
 
 def create_haiku_judge_model(

@@ -1,10 +1,23 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
-from argos.utils.dataframe import concat_and_merge, summarize_boolean_columns
+from argos.utils.dataframe import (
+    concat_and_merge,
+    list_of_dicts_to_dataframe,
+    summarize_boolean_columns,
+)
+
+
+@dataclass
+class User:
+    name: str
+    age: int
+
 
 ######################################
 #     Tests for concat_and_merge     #
@@ -104,6 +117,86 @@ def test_concat_and_merge_row_count_mismatch_raises() -> None:
     df2 = pl.DataFrame({"b": [1, 2]})
     with pytest.raises(ValueError, match="DataFrames must have the same number of rows"):
         concat_and_merge(df1, df2)
+
+
+################################################
+#     Tests for list_of_dicts_to_dataframe     #
+################################################
+
+
+def test_list_of_dicts_to_dataframe_one_column() -> None:
+    assert_frame_equal(
+        list_of_dicts_to_dataframe([{"col1": 1}, {"col1": 2}, {"col1": 3}]),
+        pl.DataFrame({"col1": [1, 2, 3]}, schema={"col1": pl.Int64}),
+    )
+
+
+def test_list_of_dicts_to_dataframe_two_columns() -> None:
+    assert_frame_equal(
+        list_of_dicts_to_dataframe(
+            [{"col1": 1, "col2": "a"}, {"col1": 2, "col2": "b"}, {"col1": 3, "col2": "c"}]
+        ),
+        pl.DataFrame(
+            {"col1": [1, 2, 3], "col2": ["a", "b", "c"]},
+            schema={"col1": pl.Int64, "col2": pl.String},
+        ),
+    )
+
+
+def test_list_of_dicts_to_dataframe_nested_dict() -> None:
+    assert_frame_equal(
+        list_of_dicts_to_dataframe(
+            [
+                {"col1": 1, "col2": "a", "user": {"name": "Alice", "age": 21}},
+                {"col1": 2, "col2": "b", "user": {"name": "Bob", "age": 22}},
+                {"col1": 3, "col2": "c", "user": {"name": "Charlie", "age": 23}},
+            ]
+        ),
+        pl.DataFrame(
+            {
+                "col1": [1, 2, 3],
+                "col2": ["a", "b", "c"],
+                "user": [
+                    {"name": "Alice", "age": 21},
+                    {"name": "Bob", "age": 22},
+                    {"name": "Charlie", "age": 23},
+                ],
+            },
+            schema={
+                "col1": pl.Int64,
+                "col2": pl.String,
+                "user": pl.Struct([pl.Field("name", pl.String), pl.Field("age", pl.Int64)]),
+            },
+        ),
+    )
+
+
+def test_list_of_dicts_to_dataframe_nested_dataclass() -> None:
+    assert_frame_equal(
+        list_of_dicts_to_dataframe(
+            [
+                {"col1": 1, "col2": "a", "user": User(name="Alice", age=21)},
+                {"col1": 2, "col2": "b", "user": User(name="Bob", age=22)},
+                {"col1": 3, "col2": "c", "user": User(name="Charlie", age=23)},
+            ]
+        ),
+        pl.DataFrame(
+            {
+                "col1": [1, 2, 3],
+                "col2": ["a", "b", "c"],
+                "user": [
+                    {"name": "Alice", "age": 21},
+                    {"name": "Bob", "age": 22},
+                    {"name": "Charlie", "age": 23},
+                ],
+            },
+            schema={
+                "col1": pl.Int64,
+                "col2": pl.String,
+                "user": pl.Struct([pl.Field("name", pl.String), pl.Field("age", pl.Int64)]),
+            },
+        ),
+    )
 
 
 ###############################################

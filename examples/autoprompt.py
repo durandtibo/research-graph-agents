@@ -16,7 +16,7 @@ from argos.tasks.autoprompt.dataset import prepare_dataset
 from argos.tasks.autoprompt.evaluator import HaikuJudgeEvaluator
 from argos.tasks.autoprompt.history import BaseHistory, JsonHistory
 from argos.tasks.autoprompt.inference import InferencePipeline
-from argos.tasks.autoprompt.judge2 import create_judge_graph
+from argos.tasks.autoprompt.judge import create_judge_graph
 from argos.tasks.autoprompt.predictor import Predictor
 from argos.tasks.autoprompt.prompt import generate_next_judge_system_prompt
 from argos.utils.logging import configure_logging, log_markdown

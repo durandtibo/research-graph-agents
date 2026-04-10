@@ -10,9 +10,9 @@ from langgraph.graph.state import CompiledStateGraph
 
 from argos.models.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.config import LlmConfig
-from argos.tasks.autoprompt.judge2 import create_judge_graph
+from argos.tasks.autoprompt.judge import create_judge_graph
 
-MODULE = "argos.tasks.autoprompt.judge2"
+MODULE = "argos.tasks.autoprompt.judge"
 
 
 @pytest.fixture

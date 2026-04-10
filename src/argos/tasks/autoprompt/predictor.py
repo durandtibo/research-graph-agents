@@ -11,13 +11,14 @@ from typing import TYPE_CHECKING, Any
 import polars as pl
 from coola.utils.format import repr_indent, repr_mapping
 from coola.utils.timing import timeblock
+from langchain_core.runnables import Runnable, RunnableConfig
 
 from argos.utils.batching import batchify
-from argos.utils.dataframe import concat_and_merge
+from argos.utils.dataframe import concat_and_merge, unnest_struct_columns
+from argos.utils.mapping import recursive_to_dict
 
 if TYPE_CHECKING:
-    from langgraph.graph.state import CompiledStateGraph
-
+    from collections.abc import Sequence
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -41,57 +42,78 @@ class Predictor(BasePredictor):
     r"""Implement a simple predictor.
 
     Args:
-        graph: The graph of the haiku judge.
+        model: The model.
         batch_size: The batch size for inference.
+        output_columns: Select the columns to return. If ``None``, all the columns are returned.
+        config: A runnable config.
     """
 
-    def __init__(self, graph: CompiledStateGraph, batch_size: int = 20) -> None:
-        self._graph = graph
+    def __init__(
+        self,
+        model: Runnable[Any, Any],
+        batch_size: int = 20,
+        output_columns: Sequence[str] | None = None,
+        config: RunnableConfig | None = None,
+    ) -> None:
+        self._model = model
         self._batch_size = batch_size
+        self._output_columns = output_columns
+        self._config = config or RunnableConfig(max_concurrency=batch_size)
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"graph": self._graph, "batch_size": self._batch_size}))
+        args = repr_indent(
+            repr_mapping(
+                {
+                    "model": self._model,
+                    "batch_size": self._batch_size,
+                    "output_columns": self._output_columns,
+                    "config": self._config,
+                }
+            )
+        )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
-        r"""Compute the predictions for the given dataset.
-
-        Args:
-            dataset: The dataset to predict on.
-
-        Returns:
-            A :class:`~polars.DataFrame` containing the predictions
-                for each row in ``dataset``.
-        """
-        return generate_predictions(dataset=dataset, graph=self._graph, batch_size=self._batch_size)
+        predictions = generate_predictions(
+            model=self._model,
+            dataset=dataset,
+            batch_size=self._batch_size,
+            config=self._config,
+        )
+        if self._output_columns is not None:
+            predictions = predictions.select(self._output_columns)
+        return predictions
 
 
 def generate_predictions(
-    dataset: pl.DataFrame, graph: CompiledStateGraph, batch_size: int = 20
+    model: Runnable[Any, Any],
+    dataset: pl.DataFrame,
+    batch_size: int = 20,
+    config: RunnableConfig | None = None,
 ) -> pl.DataFrame:
     r"""Run the inference and returns the results in a DataFrame.
 
     Args:
         dataset: The dataset to run inference on.
-        graph: The graph of the haiku judge.
+        model: The model used to generate the predictions.
         batch_size: The batch size for inference.
+        config: A runnable config.
 
     Returns:
         The results of the inference.
     """
     logger.info(f"Running inference with {batch_size:,} batches...")
-    outputs = []
-    examples = list(dataset.iter_rows(named=True))
-    batches = batchify(examples, size=batch_size)
+    batches = batchify(list(dataset.iter_rows(named=True)), size=batch_size)
 
+    outputs = []
     with timeblock(message="LLM inference time: {time}"):
         for index, batch in enumerate(batches):
             logger.info(f"--- Processing Batch {index + 1} ---")
-            output = graph.batch(batch, config={"max_concurrency": batch_size})
-            outputs.extend(output)
+            outputs.extend(model.batch(batch, config=config))
 
-    logger.info("Preparing results...")
-    return prepare_results(dataset, outputs)
+    logger.info("Preparing predictions...")
+    predictions = pl.from_dicts(recursive_to_dict(outputs))
+    return concat_and_merge(dataset, unnest_struct_columns(predictions))
 
 
 def prepare_results(dataset: pl.DataFrame, outputs: list[dict[Any, Any]]) -> pl.DataFrame:

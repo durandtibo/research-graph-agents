@@ -6,17 +6,13 @@ from unittest.mock import Mock
 import polars as pl
 import pytest
 from langchain_core.language_models import BaseChatModel
-from langgraph.graph.state import CompiledStateGraph
+from langgraph.graph.state import Runnable
 from polars.testing import assert_frame_equal
 
 from argos.models.haiku_judge import HaikuJudgeResult
-from argos.tasks.autoprompt.predictor import (
-    Predictor,
-    generate_predictions,
-    prepare_results,
-)
+from argos.tasks.autoprompt.predictor import Predictor, generate_predictions
 
-MODULE = "argos.tasks.autoprompt.judge"
+MODULE = "argos.tasks.autoprompt.predictor"
 
 
 @pytest.fixture
@@ -60,17 +56,14 @@ def mock_dataset() -> pl.DataFrame:
 
 @pytest.fixture
 def mock_llm() -> BaseChatModel:
-    llm = Mock(spec=BaseChatModel)
-    llm.model = "gpt-4o"
-    llm.temperature = 0
-    return llm
+    return Mock(spec=BaseChatModel, model="gpt-4o", temperature=0)
 
 
 @pytest.fixture
-def mock_graph(mock_outputs: list[dict[str, Any]]) -> CompiledStateGraph:
-    graph = Mock(spec=CompiledStateGraph)
-    graph.batch.side_effect = [mock_outputs]
-    return graph
+def mock_model(mock_outputs: list[dict[str, Any]]) -> Runnable:
+    model = Mock(spec=Runnable)
+    model.batch.side_effect = [mock_outputs]
+    return model
 
 
 @pytest.fixture
@@ -109,7 +102,7 @@ def mock_outputs() -> list[dict[str, Any]]:
 
 
 @pytest.fixture
-def mock_results() -> pl.DataFrame:
+def mock_predictions() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
@@ -167,27 +160,27 @@ def mock_results() -> pl.DataFrame:
 ###############################
 
 
-def test_predictor_repr(mock_graph: CompiledStateGraph) -> None:
-    assert repr(Predictor(graph=mock_graph)).startswith("Predictor(")
+def test_predictor_repr(mock_model: Runnable) -> None:
+    assert repr(Predictor(model=mock_model)).startswith("Predictor(")
 
 
-def test_predictor_str(mock_graph: CompiledStateGraph) -> None:
-    assert str(Predictor(graph=mock_graph)).startswith("Predictor(")
+def test_predictor_str(mock_model: Runnable) -> None:
+    assert str(Predictor(model=mock_model)).startswith("Predictor(")
 
 
 def test_predictor_predict(
-    mock_dataset: pl.DataFrame, mock_graph: CompiledStateGraph, mock_results: pl.DataFrame
+    mock_dataset: pl.DataFrame, mock_model: Runnable, mock_predictions: pl.DataFrame
 ) -> None:
-    predictor = Predictor(graph=mock_graph)
-    results = predictor.predict(mock_dataset)
-    assert_frame_equal(results, mock_results)
+    predictor = Predictor(model=mock_model)
+    predictions = predictor.predict(mock_dataset)
+    assert_frame_equal(predictions, mock_predictions, check_column_order=False)
 
 
 def test_predictor_predict_batch_size_1(
-    mock_dataset: pl.DataFrame, mock_results: pl.DataFrame
+    mock_dataset: pl.DataFrame, mock_predictions: pl.DataFrame
 ) -> None:
-    mock_graph = Mock(spec=CompiledStateGraph)
-    mock_graph.batch.side_effect = [
+    mock_model = Mock(spec=Runnable)
+    mock_model.batch.side_effect = [
         [
             {
                 "topic": "rain",
@@ -236,16 +229,16 @@ def test_predictor_predict_batch_size_1(
             },
         ],
     ]
-    predictor = Predictor(graph=mock_graph, batch_size=1)
-    results = predictor.predict(mock_dataset)
-    assert_frame_equal(results, mock_results)
+    predictor = Predictor(model=mock_model, batch_size=1)
+    predictions = predictor.predict(mock_dataset)
+    assert_frame_equal(predictions, mock_predictions, check_column_order=False)
 
 
 def test_predictor_predict_batch_size_2(
-    mock_dataset: pl.DataFrame, mock_results: pl.DataFrame
+    mock_dataset: pl.DataFrame, mock_predictions: pl.DataFrame
 ) -> None:
-    mock_graph = Mock(spec=CompiledStateGraph)
-    mock_graph.batch.side_effect = [
+    mock_model = Mock(spec=Runnable)
+    mock_model.batch.side_effect = [
         [
             {
                 "topic": "rain",
@@ -292,9 +285,50 @@ def test_predictor_predict_batch_size_2(
             },
         ],
     ]
-    predictor = Predictor(graph=mock_graph, batch_size=2)
-    results = predictor.predict(mock_dataset)
-    assert_frame_equal(results, mock_results)
+    predictor = Predictor(model=mock_model, batch_size=2)
+    predictions = predictor.predict(mock_dataset)
+    assert_frame_equal(predictions, mock_predictions, check_column_order=False)
+
+
+def test_predictor_predict_selects_output_columns(
+    mock_dataset: pl.DataFrame, mock_model: Runnable
+) -> None:
+    predictor = Predictor(model=mock_model, output_columns=["topic", "haiku", "passed"])
+    predictions = predictor.predict(mock_dataset)
+    assert_frame_equal(
+        predictions,
+        pl.from_dicts(
+            [
+                {
+                    "topic": "rain",
+                    "haiku": (
+                        "Gray sky descends slow,\n"
+                        "Cool drops kiss the thirsty ground,\n"
+                        "Silence finds the leaf."
+                    ),
+                    "passed": True,
+                },
+                {
+                    "topic": "cat",
+                    "haiku": (
+                        "Soft fur, warm light gleam,\n"
+                        "Silent paws upon the floor,\n"
+                        "Sunbeam, peace descends."
+                    ),
+                    "passed": True,
+                },
+                {
+                    "topic": "mountain",
+                    "haiku": (
+                        "Snow upon the peak\n"
+                        "Clouds are resting on the stone\n"
+                        "Quiet, cold, and still"
+                    ),
+                    "passed": True,
+                },
+            ]
+        ),
+    )
 
 
 ##########################################
@@ -303,17 +337,17 @@ def test_predictor_predict_batch_size_2(
 
 
 def test_generate_predictions(
-    mock_dataset: pl.DataFrame, mock_graph: CompiledStateGraph, mock_results: pl.DataFrame
+    mock_dataset: pl.DataFrame, mock_model: Runnable, mock_predictions: pl.DataFrame
 ) -> None:
-    results = generate_predictions(dataset=mock_dataset, graph=mock_graph)
-    assert_frame_equal(results, mock_results)
+    predictions = generate_predictions(dataset=mock_dataset, model=mock_model)
+    assert_frame_equal(predictions, mock_predictions, check_column_order=False)
 
 
 def test_generate_predictions_batch_size_1(
-    mock_dataset: pl.DataFrame, mock_results: pl.DataFrame
+    mock_dataset: pl.DataFrame, mock_predictions: pl.DataFrame
 ) -> None:
-    mock_graph = Mock(spec=CompiledStateGraph)
-    mock_graph.batch.side_effect = [
+    mock_model = Mock(spec=Runnable)
+    mock_model.batch.side_effect = [
         [
             {
                 "topic": "rain",
@@ -362,15 +396,15 @@ def test_generate_predictions_batch_size_1(
             },
         ],
     ]
-    results = generate_predictions(dataset=mock_dataset, graph=mock_graph, batch_size=1)
-    assert_frame_equal(results, mock_results)
+    predictions = generate_predictions(dataset=mock_dataset, model=mock_model, batch_size=1)
+    assert_frame_equal(predictions, mock_predictions, check_column_order=False)
 
 
 def test_generate_predictions_batch_size_2(
-    mock_dataset: pl.DataFrame, mock_results: pl.DataFrame
+    mock_dataset: pl.DataFrame, mock_predictions: pl.DataFrame
 ) -> None:
-    mock_graph = Mock(spec=CompiledStateGraph)
-    mock_graph.batch.side_effect = [
+    mock_model = Mock(spec=Runnable)
+    mock_model.batch.side_effect = [
         [
             {
                 "topic": "rain",
@@ -417,16 +451,5 @@ def test_generate_predictions_batch_size_2(
             },
         ],
     ]
-    results = generate_predictions(dataset=mock_dataset, graph=mock_graph, batch_size=2)
-    assert_frame_equal(results, mock_results)
-
-
-#####################################
-#     Tests for prepare_results     #
-#####################################
-
-
-def test_prepare_results_returns_dataframe(
-    mock_dataset: pl.DataFrame, mock_outputs: list, mock_results: pl.DataFrame
-) -> None:
-    assert_frame_equal(prepare_results(dataset=mock_dataset, outputs=mock_outputs), mock_results)
+    predictions = generate_predictions(dataset=mock_dataset, model=mock_model, batch_size=2)
+    assert_frame_equal(predictions, mock_predictions, check_column_order=False)

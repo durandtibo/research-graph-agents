@@ -59,12 +59,6 @@ class JsonHistory(BaseHistory):
 
     @property
     def path(self) -> Path:
-        r"""Return the path to the underlying JSON history file.
-
-        Returns:
-            The :class:`~pathlib.Path` to the JSON file used for
-                persistent storage.
-        """
         return self._path
 
     def append(self, data: dict[Any, Any]) -> None:

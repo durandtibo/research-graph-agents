@@ -99,3 +99,52 @@ def test_recursive_to_dict_list_of_multiple_dataclasses() -> None:
 
 def test_recursive_to_dict_empty_dict() -> None:
     assert recursive_to_dict({}) == {}
+
+
+def test_recursive_to_dict_pydantic_model() -> None:
+    assert recursive_to_dict(UserModel(name="Alice", age=30)) == {"name": "Alice", "age": 30}
+
+
+def test_recursive_to_dict_pydantic_model_in_list() -> None:
+    assert recursive_to_dict([UserModel(name="Alice", age=30), UserModel(name="Bob", age=25)]) == [
+        {"name": "Alice", "age": 30},
+        {"name": "Bob", "age": 25},
+    ]
+
+
+def test_recursive_to_dict_pydantic_model_in_dict() -> None:
+    assert recursive_to_dict({"u": UserModel(name="Alice", age=30)}) == {
+        "u": {"name": "Alice", "age": 30}
+    }
+
+
+@dataclass
+class Line:
+    start: Point
+    end: Point
+
+
+def test_recursive_to_dict_nested_dataclass() -> None:
+    assert recursive_to_dict(Line(start=Point(0, 0), end=Point(1, 1))) == {
+        "start": {"x": 0, "y": 0},
+        "end": {"x": 1, "y": 1},
+    }
+
+
+def test_recursive_to_dict_tuple_of_dataclasses() -> None:
+    assert recursive_to_dict((Point(1, 2), Point(3, 4))) == ({"x": 1, "y": 2}, {"x": 3, "y": 4})
+
+
+def test_recursive_to_dict_nested_list() -> None:
+    assert recursive_to_dict([[Point(1, 2)], [Point(3, 4)]]) == [
+        [{"x": 1, "y": 2}],
+        [{"x": 3, "y": 4}],
+    ]
+
+
+def test_recursive_to_dict_float() -> None:
+    assert recursive_to_dict(3.14) == 3.14
+
+
+def test_recursive_to_dict_bool() -> None:
+    assert recursive_to_dict(True) is True

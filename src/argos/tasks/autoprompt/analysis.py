@@ -1,20 +1,18 @@
 r"""Contain prediction error analysis utilities.
 
 This module provides functions to identify haiku examples where the
-judge's predictions disagree with the ground-truth labels, and to
-format those mismatches as human-readable markdown reports.
+judge's predictions disagree with the ground-truth labels, and to format
+those mismatches as human-readable markdown reports.
 """
 
 import logging
-from typing import TYPE_CHECKING, Any
+from pathlib import Path
+from typing import Any
 
 import polars as pl
 from iden.io import save_json
 
 from argos.utils.logging import log_markdown
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 logger: logging.Logger = logging.getLogger(__name__)
 

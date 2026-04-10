@@ -6,6 +6,7 @@ dataset, and persist the results as a Parquet file.
 """
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import polars as pl
@@ -14,22 +15,20 @@ from langchain.chat_models import init_chat_model
 from langgraph.constants import END, START
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 
+from argos.metrics import BinaryClassificationResults
 from argos.nodes import HaikuJudgeState, make_haiku_judge_node
 from argos.tasks.autoprompt.analysis import (
     analyze_errors,
 )
+from argos.tasks.autoprompt.config import ExperimentConfig
 from argos.tasks.autoprompt.dataset import prepare_dataset
 from argos.tasks.autoprompt.evaluation import evaluate_metrics
 from argos.tasks.autoprompt.predictor import prepare_results
 from argos.utils.batching import batchify
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from langchain_core.language_models import BaseChatModel
 
-    from argos.metrics import BinaryClassificationResults
-    from argos.tasks.autoprompt.config import ExperimentConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 

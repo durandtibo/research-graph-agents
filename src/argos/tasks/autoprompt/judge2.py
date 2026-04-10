@@ -1,4 +1,6 @@
-r"""Contain code to run the autoprompt on the haiku dataset."""
+r"""Contain an alternative LangGraph builder for the haiku judge.
+
+"""
 
 from __future__ import annotations
 

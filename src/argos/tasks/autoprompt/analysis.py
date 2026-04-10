@@ -1,13 +1,9 @@
-r"""Contain code to run the autoprompt on the haiku dataset."""
+r"""Contain prediction error analysis utilities.
 
-from __future__ import annotations
-
-__all__ = [
-    "analyze_errors",
-    "find_errors",
-    "format_errors_as_markdown",
-    "format_errors_as_markdown_table",
-]
+This module provides functions to identify haiku examples where the
+judge's predictions disagree with the ground-truth labels, and to
+format those mismatches as human-readable markdown reports.
+"""
 
 import logging
 from typing import TYPE_CHECKING, Any

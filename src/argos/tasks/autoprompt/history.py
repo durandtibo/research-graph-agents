@@ -83,11 +83,6 @@ class JsonHistory(BaseHistory):
         logger.info(f"The new history length is {len(history):,}")
 
     def get_values(self) -> list[dict[Any, Any]]:
-        r"""Return the history values by loading them from the JSON file.
-
-        Returns:
-            The history values as a list of dicts.
-        """
         return load_json(self._path)
 
     def clear(self) -> None:

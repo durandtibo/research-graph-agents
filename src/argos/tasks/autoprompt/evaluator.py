@@ -11,7 +11,7 @@ from coola.utils.format import repr_indent, repr_mapping
 from feu.utils.io import save_json
 
 from argos.tasks.autoprompt.evaluation import evaluate_metrics
-from argos.utils.dataclass import dataclass_to_dict
+from argos.utils.mapping import recursive_to_dict
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -65,7 +65,7 @@ class HaikuJudgeEvaluator(BaseEvaluator):
                 :class:`~argos.metrics.BinaryClassificationResults`
                 values serialised as nested dicts.
         """
-        metrics = dataclass_to_dict(evaluate_metrics(predictions))
+        metrics = recursive_to_dict(evaluate_metrics(predictions))
         if self._path:
             save_json(metrics, self._path, exist_ok=True)
         return metrics

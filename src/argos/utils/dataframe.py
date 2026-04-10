@@ -2,9 +2,18 @@ r"""Utility functions for processing Polars DataFrames."""
 
 from __future__ import annotations
 
+from typing import Any
+
 import polars as pl
 
-__all__ = ["concat_and_merge", "summarize_boolean_columns"]
+__all__ = [
+    "concat_and_merge",
+    "list_of_dicts_to_dataframe",
+    "summarize_boolean_columns",
+    "unnest_struct_columns",
+]
+
+from argos.utils.mapping import recursive_to_dict
 
 _TEMP_SUFFIX = "_temp_right"
 
@@ -61,6 +70,19 @@ def concat_and_merge(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
 
     coalesced = [pl.coalesce(col, f"{col}{_TEMP_SUFFIX}").alias(col) for col in shared_cols]
     return combined.with_columns(coalesced).drop([f"{col}{_TEMP_SUFFIX}" for col in shared_cols])
+
+
+def list_of_dicts_to_dataframe(list_of_dicts: list[dict[Any, Any]]) -> pl.DataFrame:
+    r"""Convert a list of dicts into a DataFrame.
+
+    Args:
+        list_of_dicts: A list of dicts whose keys are columns and whose values are dicts.
+
+    Returns:
+        A DataFrame representation of the list of dicts.
+    """
+    rows = recursive_to_dict(list_of_dicts)
+    return pl.DataFrame(rows)
 
 
 def summarize_boolean_columns(df: pl.DataFrame) -> pl.DataFrame:
@@ -126,3 +148,21 @@ def summarize_boolean_columns(df: pl.DataFrame) -> pl.DataFrame:
             (pl.col("false_count") / n_rows * 100).alias("false_pct"),
         ]
     )
+
+
+def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> pl.DataFrame:
+    r"""Unnest all the struct columns in a DataFrame.
+
+    Args:
+        frame: A DataFrame that can have struct columns.
+        separator: Rename output column names as combination of the struct column name,
+            name separator and field name.
+
+    Returns:
+        A DataFrame where all the struct columns are unnested.
+    """
+    struct_columns = [
+        col_name for col_name, dtype in frame.schema.items() if isinstance(dtype, pl.Struct)
+    ]
+
+    return frame.unnest(struct_columns, separator=separator)

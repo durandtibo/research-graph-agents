@@ -6,8 +6,7 @@ import pytest
 from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import Runnable, RunnableLambda
 
-from argos.models.haiku_judge import create_haiku_judge_model
-from argos.nodes.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeResult, create_haiku_judge_model
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 
 
@@ -30,6 +29,105 @@ def mock_llm(judge_result: HaikuJudgeResult) -> BaseChatModel:
             return_value=RunnableLambda(lambda x: judge_result)  # noqa: ARG005
         ),
     )
+
+
+######################################
+#     Tests for HaikuJudgeResult     #
+######################################
+
+
+def test_haiku_judge_result_valid_passed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=True,
+        score=8,
+        reasoning="Great imagery and strong structure.",
+        passed=True,
+    )
+    assert result.structure_passed
+    assert result.topic_passed
+    assert result.score == 8
+    assert result.passed
+
+
+def test_haiku_judge_result_valid_failed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=False,
+        topic_passed=True,
+        score=8,
+        reasoning="Great imagery but incorrect structure.",
+        passed=False,
+    )
+    assert not result.structure_passed
+    assert result.topic_passed
+    assert result.score == 8
+    assert not result.passed
+
+
+def test_haiku_judge_result_invalid_score_too_low() -> None:
+    with pytest.raises(ValueError, match=r"score\n  Input should be greater than or equal to 1"):
+        HaikuJudgeResult(
+            structure_passed=True,
+            topic_passed=True,
+            score=0,
+            reasoning="meow",
+            passed=True,
+        )
+
+
+def test_haiku_judge_result_invalid_score_too_high() -> None:
+    with pytest.raises(ValueError, match=r"score\n  Input should be less than or equal to 10"):
+        HaikuJudgeResult(
+            structure_passed=True,
+            topic_passed=True,
+            score=11,
+            reasoning="meow",
+            passed=True,
+        )
+
+
+def test_haiku_judge_result_passed_auto_corrected_structure_failed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=False,
+        topic_passed=True,
+        score=8,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
+
+
+def test_haiku_judge_result_passed_auto_corrected_topic_failed() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=False,
+        score=8,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
+
+
+def test_haiku_judge_result_passed_auto_corrected_score_too_low() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=True,
+        score=6,
+        reasoning="meow",
+        passed=True,  # LLM inconsistency: overridden to False
+    )
+    assert not result.passed
+
+
+def test_haiku_judge_result_passed_auto_corrected_all_pass() -> None:
+    result = HaikuJudgeResult(
+        structure_passed=True,
+        topic_passed=True,
+        score=7,
+        reasoning="meow",
+        passed=False,  # LLM inconsistency: overridden to True
+    )
+    assert result.passed
 
 
 ##############################################

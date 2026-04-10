@@ -9,7 +9,7 @@ from langchain_core.language_models import BaseChatModel
 from langgraph.graph.state import CompiledStateGraph
 from polars.testing import assert_frame_equal
 
-from argos.nodes.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.predictor import (
     Predictor,
     generate_predictions,

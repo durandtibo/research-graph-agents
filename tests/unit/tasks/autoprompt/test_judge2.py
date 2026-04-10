@@ -8,7 +8,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import RunnableLambda
 from langgraph.graph.state import CompiledStateGraph
 
-from argos.nodes.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.config import LlmConfig
 from argos.tasks.autoprompt.judge2 import create_judge_graph
 

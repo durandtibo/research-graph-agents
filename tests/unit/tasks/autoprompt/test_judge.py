@@ -10,7 +10,7 @@ from langgraph.graph.state import CompiledStateGraph
 from polars.testing import assert_frame_equal
 
 from argos.metrics import BinaryClassificationResults
-from argos.nodes.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeResult
 from argos.tasks.autoprompt.config import ExperimentConfig
 from argos.tasks.autoprompt.evaluation import evaluate_metrics
 from argos.tasks.autoprompt.judge import (

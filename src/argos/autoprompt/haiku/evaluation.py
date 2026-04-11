@@ -11,7 +11,6 @@ from argos.metrics import (
     BinaryClassificationResults,
     compute_binary_classification_metrics,
 )
-from argos.utils.dataframe import summarize_boolean_columns
 
 if TYPE_CHECKING:
     import polars as pl
@@ -19,14 +18,14 @@ if TYPE_CHECKING:
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def evaluate_metrics(results: pl.DataFrame) -> dict[str, BinaryClassificationResults]:
+def evaluate_metrics(predictions: pl.DataFrame) -> dict[str, BinaryClassificationResults]:
     r"""Evaluate the metrics of the haiku judge.
 
     Computes binary classification metrics for three prediction autoprompt:
     overall pass/fail, structure adherence, and topic relevance.
 
     Args:
-        results: A :class:`~polars.DataFrame` produced by the haiku
+        predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns ``target``,
             ``passed``, ``structure_target``, ``structure_passed``,
             ``topic_target``, and ``topic_passed``.
@@ -42,22 +41,18 @@ def evaluate_metrics(results: pl.DataFrame) -> dict[str, BinaryClassificationRes
               ``topic_passed``.
     """
     logger.info("Evaluating metrics...")
-    logger.info(
-        f"\n{summarize_boolean_columns(results.select(['target', 'structure_target', 'topic_target']))}"
-    )
-
     overall = compute_binary_classification_metrics(
-        results, target_col="target", predict_col="passed"
+        predictions, target_col="target", prediction_col="passed"
     )
     logger.info(f"overall\n{overall.to_str()}")
 
     structure = compute_binary_classification_metrics(
-        results, target_col="structure_target", predict_col="structure_passed"
+        predictions, target_col="structure_target", prediction_col="structure_passed"
     )
     logger.info(f"structure\n{structure.to_str()}")
 
     topic = compute_binary_classification_metrics(
-        results, target_col="topic_target", predict_col="topic_passed"
+        predictions, target_col="topic_target", prediction_col="topic_passed"
     )
     logger.info(f"topic\n{topic.to_str()}")
     return {"overall": overall, "structure": structure, "topic": topic}

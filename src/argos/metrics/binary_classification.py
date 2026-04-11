@@ -129,8 +129,9 @@ class BinaryClassificationResults:
 
 def compute_binary_classification_metrics(
     df: pl.DataFrame,
+    *,
     target_col: str,
-    predict_col: str,
+    prediction_col: str,
 ) -> BinaryClassificationResults:
     r"""Compute accuracy, confusion matrix, and core classification
     metrics from a Polars DataFrame.
@@ -138,7 +139,7 @@ def compute_binary_classification_metrics(
     Args:
         df: A Polars DataFrame containing the target and predicted columns.
         target_col: The name of the column containing the target binary values.
-        predict_col: The name of the column containing the predicted binary values.
+        prediction_col: The name of the column containing the predicted binary values.
 
     Returns:
         A :class:`BinaryClassificationResults` containing n_samples,
@@ -152,9 +153,9 @@ def compute_binary_classification_metrics(
         ```pycon
         >>> import polars as pl
         >>> from argos.metrics import compute_binary_classification_metrics
-        >>> df = pl.DataFrame({"target": [1, 0, 1, 0], "predicted": [1, 0, 0, 1]})
+        >>> df = pl.DataFrame({"target": [1, 0, 1, 0], "prediction": [1, 0, 0, 1]})
         >>> results = compute_binary_classification_metrics(
-        ...     df, target_col="target", predict_col="predicted"
+        ...     df, target_col="target", prediction_col="prediction"
         ... )
         >>> results.n_samples
         4
@@ -167,20 +168,20 @@ def compute_binary_classification_metrics(
         msg = "DataFrame is empty."
         raise ValueError(msg)
 
-    for col in [target_col, predict_col]:
+    for col in [target_col, prediction_col]:
         unique_values = df[col].unique().to_list()
         if not set(unique_values).issubset({0, 1}):
             msg = f"Column '{col}' contains non-binary values: {unique_values}"
             raise ValueError(msg)
 
     target = df[target_col].cast(pl.Int8)
-    predicted = df[predict_col].cast(pl.Int8)
+    prediction = df[prediction_col].cast(pl.Int8)
 
     n_samples = len(df)
-    tp = int(((target == 1) & (predicted == 1)).sum())
-    tn = int(((target == 0) & (predicted == 0)).sum())
-    fp = int(((target == 0) & (predicted == 1)).sum())
-    fn = int(((target == 1) & (predicted == 0)).sum())
+    tp = int(((target == 1) & (prediction == 1)).sum())
+    tn = int(((target == 0) & (prediction == 0)).sum())
+    fp = int(((target == 0) & (prediction == 1)).sum())
+    fn = int(((target == 1) & (prediction == 0)).sum())
 
     accuracy = (tp + tn) / n_samples
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0

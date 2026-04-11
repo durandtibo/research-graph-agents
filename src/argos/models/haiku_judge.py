@@ -90,7 +90,9 @@ def create_haiku_judge_model(
             ``HAIKU_JUDGE_SYSTEM_PROMPT``.
 
     Returns:
-        A simple haiku judge model.
+        A :class:`~langchain_core.runnables.Runnable` that accepts a
+            dict with ``topic`` and ``haiku`` keys and returns a
+            :class:`HaikuJudgeResult` with the structured evaluation.
     """
     prompt = ChatPromptTemplate.from_messages(
         [

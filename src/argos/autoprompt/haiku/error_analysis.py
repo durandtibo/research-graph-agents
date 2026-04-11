@@ -29,23 +29,24 @@ def find_structure_errors(
     target_col: str = "structure_target",
     prediction_col: str = "structure_passed",
 ) -> list[dict[str, str | bool]]:
-    r"""Analyze prediction errors for both structure and topic
-    autoprompt.
-
-    Finds haiku examples where the judge's predictions do not match
-    the ground-truth labels for structure and topic adherence,
-    then logs a markdown summary and saves the error details as JSON
-    files under ``path``.
+    r"""Find haiku examples where the structure prediction does not match
+    the ground-truth label, log a markdown summary, and optionally save
+    the results.
 
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns ``topic``,
-            ``haiku``, ``structure_target``, ``structure_passed``,
-            ``topic_target``, and ``topic_passed``.
-        path: Directory where the error analysis JSON files are saved.
-            Two files are written:
-            ``error_analysis_structure.json`` and
-            ``error_analysis_topic.json``.
+            ``haiku``, ``target_col``, and ``prediction_col``.
+        path: Optional path where the error list is saved as a JSON
+            file. If ``None``, no file is written.
+        target_col: The column name containing the ground-truth
+            structure labels. Defaults to ``"structure_target"``.
+        prediction_col: The column name containing the predicted
+            structure labels. Defaults to ``"structure_passed"``.
+
+    Returns:
+        A list of dicts, one per mispredicted example, each with the
+            keys ``topic``, ``haiku``, ``target``, and ``prediction``.
     """
     logger.info("Analyzing structure errors...")
     errors = find_errors(

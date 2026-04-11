@@ -59,6 +59,7 @@ class JsonHistory(BaseHistory):
 
     @property
     def path(self) -> Path:
+        r"""The path to the JSON history file."""
         return self._path
 
     def append(self, data: dict[Any, Any]) -> None:

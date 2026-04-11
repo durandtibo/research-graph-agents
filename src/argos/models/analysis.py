@@ -29,7 +29,10 @@ def create_analyzer_model(
         system_prompt: The system prompt used to define the analysis of the text.
 
     Returns:
-        A analyzer model.
+        An :class:`~langchain_core.runnables.RunnableSequence` chain
+            that accepts a dict with a ``text`` key and returns an
+            :class:`~langchain_core.messages.AIMessage` containing the
+            analysis.
     """
     prompt = ChatPromptTemplate.from_messages(
         [

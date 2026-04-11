@@ -39,7 +39,26 @@ class HaikuJudgeEvaluator(BaseEvaluator):
     r"""Evaluate the performances of the Haiku Judge.
 
     Args:
-        path: An optional path where to save the evaluation metrics.
+        path: An optional path where to save the evaluation metrics as
+            a JSON file. If ``None``, the metrics are not persisted.
+        overall_prediction_col: Column name for the overall predicted
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.OVERALL_PREDICTION`.
+        overall_target_col: Column name for the overall ground-truth
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.OVERALL_TARGET`.
+        structure_prediction_col: Column name for the structure
+            predicted label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_PREDICTION`.
+        structure_target_col: Column name for the structure
+            ground-truth label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_TARGET`.
+        topic_prediction_col: Column name for the topic predicted
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_PREDICTION`.
+        topic_target_col: Column name for the topic ground-truth
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_TARGET`.
     """
 
     def __init__(

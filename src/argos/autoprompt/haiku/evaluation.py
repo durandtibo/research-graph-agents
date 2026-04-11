@@ -36,19 +36,35 @@ def evaluate_judge_classification_metrics(
 
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
-            judge, expected to contain the columns ``target``,
-            ``passed``, ``structure_target``, ``structure_passed``,
-            ``topic_target``, and ``topic_passed``.
+            judge, containing prediction and target columns for the
+            overall, structure, and topic criteria.
+        overall_prediction_col: Column name for the overall predicted
+            label. Defaults to :data:`~argos.autoprompt.haiku.columns.OVERALL_PREDICTION`.
+        overall_target_col: Column name for the overall ground-truth
+            label. Defaults to :data:`~argos.autoprompt.haiku.columns.OVERALL_TARGET`.
+        structure_prediction_col: Column name for the structure
+            predicted label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_PREDICTION`.
+        structure_target_col: Column name for the structure
+            ground-truth label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_TARGET`.
+        topic_prediction_col: Column name for the topic predicted
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_PREDICTION`.
+        topic_target_col: Column name for the topic ground-truth
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_TARGET`.
 
     Returns:
         A dict with three keys mapping to
             :class:`~argos.metrics.BinaryClassificationResults`:
 
-            - ``"overall"``: metrics comparing ``target`` vs ``passed``.
-            - ``"structure"``: metrics comparing ``structure_target``
-              vs ``structure_passed``.
-            - ``"topic"``: metrics comparing ``topic_target`` vs
-              ``topic_passed``.
+            - ``"overall"``: metrics comparing ``overall_target_col``
+              vs ``overall_prediction_col``.
+            - ``"structure"``: metrics comparing ``structure_target_col``
+              vs ``structure_prediction_col``.
+            - ``"topic"``: metrics comparing ``topic_target_col`` vs
+              ``topic_prediction_col``.
     """
     logger.info("Evaluating metrics...")
     overall = compute_binary_classification_metrics(

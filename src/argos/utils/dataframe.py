@@ -76,7 +76,9 @@ def list_of_dicts_to_dataframe(list_of_dicts: list[dict[Any, Any]]) -> pl.DataFr
     r"""Convert a list of dicts into a DataFrame.
 
     Args:
-        list_of_dicts: A list of dicts whose keys are columns and whose values are dicts.
+        list_of_dicts: A list of dicts where each dict represents a
+            single row, with keys as column names and values as the
+            corresponding cell values.
 
     Returns:
         A DataFrame representation of the list of dicts.

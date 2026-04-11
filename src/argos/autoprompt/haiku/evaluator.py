@@ -11,7 +11,7 @@ from coola.utils.format import repr_indent, repr_mapping
 from feu.utils.io import save_json
 
 from argos.autoprompt.haiku import columns
-from argos.autoprompt.haiku.evaluation import evaluate_classification_metrics
+from argos.autoprompt.haiku.evaluation import evaluate_judge_classification_metrics
 from argos.utils.mapping import recursive_to_dict
 
 if TYPE_CHECKING:
@@ -94,7 +94,7 @@ class HaikuJudgeEvaluator(BaseEvaluator):
                 :class:`~argos.metrics.BinaryClassificationResults`
                 values serialised as nested dicts.
         """
-        metrics = evaluate_classification_metrics(
+        metrics = evaluate_judge_classification_metrics(
             predictions,
             overall_prediction_col=self._overall_prediction_col,
             overall_target_col=self._overall_target_col,

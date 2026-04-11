@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from argos.tasks.autoprompt.config import ExperimentConfig, LlmConfig
+from argos.autoprompt.haiku.config import ExperimentConfig, LlmConfig
 
 if TYPE_CHECKING:
     from pathlib import Path

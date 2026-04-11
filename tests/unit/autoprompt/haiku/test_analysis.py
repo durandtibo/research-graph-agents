@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 from iden.io import load_json
 
-from argos.tasks.autoprompt.analysis import (
+from argos.autoprompt.haiku.analysis import (
     analyze_errors,
 )
 

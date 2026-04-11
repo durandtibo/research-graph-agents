@@ -14,7 +14,7 @@ from coola.utils.format import repr_indent, repr_mapping
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from argos.tasks.autoprompt.predictor import BasePredictor
+    from argos.autoprompt.haiku.predictor import BasePredictor
 
 
 logger: logging.Logger = logging.getLogger(__name__)

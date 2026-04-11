@@ -22,7 +22,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 def evaluate_metrics(results: pl.DataFrame) -> dict[str, BinaryClassificationResults]:
     r"""Evaluate the metrics of the haiku judge.
 
-    Computes binary classification metrics for three prediction tasks:
+    Computes binary classification metrics for three prediction autoprompt:
     overall pass/fail, structure adherence, and topic relevance.
 
     Args:

@@ -17,7 +17,7 @@ from argos.nodes import HaikuJudgeState, HaikuState
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
 
-    from argos.tasks.autoprompt.config import LlmConfig
+    from argos.autoprompt.haiku.config import LlmConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 

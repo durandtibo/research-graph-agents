@@ -11,14 +11,18 @@ from pathlib import Path
 import polars as pl
 from iden.io import save_json
 
-from argos.tasks.autoprompt.error_analysis import find_errors, format_errors_as_markdown
+from argos.autoprompt.haiku.error_analysis import (
+    find_errors,
+    format_errors_as_markdown,
+)
 from argos.utils.logging import log_markdown
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
 def analyze_errors(results: pl.DataFrame, path: Path) -> None:
-    r"""Analyze prediction errors for both structure and topic tasks.
+    r"""Analyze prediction errors for both structure and topic
+    autoprompt.
 
     Finds haiku examples where the judge's predictions do not match
     the ground-truth labels for structure and topic adherence,

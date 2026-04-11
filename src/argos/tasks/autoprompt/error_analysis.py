@@ -2,21 +2,71 @@ r"""Contain code to analyze the errors."""
 
 from __future__ import annotations
 
-__all__ = ["find_errors", "format_errors_as_markdown", "format_errors_as_markdown_table"]
+__all__ = [
+    "find_errors",
+    "find_structure_errors",
+    "format_errors_as_markdown",
+    "format_errors_as_markdown_table",
+]
 
-from typing import Any
+import logging
+from typing import TYPE_CHECKING, Any
 
 import polars as pl
+from iden.io import save_json
+
+from argos.utils.logging import log_markdown
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+logger: logging.Logger = logging.getLogger(__name__)
+
+
+def find_structure_errors(
+    predictions: pl.DataFrame,
+    path: Path | None = None,
+    target_col: str = "structure_target",
+    prediction_col: str = "structure_passed",
+) -> list[dict[str, str | bool]]:
+    r"""Analyze prediction errors for both structure and topic tasks.
+
+    Finds haiku examples where the judge's predictions do not match
+    the ground-truth labels for structure and topic adherence,
+    then logs a markdown summary and saves the error details as JSON
+    files under ``path``.
+
+    Args:
+        predictions: A :class:`~polars.DataFrame` produced by the haiku
+            judge, expected to contain the columns ``topic``,
+            ``haiku``, ``structure_target``, ``structure_passed``,
+            ``topic_target``, and ``topic_passed``.
+        path: Directory where the error analysis JSON files are saved.
+            Two files are written:
+            ``error_analysis_structure.json`` and
+            ``error_analysis_topic.json``.
+    """
+    logger.info("Analyzing structure errors...")
+    errors = find_errors(
+        predictions=predictions, col_target=target_col, col_prediction=prediction_col
+    )
+    log_markdown(
+        format_errors_as_markdown(errors, error_type="structure"),
+        title="Structure Errors",
+    )
+    if path:
+        save_json(errors, path, exist_ok=True)
+    return errors
 
 
 def find_errors(
-    results: pl.DataFrame, col_target: str, col_prediction: str
+    predictions: pl.DataFrame, col_target: str, col_prediction: str
 ) -> list[dict[str, str | bool]]:
     r"""Find haiku examples where the prediction does not match the
     ground-truth label.
 
     Args:
-        results: A :class:`~polars.DataFrame` produced by the haiku
+        predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns ``topic``,
             ``haiku``, ``col_target``, and ``col_prediction``.
         col_target: The column name containing the ground-truth labels.
@@ -27,7 +77,7 @@ def find_errors(
             keys ``topic``, ``haiku``, ``target``, and ``prediction``.
     """
     return (
-        results.filter(pl.col(col_target) != pl.col(col_prediction))
+        predictions.filter(pl.col(col_target) != pl.col(col_prediction))
         .select(["topic", "haiku", col_target, col_prediction])
         .rename({col_target: "target", col_prediction: "prediction"})
         .to_dicts()

@@ -29,7 +29,10 @@ def create_judge_graph(config: LlmConfig) -> CompiledStateGraph:
         config: The LLM config.
 
     Returns:
-        The graph of the haiku judge.
+        A compiled :class:`~langgraph.graph.state.CompiledStateGraph`
+            with a single ``"judge"`` node that reads ``topic`` and
+            ``haiku`` from the state and writes the structured
+            evaluation to ``evaluation``.
     """
     logger.info("Creating judge graph...")
     if config.temperature > 0:

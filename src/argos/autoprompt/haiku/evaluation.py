@@ -2,7 +2,7 @@ r"""Contain the code to evaluate the performances."""
 
 from __future__ import annotations
 
-__all__ = ["evaluate_classification_metrics"]
+__all__ = ["evaluate_judge_classification_metrics"]
 
 import logging
 from typing import TYPE_CHECKING
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def evaluate_classification_metrics(
+def evaluate_judge_classification_metrics(
     predictions: pl.DataFrame,
     *,
     overall_prediction_col: str = columns.OVERALL_PREDICTION,

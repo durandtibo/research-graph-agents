@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 
 from argos.autoprompt.haiku import columns
-from argos.autoprompt.haiku.evaluation import evaluate_classification_metrics
+from argos.autoprompt.haiku.evaluation import evaluate_judge_classification_metrics
 from argos.metrics import BinaryClassificationResults
 
 
@@ -183,18 +183,18 @@ def mixed_metrics() -> dict[str, BinaryClassificationResults]:
     }
 
 
-#####################################################
-#     Tests for evaluate_classification_metrics     #
-#####################################################
+###########################################################
+#     Tests for evaluate_judge_classification_metrics     #
+###########################################################
 
 
-def test_evaluate_classification_metrics(
+def test_evaluate_judge_classification_metrics(
     correct_predictions: pl.DataFrame, correct_metrics: dict[str, BinaryClassificationResults]
 ) -> None:
-    assert evaluate_classification_metrics(correct_predictions) == correct_metrics
+    assert evaluate_judge_classification_metrics(correct_predictions) == correct_metrics
 
 
-def test_evaluate_classification_metrics_mixed_results(
+def test_evaluate_judge_classification_metrics_mixed_results(
     mixed_predictions: pl.DataFrame, mixed_metrics: dict[str, BinaryClassificationResults]
 ) -> None:
-    assert evaluate_classification_metrics(mixed_predictions) == mixed_metrics
+    assert evaluate_judge_classification_metrics(mixed_predictions) == mixed_metrics

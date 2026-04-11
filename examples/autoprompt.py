@@ -55,7 +55,7 @@ def generate_predictions(config: ExperimentConfig) -> pl.DataFrame:
     inferpipe = InferencePipeline(
         dataset=prepare_dataset(),
         predictor=Predictor(
-            graph=create_judge_graph(config.judge),
+            model=create_judge_graph(config.judge),
             batch_size=config.judge.batch_size,
             # output_columns=[
             #     "topic",

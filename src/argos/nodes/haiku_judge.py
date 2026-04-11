@@ -2,16 +2,11 @@ r"""Define a haiku judge."""
 
 from __future__ import annotations
 
-__all__ = [
-    "HaikuJudgeState",
-    "make_haiku_judge_node",
-]
+__all__ = ["HaikuJudgeState", "make_haiku_judge_node"]
 
 from typing import TYPE_CHECKING
 
-from langchain_core.prompts import ChatPromptTemplate
-
-from argos.models.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeResult, create_haiku_judge_model
 from argos.nodes.haiku_generator import HaikuState
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 
@@ -67,16 +62,10 @@ def make_haiku_judge_node(
 
         ```
     """
-    judge_prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system_prompt),
-            ("user", "Topic: {topic}\n\nHaiku: {haiku}"),
-        ]
-    )
-    llm_judge = judge_prompt | llm.with_structured_output(HaikuJudgeResult)
+    model = create_haiku_judge_model(llm=llm, system_prompt=system_prompt)
 
     def llm_node(state: HaikuState) -> dict:
-        response = llm_judge.invoke({"topic": state["topic"], "haiku": state["haiku"]})
+        response = model.invoke({"topic": state["topic"], "haiku": state["haiku"]})
         return {"evaluation": response}
 
     return llm_node

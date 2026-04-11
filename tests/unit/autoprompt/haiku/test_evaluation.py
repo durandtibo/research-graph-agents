@@ -3,73 +3,109 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from argos.autoprompt.haiku.evaluation import evaluate_metrics
+from argos.autoprompt.haiku import columns
+from argos.autoprompt.haiku.evaluation import evaluate_classification_metrics
 from argos.metrics import BinaryClassificationResults
-
-MODULE = "argos.autoprompt.haiku.judge"
 
 
 @pytest.fixture
-def mock_results() -> pl.DataFrame:
+def correct_predictions() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "score": 10,
-                "passed": True,
-                "target": True,
-                "structure_passed": True,
-                "structure_target": True,
-                "topic_passed": True,
-                "topic_target": True,
-                "reasoning": "reason1",
+                columns.OVERALL_SCORE_PREDICTION: 10,
+                columns.OVERALL_PREDICTION: True,
+                columns.OVERALL_TARGET: True,
+                columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\n"
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "score": 9,
-                "passed": True,
-                "target": True,
-                "structure_passed": True,
-                "structure_target": True,
-                "topic_passed": True,
-                "topic_target": True,
-                "reasoning": "reason2",
+                columns.OVERALL_SCORE_PREDICTION: 9,
+                columns.OVERALL_PREDICTION: True,
+                columns.OVERALL_TARGET: True,
+                columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_TARGET: True,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "score": 8,
-                "passed": True,
-                "target": True,
-                "structure_passed": True,
-                "structure_target": True,
-                "topic_passed": True,
-                "topic_target": True,
-                "reasoning": "reason3",
+                columns.OVERALL_SCORE_PREDICTION: 8,
+                columns.OVERALL_PREDICTION: True,
+                columns.OVERALL_TARGET: True,
+                columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_TARGET: True,
             },
         ]
     )
 
 
-######################################
-#     Tests for evaluate_metrics     #
-######################################
+@pytest.fixture
+def mixed_predictions() -> pl.DataFrame:
+    return pl.from_dicts(
+        [
+            {
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
+                columns.OVERALL_PREDICTION: False,
+                columns.STRUCTURE_PREDICTION: True,
+                columns.TOPIC_PREDICTION: True,
+            },
+            {
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
+                columns.OVERALL_PREDICTION: False,
+                columns.STRUCTURE_PREDICTION: False,
+                columns.TOPIC_PREDICTION: True,
+            },
+            {
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
+                columns.OVERALL_PREDICTION: False,
+                columns.STRUCTURE_PREDICTION: False,
+                columns.TOPIC_PREDICTION: False,
+            },
+            {
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
+                columns.OVERALL_PREDICTION: True,
+                columns.STRUCTURE_PREDICTION: True,
+                columns.TOPIC_PREDICTION: True,
+            },
+        ]
+    )
 
 
-def test_evaluate_metrics(mock_results: pl.DataFrame) -> None:
-    assert evaluate_metrics(mock_results) == {
+#####################################################
+#     Tests for evaluate_classification_metrics     #
+#####################################################
+
+
+def test_evaluate_classification_metrics(correct_predictions: pl.DataFrame) -> None:
+    assert evaluate_classification_metrics(correct_predictions) == {
         "overall": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
@@ -109,45 +145,8 @@ def test_evaluate_metrics(mock_results: pl.DataFrame) -> None:
     }
 
 
-def test_evaluate_metrics_mixed_results() -> None:
-    assert evaluate_metrics(
-        pl.from_dicts(
-            [
-                {
-                    "structure_target": True,
-                    "topic_target": True,
-                    "target": True,
-                    "passed": False,
-                    "structure_passed": True,
-                    "topic_passed": True,
-                },
-                {
-                    "structure_target": True,
-                    "topic_target": True,
-                    "target": True,
-                    "passed": False,
-                    "structure_passed": False,
-                    "topic_passed": True,
-                },
-                {
-                    "structure_target": True,
-                    "topic_target": True,
-                    "target": True,
-                    "passed": False,
-                    "structure_passed": False,
-                    "topic_passed": False,
-                },
-                {
-                    "structure_target": True,
-                    "topic_target": True,
-                    "target": True,
-                    "passed": True,
-                    "structure_passed": True,
-                    "topic_passed": True,
-                },
-            ]
-        )
-    ) == {
+def test_evaluate_classification_metrics_mixed_results(mixed_predictions: pl.DataFrame) -> None:
+    assert evaluate_classification_metrics(mixed_predictions) == {
         "overall": BinaryClassificationResults(
             n_samples=4,
             accuracy=0.25,

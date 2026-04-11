@@ -18,6 +18,7 @@ TOPIC = "topic"
 OVERALL_PREDICTION = "overall_prediction"
 OVERALL_SCORE_PREDICTION = "overall_score_prediction"
 OVERALL_TARGET = "overall_target"
+OVERALL_REASONING = "overall_reasoning"
 
 STRUCTURE_PREDICTION = "structure_prediction"
 STRUCTURE_TARGET = "structure_target"

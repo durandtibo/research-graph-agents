@@ -9,10 +9,10 @@ from langchain_core.language_models import BaseChatModel
 from langgraph.graph.state import Runnable
 from polars.testing import assert_frame_equal
 
+from argos.autoprompt.haiku.predictor import Predictor, generate_predictions
 from argos.models.haiku_judge import HaikuJudgeResult
-from argos.tasks.autoprompt.predictor import Predictor, generate_predictions
 
-MODULE = "argos.tasks.autoprompt.predictor"
+MODULE = "argos.autoprompt.haiku.predictor"
 
 
 @pytest.fixture

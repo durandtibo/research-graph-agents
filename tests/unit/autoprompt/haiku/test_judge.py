@@ -8,11 +8,11 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import RunnableLambda
 from langgraph.graph.state import CompiledStateGraph
 
+from argos.autoprompt.haiku.config import LlmConfig
+from argos.autoprompt.haiku.judge import create_judge_graph
 from argos.models.haiku_judge import HaikuJudgeResult
-from argos.tasks.autoprompt.config import LlmConfig
-from argos.tasks.autoprompt.judge import create_judge_graph
 
-MODULE = "argos.tasks.autoprompt.judge"
+MODULE = "argos.autoprompt.haiku.judge"
 
 
 @pytest.fixture

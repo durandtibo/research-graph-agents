@@ -6,9 +6,9 @@ import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
-from argos.tasks.autoprompt.dataset import prepare_dataset
+from argos.autoprompt.haiku.dataset import prepare_dataset
 
-MODULE = "argos.tasks.autoprompt.dataset"
+MODULE = "argos.autoprompt.haiku.dataset"
 
 
 @pytest.fixture

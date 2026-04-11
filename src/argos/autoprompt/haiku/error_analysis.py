@@ -29,7 +29,8 @@ def find_structure_errors(
     target_col: str = "structure_target",
     prediction_col: str = "structure_passed",
 ) -> list[dict[str, str | bool]]:
-    r"""Analyze prediction errors for both structure and topic tasks.
+    r"""Analyze prediction errors for both structure and topic
+    autoprompt.
 
     Finds haiku examples where the judge's predictions do not match
     the ground-truth labels for structure and topic adherence,

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 from coola.utils.format import repr_indent, repr_mapping
 from feu.utils.io import save_json
 
-from argos.tasks.autoprompt.evaluation import evaluate_metrics
+from argos.autoprompt.haiku.evaluation import evaluate_metrics
 from argos.utils.mapping import recursive_to_dict
 
 if TYPE_CHECKING:

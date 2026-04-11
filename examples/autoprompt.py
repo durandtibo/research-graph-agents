@@ -9,16 +9,16 @@ from dotenv import load_dotenv
 from iden.io import save_text
 from langchain_core.runnables import RunnableConfig
 
+from argos.autoprompt.haiku.analysis import analyze_errors
+from argos.autoprompt.haiku.config import ExperimentConfig, LlmConfig
+from argos.autoprompt.haiku.dataset import prepare_dataset
+from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
+from argos.autoprompt.haiku.history import BaseHistory, JsonHistory
+from argos.autoprompt.haiku.inference import InferencePipeline
+from argos.autoprompt.haiku.judge import create_judge_graph
+from argos.autoprompt.haiku.predictor import Predictor
+from argos.autoprompt.haiku.prompt import generate_next_judge_system_prompt
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
-from argos.tasks.autoprompt.analysis import analyze_errors
-from argos.tasks.autoprompt.config import ExperimentConfig, LlmConfig
-from argos.tasks.autoprompt.dataset import prepare_dataset
-from argos.tasks.autoprompt.evaluator import HaikuJudgeEvaluator
-from argos.tasks.autoprompt.history import BaseHistory, JsonHistory
-from argos.tasks.autoprompt.inference import InferencePipeline
-from argos.tasks.autoprompt.judge import create_judge_graph
-from argos.tasks.autoprompt.predictor import Predictor
-from argos.tasks.autoprompt.prompt import generate_next_judge_system_prompt
 from argos.utils.logging import configure_logging, log_markdown
 
 if TYPE_CHECKING:
@@ -145,7 +145,7 @@ def main() -> None:
         Path(__file__)
         .resolve()
         .parent.parent.joinpath("results")
-        .joinpath("autoprompt")
+        .joinpath("haiku")
         .joinpath("haiku")
     )
 

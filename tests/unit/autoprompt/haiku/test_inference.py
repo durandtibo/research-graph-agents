@@ -7,8 +7,8 @@ import polars as pl
 import pytest
 from coola.equality.handler.polars import assert_frame_equal
 
-from argos.tasks.autoprompt.inference import InferencePipeline
-from argos.tasks.autoprompt.predictor import BasePredictor
+from argos.autoprompt.haiku.inference import InferencePipeline
+from argos.autoprompt.haiku.predictor import BasePredictor
 
 if TYPE_CHECKING:
     from pathlib import Path

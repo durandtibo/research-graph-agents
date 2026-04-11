@@ -7,7 +7,7 @@ import pytest
 from coola.equality import objects_are_equal
 from iden.io import load_json
 
-from argos.tasks.autoprompt.evaluator import HaikuJudgeEvaluator
+from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
 
 if TYPE_CHECKING:
     from pathlib import Path

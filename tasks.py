@@ -1,4 +1,4 @@
-r"""Define some tasks that are executed with invoke."""
+r"""Define some autoprompt that are executed with invoke."""
 
 from __future__ import annotations
 

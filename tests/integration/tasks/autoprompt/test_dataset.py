@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import polars as pl
 
-from argos.tasks.autoprompt.dataset import prepare_dataset
+from argos.autoprompt.haiku.dataset import prepare_dataset
 
 #####################################
 #     Tests for prepare_dataset     #

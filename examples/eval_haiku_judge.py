@@ -8,11 +8,11 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
-from argos.tasks.autoprompt.config import ExperimentConfig
-from argos.tasks.autoprompt.judge import (
+from argos.autoprompt.haiku.config import ExperimentConfig
+from argos.autoprompt.haiku.judge import (
     run_experiment,
 )
+from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 from argos.utils.logging import configure_logging
 
 logger = logging.getLogger(__name__)

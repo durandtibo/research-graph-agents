@@ -3,10 +3,10 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
+from argos.autoprompt.haiku.evaluation import evaluate_metrics
 from argos.metrics import BinaryClassificationResults
-from argos.tasks.autoprompt.evaluation import evaluate_metrics
 
-MODULE = "argos.tasks.autoprompt.judge"
+MODULE = "argos.autoprompt.haiku.judge"
 
 
 @pytest.fixture

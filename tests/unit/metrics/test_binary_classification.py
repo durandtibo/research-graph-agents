@@ -12,7 +12,7 @@ from argos.metrics import (
 @pytest.fixture
 def dataframe() -> pl.DataFrame:
     return pl.DataFrame(
-        {"target": [1, 0, 1, 0, 1, 1, 0, 0, 1, 0], "predicted": [1, 0, 1, 0, 0, 1, 1, 0, 0, 0]}
+        {"target": [1, 0, 1, 0, 1, 1, 0, 0, 1, 0], "prediction": [1, 0, 1, 0, 0, 1, 1, 0, 0, 0]}
     )
 
 
@@ -507,7 +507,9 @@ def test_binary_classification_results_to_str_single_sample() -> None:
 
 
 def test_compute_binary_classification_metrics_balanced(dataframe: pl.DataFrame) -> None:
-    result = compute_binary_classification_metrics(dataframe, "target", "predicted")
+    result = compute_binary_classification_metrics(
+        dataframe, target_col="target", prediction_col="prediction"
+    )
     assert result.allclose(
         BinaryClassificationResults(
             n_samples=10,
@@ -526,8 +528,10 @@ def test_compute_binary_classification_metrics_balanced(dataframe: pl.DataFrame)
 
 
 def test_compute_binary_classification_metrics_perfect_predictions() -> None:
-    df = pl.DataFrame({"target": [1, 0, 1, 0], "predicted": [1, 0, 1, 0]})
-    result = compute_binary_classification_metrics(df, "target", "predicted")
+    df = pl.DataFrame({"target": [1, 0, 1, 0], "prediction": [1, 0, 1, 0]})
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
     assert result == BinaryClassificationResults(
         n_samples=4,
         true_positive=2,
@@ -543,8 +547,10 @@ def test_compute_binary_classification_metrics_perfect_predictions() -> None:
 
 
 def test_compute_binary_classification_metrics_all_wrong_predictions() -> None:
-    df = pl.DataFrame({"target": [1, 0, 1, 0], "predicted": [0, 1, 0, 1]})
-    result = compute_binary_classification_metrics(df, "target", "predicted")
+    df = pl.DataFrame({"target": [1, 0, 1, 0], "prediction": [0, 1, 0, 1]})
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
     assert result == BinaryClassificationResults(
         n_samples=4,
         true_positive=0,
@@ -560,8 +566,10 @@ def test_compute_binary_classification_metrics_all_wrong_predictions() -> None:
 
 
 def test_compute_binary_classification_metrics_low_precision() -> None:
-    df = pl.DataFrame({"target": [1, 0, 0, 0], "predicted": [1, 1, 1, 1]})
-    result = compute_binary_classification_metrics(df, "target", "predicted")
+    df = pl.DataFrame({"target": [1, 0, 0, 0], "prediction": [1, 1, 1, 1]})
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
     assert result == BinaryClassificationResults(
         n_samples=4,
         true_positive=1,
@@ -577,8 +585,10 @@ def test_compute_binary_classification_metrics_low_precision() -> None:
 
 
 def test_compute_binary_classification_metrics_low_recall() -> None:
-    df = pl.DataFrame({"target": [1, 1, 1, 1], "predicted": [1, 0, 0, 0]})
-    result = compute_binary_classification_metrics(df, "target", "predicted")
+    df = pl.DataFrame({"target": [1, 1, 1, 1], "prediction": [1, 0, 0, 0]})
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
     assert result == BinaryClassificationResults(
         n_samples=4,
         true_positive=1,
@@ -595,9 +605,11 @@ def test_compute_binary_classification_metrics_low_recall() -> None:
 
 def test_compute_binary_classification_metrics_with_boolean_values() -> None:
     df = pl.DataFrame(
-        {"target": [True, False, True, False], "predicted": [True, False, True, False]}
+        {"target": [True, False, True, False], "prediction": [True, False, True, False]}
     )
-    result = compute_binary_classification_metrics(df, "target", "predicted")
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
     assert result == BinaryClassificationResults(
         n_samples=4,
         true_positive=2,
@@ -613,8 +625,10 @@ def test_compute_binary_classification_metrics_with_boolean_values() -> None:
 
 
 def test_compute_binary_classification_metrics_zero_division() -> None:
-    df = pl.DataFrame({"target": [0, 0], "predicted": [0, 0]})
-    result = compute_binary_classification_metrics(df, "target", "predicted")
+    df = pl.DataFrame({"target": [0, 0], "prediction": [0, 0]})
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
     assert result == BinaryClassificationResults(
         n_samples=2,
         true_positive=0,
@@ -630,12 +644,12 @@ def test_compute_binary_classification_metrics_zero_division() -> None:
 
 
 def test_compute_binary_classification_metrics_raises_on_empty_dataframe() -> None:
-    df = pl.DataFrame({"target": [], "predicted": []})
+    df = pl.DataFrame({"target": [], "prediction": []})
     with pytest.raises(ValueError, match="DataFrame is empty"):
-        compute_binary_classification_metrics(df, "target", "predicted")
+        compute_binary_classification_metrics(df, target_col="target", prediction_col="prediction")
 
 
 def test_compute_binary_classification_metrics_raises_on_non_binary_values() -> None:
-    df = pl.DataFrame({"target": [1, 2, 3], "predicted": [1, 0, 1]})
+    df = pl.DataFrame({"target": [1, 2, 3], "prediction": [1, 0, 1]})
     with pytest.raises(ValueError, match="non-binary values"):
-        compute_binary_classification_metrics(df, "target", "predicted")
+        compute_binary_classification_metrics(df, target_col="target", prediction_col="prediction")

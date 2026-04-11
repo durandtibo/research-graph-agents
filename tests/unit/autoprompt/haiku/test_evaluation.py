@@ -99,13 +99,9 @@ def mixed_predictions() -> pl.DataFrame:
     )
 
 
-#####################################################
-#     Tests for evaluate_classification_metrics     #
-#####################################################
-
-
-def test_evaluate_classification_metrics(correct_predictions: pl.DataFrame) -> None:
-    assert evaluate_classification_metrics(correct_predictions) == {
+@pytest.fixture
+def correct_metrics() -> dict[str, BinaryClassificationResults]:
+    return {
         "overall": BinaryClassificationResults(
             n_samples=3,
             accuracy=1.0,
@@ -145,8 +141,9 @@ def test_evaluate_classification_metrics(correct_predictions: pl.DataFrame) -> N
     }
 
 
-def test_evaluate_classification_metrics_mixed_results(mixed_predictions: pl.DataFrame) -> None:
-    assert evaluate_classification_metrics(mixed_predictions) == {
+@pytest.fixture
+def mixed_metrics() -> dict[str, BinaryClassificationResults]:
+    return {
         "overall": BinaryClassificationResults(
             n_samples=4,
             accuracy=0.25,
@@ -184,3 +181,20 @@ def test_evaluate_classification_metrics_mixed_results(mixed_predictions: pl.Dat
             specificity=0.0,
         ),
     }
+
+
+#####################################################
+#     Tests for evaluate_classification_metrics     #
+#####################################################
+
+
+def test_evaluate_classification_metrics(
+    correct_predictions: pl.DataFrame, correct_metrics: dict[str, BinaryClassificationResults]
+) -> None:
+    assert evaluate_classification_metrics(correct_predictions) == correct_metrics
+
+
+def test_evaluate_classification_metrics_mixed_results(
+    mixed_predictions: pl.DataFrame, mixed_metrics: dict[str, BinaryClassificationResults]
+) -> None:
+    assert evaluate_classification_metrics(mixed_predictions) == mixed_metrics

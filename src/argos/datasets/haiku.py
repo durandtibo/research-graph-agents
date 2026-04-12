@@ -7,6 +7,8 @@ __all__ = ["generate_haiku_dataset"]
 
 import polars as pl
 
+from argos.autoprompt.haiku import columns
+
 
 def generate_haiku_dataset() -> pl.DataFrame:
     r"""Generate a labeled dataset of haiku examples.
@@ -58,439 +60,441 @@ def _generate_positive_examples() -> pl.DataFrame:
         [
             # rain
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Dark clouds fill the sky\n"
                     "Water falls upon the leaves\n"
                     "Washing the world clean."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Puddles on the ground\nMirrors for the grey heavens\nSplashing as we walk"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Rhythm on the roof\nGentle tapping through the night\nSinging me to sleep"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Storm has passed away\n"
                     "Rainbow colors shining bright\n"
                     "Sunlight breaks the clouds"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # cat
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\n"
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": "Soft fur drinks the light\n"
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Soft fur drinks the light\n"
                 "A curled crescent on the rug\n"
                 "Warm sleeping tiger",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Two green eyes flash bright\n"
                     "Shadow creeps through midnight grass\n"
                     "A silent, swift pounce"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": "Shadows on the wall\nJumping high to catch a bug\nLanding on its feet",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Shadows on the wall\nJumping high to catch a bug\nLanding on its feet",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft paws on the floor\nChasing after sunny beams\nSleeping all the day"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": "Whiskers in the dark\nSilent hunter strikes so fast\nPurring on my lap",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Whiskers in the dark\nSilent hunter strikes so fast\nPurring on my lap",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # mountain
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "mountain",
-                "haiku": "Ancient rock so high\nReaching up to touch the sky\nShadows fall below",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "mountain",
+                columns.HAIKU: "Ancient rock so high\nReaching up to touch the sky\nShadows fall below",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Pines upon the slope\nWinds are whispering their song\nEagles taking flight"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Granite standing firm\nThrough the winter and the storm\nSleeping giant waits"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # deep ocean
             {
-                "topic": "ocean",
-                "haiku": (
+                columns.TOPIC: "ocean",
+                columns.HAIKU: (
                     "Blue waves softly sigh,\n"
                     "Salt air, a cool, deep embrace,\n"
                     "Sun melts on the deep."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "deep ocean",
-                "haiku": "Heavy water waits\nNo sunlight can reach this deep\nSecrets in the dark",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: "Heavy water waits\nNo sunlight can reach this deep\nSecrets in the dark",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "Tiny glowing lights\nFlashing in the midnight zone\nStars beneath the sea"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "deep ocean",
-                "haiku": "Giant shadows move\nSinging songs across the miles\nEchoes in the cold",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: "Giant shadows move\nSinging songs across the miles\nEchoes in the cold",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "Silent trench so deep\nWhere the ancient waters rest\nHidden from the world"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # train journey
             {
-                "topic": "train journey",
-                "haiku": "Iron wheels roll on\nPassing by the green forests\nLeaving home behind",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "train journey",
+                columns.HAIKU: "Iron wheels roll on\nPassing by the green forests\nLeaving home behind",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "train journey",
-                "haiku": "Whistle in the wind\nCities fade into the night\nSleeping in my seat",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "train journey",
+                columns.HAIKU: "Whistle in the wind\nCities fade into the night\nSleeping in my seat",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "train journey",
-                "haiku": "Silver metal snake\nRhythm beats against the rail\nCarrying me home",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "train journey",
+                columns.HAIKU: "Silver metal snake\nRhythm beats against the rail\nCarrying me home",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "train journey",
-                "haiku": (
+                columns.TOPIC: "train journey",
+                columns.HAIKU: (
                     "Mountains in the glass\nShadows stretch across the floor\nSun is going down"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "train journey",
-                "haiku": "Tickets in my hand\nStrangers sitting in the car\nWaiting for the stop",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "train journey",
+                columns.HAIKU: "Tickets in my hand\nStrangers sitting in the car\nWaiting for the stop",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # morning coffee
             {
-                "topic": "morning coffee",
-                "haiku": "Dark and bitter brew\nWaking up my sleepy mind\nWarming up my soul",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "morning coffee",
+                columns.HAIKU: "Dark and bitter brew\nWaking up my sleepy mind\nWarming up my soul",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "morning coffee",
-                "haiku": (
+                columns.TOPIC: "morning coffee",
+                columns.HAIKU: (
                     "Steam above the cup\nMorning quiet fills the room\nFirst sip starts the day"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "morning coffee",
-                "haiku": (
+                columns.TOPIC: "morning coffee",
+                columns.HAIKU: (
                     "Roasted beans so sweet\nPouring water over grounds\nFragrance in the air"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "morning coffee",
-                "haiku": "Mug into my hands\nDrinking liquid energy\nReady for the sun",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "morning coffee",
+                columns.HAIKU: "Mug into my hands\nDrinking liquid energy\nReady for the sun",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "morning coffee",
-                "haiku": (
+                columns.TOPIC: "morning coffee",
+                columns.HAIKU: (
                     "Sunlight strikes the glass\nDrip by drip the pot will fill\nMorning is alive"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # cherry blossoms
             {
-                "topic": "cherry blossoms",
-                "haiku": (
+                columns.TOPIC: "cherry blossoms",
+                columns.HAIKU: (
                     "Pink buds on the branch\nSoftly waking from the sleep\nSpring has come again"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cherry blossoms",
-                "haiku": "Petals on the wind\nDancing through the quiet air\nSnow of rosy light",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "cherry blossoms",
+                columns.HAIKU: "Petals on the wind\nDancing through the quiet air\nSnow of rosy light",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cherry blossoms",
-                "haiku": "Underneath the tree\nFloating on the silver stream\nTime is drifting by",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "cherry blossoms",
+                columns.HAIKU: "Underneath the tree\nFloating on the silver stream\nTime is drifting by",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cherry blossoms",
-                "haiku": "Brief and lovely bloom\nBeauty fading in the sun\nGone before the night",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "cherry blossoms",
+                columns.HAIKU: "Brief and lovely bloom\nBeauty fading in the sun\nGone before the night",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cherry blossoms",
-                "haiku": (
+                columns.TOPIC: "cherry blossoms",
+                columns.HAIKU: (
                     "Walking through the park\n"
                     "Clouds of pink above our heads\n"
                     "Earth is breathing sweet"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # moon
             {
-                "topic": "moon",
-                "haiku": "Silver orb above\nWatching over sleeping worlds\nSilent light descends",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "moon",
+                columns.HAIKU: "Silver orb above\nWatching over sleeping worlds\nSilent light descends",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "moon",
-                "haiku": "Crescent in the dark\nHanging from a velvet sky\nGolden thread of night",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "moon",
+                columns.HAIKU: "Crescent in the dark\nHanging from a velvet sky\nGolden thread of night",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "moon",
-                "haiku": (
+                columns.TOPIC: "moon",
+                columns.HAIKU: (
                     "Full and bright tonight\nCasting shadows on the snow\nCold and distant glow"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "moon",
-                "haiku": "Mirror in the stars\nReflecting the hidden sun\nGuardian of dreams",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "moon",
+                columns.HAIKU: "Mirror in the stars\nReflecting the hidden sun\nGuardian of dreams",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "moon",
-                "haiku": (
+                columns.TOPIC: "moon",
+                columns.HAIKU: (
                     "Clouds drift slowly by\nHiding then revealing light\nGhostly face on high"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # silence
             {
-                "topic": "silence",
-                "haiku": (
+                columns.TOPIC: "silence",
+                columns.HAIKU: (
                     "Breath within the dark\nWords are lost in heavy air\nOnly heartbeats stay"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "silence",
-                "haiku": (
+                columns.TOPIC: "silence",
+                columns.HAIKU: (
                     "Snow falls on the lake\nMuffling the distant world\nNature holds its breath"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "silence",
-                "haiku": "Empty room at night\nEchoes of a voice long gone\nQuiet fills the space",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "silence",
+                columns.HAIKU: "Empty room at night\nEchoes of a voice long gone\nQuiet fills the space",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "silence",
-                "haiku": "Stillness in the woods\nEven wind has gone to sleep\nTime begins to fade",
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "silence",
+                columns.HAIKU: "Stillness in the woods\nEven wind has gone to sleep\nTime begins to fade",
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "silence",
-                "haiku": (
+                columns.TOPIC: "silence",
+                columns.HAIKU: (
                     "Deep beneath the sea\nSunlight fails to reach the floor\nPeace is all there is"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             # colorful leaves
             {
-                "topic": "colorful leaves",
-                "haiku": (
+                columns.TOPIC: "colorful leaves",
+                columns.HAIKU: (
                     "Crimson, gold, and brown\nFalling to the forest floor\nAutumn's soft descent"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "colorful leaves",
-                "haiku": (
+                columns.TOPIC: "colorful leaves",
+                columns.HAIKU: (
                     "Fire on the branch\nBurning bright before the cold\nSummer's last goodbye"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "colorful leaves",
-                "haiku": (
+                columns.TOPIC: "colorful leaves",
+                columns.HAIKU: (
                     "Drifting on the breeze\n"
                     "Painting paths across the grass\n"
                     "Nature's vibrant quilt"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "colorful leaves",
-                "haiku": (
+                columns.TOPIC: "colorful leaves",
+                columns.HAIKU: (
                     "Crisp beneath my feet\nRustling songs of changing times\nGolden light remains"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "colorful leaves",
-                "haiku": ("Scarlet maple star\nFloating on the silver pond\nRipple in the glass"),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.TOPIC: "colorful leaves",
+                columns.HAIKU: (
+                    "Scarlet maple star\nFloating on the silver pond\nRipple in the glass"
+                ),
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
         ]
     )
@@ -540,51 +544,53 @@ def _generate_negative_examples_incorrect_topic() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
-                "topic": topic,  # real topic: cat
-                "haiku": (
+                columns.TOPIC: topic,  # real topic: cat
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\n"
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "structure_target": True,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             }
             for topic in ["rain", "mountain", "ocean", "train journey", "morning coffee"]
         ]
         + [
             {
-                "topic": topic,  # real topic: rain
-                "haiku": (
+                columns.TOPIC: topic,  # real topic: rain
+                columns.HAIKU: (
                     "Dark clouds fill the sky\n"
                     "Water falls upon the leaves\n"
                     "Washing the world clean."
                 ),
-                "structure_target": True,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             }
             for topic in ["cat", "mountain", "ocean", "train journey", "morning coffee"]
         ]
         + [
             {
-                "topic": topic,  # real topic: mountain
-                "haiku": (
+                columns.TOPIC: topic,  # real topic: mountain
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "structure_target": True,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             }
             for topic in ["cat", "rain", "ocean", "train journey", "morning coffee"]
         ]
         + [
             {
-                "topic": topic,  # real topic: moon
-                "haiku": ("Silver orb above\nWatching over sleeping worlds\nSilent light descends"),
-                "structure_target": True,
-                "topic_target": False,
-                "target": False,
+                columns.TOPIC: topic,  # real topic: moon
+                columns.HAIKU: (
+                    "Silver orb above\nWatching over sleeping worlds\nSilent light descends"
+                ),
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             }
             for topic in ["cat", "rain", "ocean", "train journey", "morning coffee"]
         ]
@@ -609,197 +615,197 @@ def _generate_negative_examples_incorrect_structure() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
-                "topic": "cat",
-                "haiku": "meow",
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "meow",
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "snow",
-                "haiku": "Footprints in the fresh snow lead directly into the dark woods.",
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.TOPIC: "snow",
+                columns.HAIKU: "Footprints in the fresh snow lead directly into the dark woods.",
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "The abyssal weight crushes down in cold, absolute silence.\n"
                     "Yet alien eyes spark like embers in the suffocating dark."
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "Centuries drift by like slow-falling snow upon the ocean floor.\n"
                     "Forgotten bones become the architecture of a sunless world."
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "The bathypelagic void stretches out in endless chill,\n"
                     "A liquid cosmos lit by fleeting bioluminescent sparks.\n"
                     "Immense and sightless shadows glide completely still,\n"
                     "Through crushing depths where human exploration rarely marks."
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "The pressure builds with every sinking league.\n"
                     "Sunlight is a memory, swallowed by the blue,\n"
                     "then the purple, then the absolute black.\n"
                     "Here, the water feels like iron,\n"
                     "heavy, silent, and ancient."
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "The giant falls slowly through the water column,\n"
                     "a snowstorm of marine dust settling on bones.\n"
                     "In death, it becomes an oasis,\n"
                     "feeding a thousand tiny mouths in the barren wasteland,\n"
                     "a temporary city built upon a single, mighty ribcage."
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "The turquoise surface fades into a deep, impenetrable violet.\n"
                     "Gravity pulls the submersible down into the crushing, breathless deep.\n"
                     "We are merely fragile visitors intruding on the trench's sleep."
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "deep ocean",
-                "haiku": (
+                columns.TOPIC: "deep ocean",
+                columns.HAIKU: (
                     "A relentless blizzard of biological dust descends endlessly.\n"
                     "Nourishing the ghostly scavengers that crawl through the abyssal muck.\n"
                     "The cycle of life finding its quiet end at the very bottom of the world."
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a little mouse",
-                "structure_target": False,  # structure is 5, 5, 7
-                "topic_target": True,
-                "target": False,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Soft paws on the rug\nPurring in her sleep\nDreaming of a little mouse",
+                columns.STRUCTURE_TARGET: False,  # structure is 5, 5, 7
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Eyes of glowing green\nWatching from the dark\nReady for a sudden pounce"
                 ),
-                "structure_target": False,  # structure is 5, 5, 7
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,  # structure is 5, 5, 7
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": "Sleeping in the sunny spot\nGolden fur so warm\nPurring all the day",
-                "structure_target": False,  # structure is 7, 5, 5
-                "topic_target": True,
-                "target": False,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Sleeping in the sunny spot\nGolden fur so warm\nPurring all the day",
+                columns.STRUCTURE_TARGET: False,  # structure is 7, 5, 5
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": "Chasing after flying bugs\nJumping in the air\nLanding on her paws",
-                "structure_target": False,  # structure is 7, 5, 5
-                "topic_target": True,
-                "target": False,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Chasing after flying bugs\nJumping in the air\nLanding on her paws",
+                columns.STRUCTURE_TARGET: False,  # structure is 7, 5, 5
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
-                "structure_target": False,  # structure is 5, 5, 5
-                "topic_target": True,
-                "target": False,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
+                columns.STRUCTURE_TARGET: False,  # structure is 5, 5, 5
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": "Tail is standing high\nRubbing on my leg\nBegging for a treat",
-                "structure_target": False,  # structure is 5, 5, 5
-                "topic_target": True,
-                "target": False,
+                columns.TOPIC: "cat",
+                columns.HAIKU: "Tail is standing high\nRubbing on my leg\nBegging for a treat",
+                columns.STRUCTURE_TARGET: False,  # structure is 5, 5, 5
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Sleepy kitten in the sun\n"
                     "Stretching out when day is done\n"
                     "Purring softly, having fun"
                 ),
-                "structure_target": False,  # structure is 7, 7, 7
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,  # structure is 7, 7, 7
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "bakery",
-                "haiku": (
+                columns.TOPIC: "bakery",
+                columns.HAIKU: (
                     "Fresh bread baking in the hot oven\n"
                     "The sweet smell fills the early morning air\n"
                     "Customers line up outside"
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "thunderstorm",
-                "haiku": (
+                columns.TOPIC: "thunderstorm",
+                columns.HAIKU: (
                     "Dark clouds roll over the hills\n"
                     "A sudden flash of lightning strikes the ground\n"
                     "Thunder shakes the window glass"
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "garden",
-                "haiku": (
+                columns.TOPIC: "garden",
+                columns.HAIKU: (
                     "Weeding the damp soil with bare hands\n"
                     "A bright green tomato still clinging to the vine\n"
                     "Summer is fading away"
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "coffee shop",
-                "haiku": (
+                columns.TOPIC: "coffee shop",
+                columns.HAIKU: (
                     "The barista calls out a mispronounced name\n"
                     "Espresso machines hiss and steam\n"
                     "Finding an empty corner table"
                 ),
-                "structure_target": False,
-                "topic_target": True,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: False,
             },
         ]
     )
@@ -822,103 +828,103 @@ def _generate_negative_examples_incorrect_topic_and_structure() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "The abyssal weight crushes down in cold, absolute silence.\n"
                     "Yet alien eyes spark like embers in the suffocating dark."
                 ),
-                "structure_target": False,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "The pressure builds with every sinking league.\n"
                     "Sunlight is a memory, swallowed by the blue,\n"
                     "then the purple, then the absolute black.\n"
                     "Here, the water feels like iron,\n"
                     "heavy, silent, and ancient."
                 ),
-                "structure_target": False,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "morning coffee",
-                "haiku": (
+                columns.TOPIC: "morning coffee",
+                columns.HAIKU: (
                     "The turquoise surface fades into a deep, impenetrable violet.\n"
                     "Gravity pulls the submersible down into the crushing, breathless deep.\n"
                     "We are merely fragile visitors intruding on the trench's sleep."
                 ),
-                "structure_target": False,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "moon",
-                "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a little mouse",
-                "structure_target": False,  # structure is 5, 5, 7
-                "topic_target": False,
-                "target": False,
+                columns.TOPIC: "moon",
+                columns.HAIKU: "Soft paws on the rug\nPurring in her sleep\nDreaming of a little mouse",
+                columns.STRUCTURE_TARGET: False,  # structure is 5, 5, 7
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "train journey",
-                "haiku": "Sleeping in the sunny spot\nGolden fur so warm\nPurring all the day",
-                "structure_target": False,  # structure is 7, 5, 5
-                "topic_target": False,
-                "target": False,
+                columns.TOPIC: "train journey",
+                columns.HAIKU: "Sleeping in the sunny spot\nGolden fur so warm\nPurring all the day",
+                columns.STRUCTURE_TARGET: False,  # structure is 7, 5, 5
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "rain",
-                "haiku": "Tail is standing high\nRubbing on my leg\nBegging for a treat",
-                "structure_target": False,  # structure is 5, 5, 5
-                "topic_target": False,
-                "target": False,
+                columns.TOPIC: "rain",
+                columns.HAIKU: "Tail is standing high\nRubbing on my leg\nBegging for a treat",
+                columns.STRUCTURE_TARGET: False,  # structure is 5, 5, 5
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Sleepy kitten in the sun\n"
                     "Stretching out when day is done\n"
                     "Purring softly, having fun"
                 ),
-                "structure_target": False,  # structure is 7, 7, 7
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,  # structure is 7, 7, 7
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Crashing waves against the dark rocks\n"
                     "Salt spray heavy in the air\n"
                     "A lone gull cries out"
                 ),
-                "structure_target": False,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "moon",
-                "haiku": (
+                columns.TOPIC: "moon",
+                columns.HAIKU: (
                     "The train rattles down the track\n"
                     "Tired faces staring at glowing screens\n"
                     "Rain against the glass"
                 ),
-                "structure_target": False,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Snow caps the jagged mountain peaks\n"
                     "Thick clouds roll over the valley below\n"
                     "Perfect silence remains"
                 ),
-                "structure_target": False,
-                "topic_target": False,
-                "target": False,
+                columns.STRUCTURE_TARGET: False,
+                columns.TOPIC_TARGET: False,
+                columns.OVERALL_TARGET: False,
             },
         ]
     )

@@ -19,7 +19,10 @@ def prepare_dataset() -> pl.DataFrame:
     r"""Prepare a dataset of haiku examples.
 
     Returns:
-        A DataFrame containing haiku examples.
+        A :class:`~polars.DataFrame` with columns ``topic``,
+            ``haiku``, ``structure_target``, ``topic_target``, and
+            ``target`` — matching the schema produced by
+            :func:`~argos.datasets.generate_haiku_dataset`.
     """
     logger.info("Preparing dataset...")
     with timeblock(message="Dataset generation time: {time}"):

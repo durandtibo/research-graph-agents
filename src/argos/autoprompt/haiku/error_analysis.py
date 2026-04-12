@@ -40,14 +40,23 @@ def find_structure_errors(
 
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
-            judge, expected to contain the columns ``topic``,
-            ``haiku``, ``target_col``, and ``prediction_col``.
+            judge, expected to contain the columns identified by
+            ``topic_col``, ``haiku_col``, ``target_col``, and
+            ``prediction_col``.
         path: Optional path where the error list is saved as a JSON
             file. If ``None``, no file is written.
+        haiku_col: The column name containing the haiku text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.HAIKU`.
+        topic_col: The column name containing the topic text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC`.
         prediction_col: The column name containing the predicted
-            structure labels. Defaults to ``"structure_passed"``.
+            structure labels. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_PREDICTION`.
         target_col: The column name containing the ground-truth
-            structure labels. Defaults to ``"structure_target"``.
+            structure labels. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_TARGET`.
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
@@ -85,14 +94,23 @@ def find_topic_errors(
 
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
-            judge, expected to contain the columns ``topic``,
-            ``haiku``, ``target_col``, and ``prediction_col``.
+            judge, expected to contain the columns identified by
+            ``topic_col``, ``haiku_col``, ``target_col``, and
+            ``prediction_col``.
         path: Optional path where the error list is saved as a JSON
             file. If ``None``, no file is written.
+        haiku_col: The column name containing the haiku text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.HAIKU`.
+        topic_col: The column name containing the topic text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC`.
         prediction_col: The column name containing the predicted
-            topic labels. Defaults to ``"topic_passed"``.
+            topic labels. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_PREDICTION`.
         target_col: The column name containing the ground-truth
-            topic labels. Defaults to ``"topic_target"``.
+            topic labels. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_TARGET`.
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
@@ -128,11 +146,17 @@ def find_errors(
 
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
-            judge, expected to contain the columns ``topic``,
-            ``haiku``, ``col_target``, and ``col_prediction``.
-
+            judge, expected to contain the columns identified by
+            ``topic_col``, ``haiku_col``, ``target_col``, and
+            ``prediction_col``.
         prediction_col: The column name containing the predicted labels.
         target_col: The column name containing the ground-truth labels.
+        haiku_col: The column name containing the haiku text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.HAIKU`.
+        topic_col: The column name containing the topic text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC`.
 
     Returns:
         A list of dicts, one per mispredicted example, each with the

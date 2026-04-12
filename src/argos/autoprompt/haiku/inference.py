@@ -37,8 +37,11 @@ class InferencePipeline(BaseInferencePipeline):
 
     Args:
         dataset: The dataset to use for inference.
-        predictor: The predictor to use for inference.
-        path: Path where to read/write the predictions.
+        predictor: The predictor used to generate predictions.
+        path: Optional path for caching predictions as a Parquet
+            file. If the file already exists, predictions are read
+            from it instead of running inference. If ``None``, no
+            caching is performed.
     """
 
     def __init__(

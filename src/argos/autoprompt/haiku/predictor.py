@@ -42,10 +42,17 @@ class Predictor(BasePredictor):
     r"""Implement a simple predictor.
 
     Args:
-        model: The model.
-        batch_size: The batch size for inference.
-        output_columns: Select the columns to return. If ``None``, all the columns are returned.
-        config: A runnable config.
+        model: The :class:`~langchain_core.runnables.Runnable` used
+            to generate predictions.
+        batch_size: Number of inputs to process concurrently per
+            batch. Defaults to ``20``.
+        output_columns: Column names to include in the returned
+            :class:`~polars.DataFrame`. If ``None``, all columns
+            are returned.
+        config: Optional
+            :class:`~langchain_core.runnables.RunnableConfig`
+            controlling concurrency. If ``None``, defaults to
+            ``RunnableConfig(max_concurrency=batch_size)``.
     """
 
     def __init__(
@@ -94,10 +101,15 @@ def generate_predictions(
     r"""Run the inference and returns the results in a DataFrame.
 
     Args:
+        model: The :class:`~langchain_core.runnables.Runnable` used
+            to generate the predictions.
         dataset: The dataset to run inference on.
-        model: The model used to generate the predictions.
-        batch_size: The batch size for inference.
-        config: A runnable config.
+        batch_size: Number of inputs to process concurrently per
+            batch. Defaults to ``20``.
+        config: Optional
+            :class:`~langchain_core.runnables.RunnableConfig`
+            controlling concurrency. If ``None``, a default config
+            with ``max_concurrency=batch_size`` is used.
 
     Returns:
         The results of the inference.

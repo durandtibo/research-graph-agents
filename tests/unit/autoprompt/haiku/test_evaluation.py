@@ -19,7 +19,7 @@ def correct_predictions() -> pl.DataFrame:
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                columns.OVERALL_SCORE_PREDICTION: 10,
+                columns.SCORE_PREDICTION: 10,
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: True,
                 columns.STRUCTURE_PREDICTION: True,
@@ -34,7 +34,7 @@ def correct_predictions() -> pl.DataFrame:
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                columns.OVERALL_SCORE_PREDICTION: 9,
+                columns.SCORE_PREDICTION: 9,
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: True,
                 columns.STRUCTURE_PREDICTION: True,
@@ -47,7 +47,7 @@ def correct_predictions() -> pl.DataFrame:
                 columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                columns.OVERALL_SCORE_PREDICTION: 8,
+                columns.SCORE_PREDICTION: 8,
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: True,
                 columns.STRUCTURE_PREDICTION: True,

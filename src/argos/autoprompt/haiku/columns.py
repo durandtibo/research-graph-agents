@@ -6,6 +6,7 @@ __all__ = [
     "OVERALL_REASONING",
     "OVERALL_TARGET",
     "PREDICTION",
+    "REASONING",
     "SCORE_PREDICTION",
     "SCORE_REASONING",
     "SCORE_TARGET",
@@ -21,6 +22,7 @@ __all__ = [
 
 HAIKU = "haiku"
 PREDICTION = "prediction"
+REASONING = "reasoning"
 TARGET = "target"
 TOPIC = "topic"
 

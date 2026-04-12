@@ -124,6 +124,47 @@ def test_haiku_judge_result_passed_auto_corrected_all_pass() -> None:
     assert result.overall_prediction
 
 
+def test_haiku_judge_result_optional_overall_reasoning_default_none() -> None:
+    result = HaikuJudgeResult(
+        structure_prediction=True,
+        topic_prediction=True,
+        score=8,
+    )
+    assert result.overall_reasoning is None
+
+
+def test_haiku_judge_result_optional_structure_reasoning_default_none() -> None:
+    result = HaikuJudgeResult(
+        structure_prediction=True,
+        topic_prediction=True,
+        score=8,
+    )
+    assert result.structure_reasoning is None
+
+
+def test_haiku_judge_result_optional_topic_reasoning_default_none() -> None:
+    result = HaikuJudgeResult(
+        structure_prediction=True,
+        topic_prediction=True,
+        score=8,
+    )
+    assert result.topic_reasoning is None
+
+
+def test_haiku_judge_result_with_all_reasoning_fields() -> None:
+    result = HaikuJudgeResult(
+        structure_prediction=True,
+        topic_prediction=True,
+        score=8,
+        structure_reasoning="All three lines follow 5-7-5.",
+        topic_reasoning="The haiku clearly evokes the target topic.",
+        overall_reasoning="Strong imagery with effective juxtaposition.",
+    )
+    assert result.structure_reasoning == "All three lines follow 5-7-5."
+    assert result.topic_reasoning == "The haiku clearly evokes the target topic."
+    assert result.overall_reasoning == "Strong imagery with effective juxtaposition."
+
+
 ##############################################
 #     Tests for create_haiku_judge_model     #
 ##############################################

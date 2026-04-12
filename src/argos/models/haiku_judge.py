@@ -80,7 +80,7 @@ class HaikuJudgeResult(BaseModel):
     )
 
     @model_validator(mode="after")
-    def compute_passed(self) -> Self:
+    def compute_overall_prediction(self) -> Self:
         r"""Compute ``overall_prediction`` from the contributing fields.
 
         Overrides any LLM-provided value to guarantee that

@@ -77,7 +77,11 @@ def mock_outputs() -> list[dict[str, Any]]:
                 "Silence finds the leaf."
             ),
             "evaluation": HaikuJudgeResult(
-                structure_passed=True, topic_passed=True, score=10, reasoning="reason1", passed=True
+                structure_prediction=True,
+                topic_prediction=True,
+                score=10,
+                overall_reasoning="reason1",
+                overall_prediction=True,
             ),
         },
         {
@@ -86,7 +90,11 @@ def mock_outputs() -> list[dict[str, Any]]:
                 "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
             ),
             "evaluation": HaikuJudgeResult(
-                structure_passed=True, topic_passed=True, score=9, reasoning="reason2", passed=True
+                structure_prediction=True,
+                topic_prediction=True,
+                score=9,
+                overall_reasoning="reason2",
+                overall_prediction=True,
             ),
         },
         {
@@ -95,7 +103,11 @@ def mock_outputs() -> list[dict[str, Any]]:
                 "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
             ),
             "evaluation": HaikuJudgeResult(
-                structure_passed=True, topic_passed=True, score=8, reasoning="reason3", passed=True
+                structure_prediction=True,
+                topic_prediction=True,
+                score=8,
+                overall_reasoning="reason3",
+                overall_prediction=True,
             ),
         },
     ]
@@ -113,13 +125,15 @@ def mock_predictions() -> pl.DataFrame:
                     "Silence finds the leaf."
                 ),
                 "score": 10,
-                "passed": True,
+                "overall_prediction": True,
                 "target": True,
-                "structure_passed": True,
+                "structure_prediction": True,
+                "structure_reasoning": None,
                 "structure_target": True,
-                "topic_passed": True,
+                "topic_prediction": True,
+                "topic_reasoning": None,
                 "topic_target": True,
-                "reasoning": "reason1",
+                "overall_reasoning": "reason1",
             },
             {
                 "topic": "cat",
@@ -129,13 +143,15 @@ def mock_predictions() -> pl.DataFrame:
                     "Sunbeam, peace descends."
                 ),
                 "score": 9,
-                "passed": True,
+                "overall_prediction": True,
                 "target": True,
-                "structure_passed": True,
+                "structure_prediction": True,
+                "structure_reasoning": None,
                 "structure_target": True,
-                "topic_passed": True,
+                "topic_prediction": True,
+                "topic_reasoning": None,
                 "topic_target": True,
-                "reasoning": "reason2",
+                "overall_reasoning": "reason2",
             },
             {
                 "topic": "mountain",
@@ -143,13 +159,15 @@ def mock_predictions() -> pl.DataFrame:
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "score": 8,
-                "passed": True,
+                "overall_prediction": True,
                 "target": True,
-                "structure_passed": True,
+                "structure_prediction": True,
+                "structure_reasoning": None,
                 "structure_target": True,
-                "topic_passed": True,
+                "topic_prediction": True,
+                "topic_reasoning": None,
                 "topic_target": True,
-                "reasoning": "reason3",
+                "overall_reasoning": "reason3",
             },
         ]
     )
@@ -190,11 +208,11 @@ def test_predictor_predict_batch_size_1(
                     "Silence finds the leaf."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=10,
-                    reasoning="reason1",
-                    passed=True,
+                    overall_reasoning="reason1",
+                    overall_prediction=True,
                 ),
             }
         ],
@@ -205,11 +223,11 @@ def test_predictor_predict_batch_size_1(
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=9,
-                    reasoning="reason2",
-                    passed=True,
+                    overall_reasoning="reason2",
+                    overall_prediction=True,
                 ),
             },
         ],
@@ -220,11 +238,11 @@ def test_predictor_predict_batch_size_1(
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=8,
-                    reasoning="reason3",
-                    passed=True,
+                    overall_reasoning="reason3",
+                    overall_prediction=True,
                 ),
             },
         ],
@@ -248,11 +266,11 @@ def test_predictor_predict_batch_size_2(
                     "Silence finds the leaf."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=10,
-                    reasoning="reason1",
-                    passed=True,
+                    overall_reasoning="reason1",
+                    overall_prediction=True,
                 ),
             },
             {
@@ -261,11 +279,11 @@ def test_predictor_predict_batch_size_2(
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=9,
-                    reasoning="reason2",
-                    passed=True,
+                    overall_reasoning="reason2",
+                    overall_prediction=True,
                 ),
             },
         ],
@@ -276,11 +294,11 @@ def test_predictor_predict_batch_size_2(
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=8,
-                    reasoning="reason3",
-                    passed=True,
+                    overall_reasoning="reason3",
+                    overall_prediction=True,
                 ),
             },
         ],
@@ -293,7 +311,7 @@ def test_predictor_predict_batch_size_2(
 def test_predictor_predict_selects_output_columns(
     mock_dataset: pl.DataFrame, mock_model: Runnable
 ) -> None:
-    predictor = Predictor(model=mock_model, output_columns=["topic", "haiku", "passed"])
+    predictor = Predictor(model=mock_model, output_columns=["topic", "haiku", "overall_prediction"])
     predictions = predictor.predict(mock_dataset)
     assert_frame_equal(
         predictions,
@@ -306,7 +324,7 @@ def test_predictor_predict_selects_output_columns(
                         "Cool drops kiss the thirsty ground,\n"
                         "Silence finds the leaf."
                     ),
-                    "passed": True,
+                    "overall_prediction": True,
                 },
                 {
                     "topic": "cat",
@@ -315,7 +333,7 @@ def test_predictor_predict_selects_output_columns(
                         "Silent paws upon the floor,\n"
                         "Sunbeam, peace descends."
                     ),
-                    "passed": True,
+                    "overall_prediction": True,
                 },
                 {
                     "topic": "mountain",
@@ -324,7 +342,7 @@ def test_predictor_predict_selects_output_columns(
                         "Clouds are resting on the stone\n"
                         "Quiet, cold, and still"
                     ),
-                    "passed": True,
+                    "overall_prediction": True,
                 },
             ]
         ),
@@ -357,11 +375,11 @@ def test_generate_predictions_batch_size_1(
                     "Silence finds the leaf."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=10,
-                    reasoning="reason1",
-                    passed=True,
+                    overall_reasoning="reason1",
+                    overall_prediction=True,
                 ),
             }
         ],
@@ -372,11 +390,11 @@ def test_generate_predictions_batch_size_1(
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=9,
-                    reasoning="reason2",
-                    passed=True,
+                    overall_reasoning="reason2",
+                    overall_prediction=True,
                 ),
             },
         ],
@@ -387,11 +405,11 @@ def test_generate_predictions_batch_size_1(
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=8,
-                    reasoning="reason3",
-                    passed=True,
+                    overall_reasoning="reason3",
+                    overall_prediction=True,
                 ),
             },
         ],
@@ -414,11 +432,11 @@ def test_generate_predictions_batch_size_2(
                     "Silence finds the leaf."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=10,
-                    reasoning="reason1",
-                    passed=True,
+                    overall_reasoning="reason1",
+                    overall_prediction=True,
                 ),
             },
             {
@@ -427,11 +445,11 @@ def test_generate_predictions_batch_size_2(
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=9,
-                    reasoning="reason2",
-                    passed=True,
+                    overall_reasoning="reason2",
+                    overall_prediction=True,
                 ),
             },
         ],
@@ -442,11 +460,11 @@ def test_generate_predictions_batch_size_2(
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
-                    structure_passed=True,
-                    topic_passed=True,
+                    structure_prediction=True,
+                    topic_prediction=True,
                     score=8,
-                    reasoning="reason3",
-                    passed=True,
+                    overall_reasoning="reason3",
+                    overall_prediction=True,
                 ),
             },
         ],

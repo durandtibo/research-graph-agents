@@ -20,11 +20,11 @@ def mock_llm() -> BaseChatModel:
 @pytest.fixture
 def mock_judge_result() -> HaikuJudgeResult:
     return HaikuJudgeResult(
-        structure_passed=True,
-        topic_passed=True,
+        structure_prediction=True,
+        topic_prediction=True,
         score=8,
-        reasoning="Great imagery and strong structure.",
-        passed=True,
+        overall_reasoning="Great imagery and strong structure.",
+        overall_prediction=True,
     )
 
 

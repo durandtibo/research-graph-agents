@@ -5,6 +5,7 @@ from __future__ import annotations
 __all__ = [
     "find_errors",
     "find_structure_errors",
+    "find_topic_errors",
     "format_errors_as_markdown",
     "format_errors_as_markdown_table",
 ]
@@ -63,6 +64,51 @@ def find_structure_errors(
     log_markdown(
         format_errors_as_markdown(errors, error_type="structure"),
         title="Structure Errors",
+    )
+    if path:
+        save_json(errors, path, exist_ok=True)
+    return errors
+
+
+def find_topic_errors(
+    predictions: pl.DataFrame,
+    path: Path | None = None,
+    *,
+    haiku_col: str = columns.HAIKU,
+    topic_col: str = columns.TOPIC,
+    prediction_col: str = columns.TOPIC_PREDICTION,
+    target_col: str = columns.TOPIC_TARGET,
+) -> list[dict[str, str | bool]]:
+    r"""Find haiku examples where the topic prediction does not match the
+    ground-truth label, log a markdown summary, and optionally save the
+    results.
+
+    Args:
+        predictions: A :class:`~polars.DataFrame` produced by the haiku
+            judge, expected to contain the columns ``topic``,
+            ``haiku``, ``target_col``, and ``prediction_col``.
+        path: Optional path where the error list is saved as a JSON
+            file. If ``None``, no file is written.
+        prediction_col: The column name containing the predicted
+            topic labels. Defaults to ``"topic_passed"``.
+        target_col: The column name containing the ground-truth
+            topic labels. Defaults to ``"topic_target"``.
+
+    Returns:
+        A list of dicts, one per mispredicted example, each with the
+            keys ``topic``, ``haiku``, ``target``, and ``prediction``.
+    """
+    logger.info("Analyzing topic errors...")
+    errors = find_errors(
+        predictions=predictions,
+        target_col=target_col,
+        prediction_col=prediction_col,
+        haiku_col=haiku_col,
+        topic_col=topic_col,
+    )
+    log_markdown(
+        format_errors_as_markdown(errors, error_type="topic"),
+        title="Topic Errors",
     )
     if path:
         save_json(errors, path, exist_ok=True)

@@ -9,6 +9,7 @@ from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.error_analysis import (
     find_errors,
     find_structure_errors,
+    find_topic_errors,
     format_errors_as_markdown,
     format_errors_as_markdown_table,
 )
@@ -67,7 +68,7 @@ MULTIPLE_ERRORS_TABLE = (
 
 
 def test_find_structure_errors_all_correct(tmp_path: Path) -> None:
-    path = tmp_path.joinpath("data").joinpath("error_analysis_structure.json")
+    path = tmp_path.joinpath("data").joinpath("error.json")
     out = find_structure_errors(
         predictions=pl.DataFrame(
             {
@@ -85,7 +86,7 @@ def test_find_structure_errors_all_correct(tmp_path: Path) -> None:
 
 
 def test_find_structure_errors_all_incorrect(tmp_path: Path) -> None:
-    path = tmp_path.joinpath("data").joinpath("error_analysis_structure.json")
+    path = tmp_path.joinpath("data").joinpath("error.json")
     out = find_structure_errors(
         predictions=pl.DataFrame(
             {
@@ -114,7 +115,7 @@ def test_find_structure_errors_all_incorrect(tmp_path: Path) -> None:
 
 
 def test_find_structure_errors_empty(tmp_path: Path) -> None:
-    path = tmp_path.joinpath("data").joinpath("error_analysis_structure.json")
+    path = tmp_path.joinpath("data").joinpath("error.json")
     out = find_structure_errors(
         predictions=pl.DataFrame(
             {
@@ -139,6 +140,90 @@ def test_find_structure_errors_without_path() -> None:
                 columns.HAIKU: ["A", "B", "C", "D"],
                 columns.STRUCTURE_PREDICTION: [True, True, False, False],
                 columns.STRUCTURE_TARGET: [True, True, False, False],
+            }
+        ),
+    )
+    assert out == []
+
+
+#######################################
+#     Tests for find_topic_errors     #
+#######################################
+
+
+def test_find_topic_errors_all_correct(tmp_path: Path) -> None:
+    path = tmp_path.joinpath("data").joinpath("error.json")
+    out = find_topic_errors(
+        predictions=pl.DataFrame(
+            {
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.TOPIC_PREDICTION: [True, True, False, False],
+                columns.TOPIC_TARGET: [True, True, False, False],
+            }
+        ),
+        path=path,
+    )
+    assert out == []
+    assert path.is_file()
+    assert load_json(path) == []
+
+
+def test_find_topic_errors_all_incorrect(tmp_path: Path) -> None:
+    path = tmp_path.joinpath("data").joinpath("error.json")
+    out = find_topic_errors(
+        predictions=pl.DataFrame(
+            {
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.TOPIC_PREDICTION: [True, True, False, False],
+                columns.TOPIC_TARGET: [False, False, True, True],
+            }
+        ),
+        path=path,
+    )
+    assert out == [
+        {columns.TOPIC: "u", columns.HAIKU: "A", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "v", columns.HAIKU: "B", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "w", columns.HAIKU: "C", columns.TARGET: True, columns.PREDICTION: False},
+        {columns.TOPIC: "x", columns.HAIKU: "D", columns.TARGET: True, columns.PREDICTION: False},
+    ]
+
+    assert path.is_file()
+    assert load_json(path) == [
+        {columns.TOPIC: "u", columns.HAIKU: "A", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "v", columns.HAIKU: "B", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "w", columns.HAIKU: "C", columns.TARGET: True, columns.PREDICTION: False},
+        {columns.TOPIC: "x", columns.HAIKU: "D", columns.TARGET: True, columns.PREDICTION: False},
+    ]
+
+
+def test_find_topic_errors_empty(tmp_path: Path) -> None:
+    path = tmp_path.joinpath("data").joinpath("error.json")
+    out = find_topic_errors(
+        predictions=pl.DataFrame(
+            {
+                columns.TOPIC: [],
+                columns.HAIKU: [],
+                columns.TOPIC_PREDICTION: [],
+                columns.TOPIC_TARGET: [],
+            }
+        ),
+        path=path,
+    )
+    assert out == []
+    assert path.is_file()
+    assert load_json(path) == []
+
+
+def test_find_topic_errors_without_path() -> None:
+    out = find_topic_errors(
+        predictions=pl.DataFrame(
+            {
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.TOPIC_PREDICTION: [True, True, False, False],
+                columns.TOPIC_TARGET: [True, True, False, False],
             }
         ),
     )

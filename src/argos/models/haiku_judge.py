@@ -22,32 +22,46 @@ logger: logging.Logger = logging.getLogger(__name__)
 class HaikuJudgeResult(BaseModel):
     r"""Define the structured result produced by the haiku judge LLM.
 
-    ``structure_passed``, ``topic_passed``, ``score``, and
-    ``reasoning`` are populated by the LLM via structured output.
-    ``passed`` is always derived automatically from those fields by the
-    model validator, so it is guaranteed to be consistent.
+    ``structure_prediction``, ``topic_prediction``, ``score``, and
+    ``overall_reasoning`` are populated by the LLM via structured
+    output. ``overall_prediction`` is always derived automatically from
+    those fields by the model validator, so it is guaranteed to be
+    consistent.
 
     Attributes:
-        structure_passed: ``True`` only if the haiku has exactly three
-            lines with syllable counts of 5, 7, and 5 respectively.
-        topic_passed: ``True`` if the haiku meaningfully addresses the
-            target topic, otherwise ``False``.
+        structure_prediction: ``True`` only if the haiku has exactly
+            three lines with syllable counts of 5, 7, and 5
+            respectively.
+        structure_reasoning: An optional brief explanation justifying
+            the ``structure_prediction`` decision.
+        topic_prediction: ``True`` if the haiku meaningfully addresses
+            the target topic, otherwise ``False``.
+        topic_reasoning: An optional brief explanation justifying the
+            ``topic_prediction`` decision.
         score: Quality score from 1 to 10 based on imagery, emotional
             resonance, and word choice. Constrained to the range
             ``[1, 10]``.
-        reasoning: A brief explanation justifying the score, topic
-            adherence, and structure evaluation.
-        passed: Derived automatically: ``True`` only if
-            ``structure_passed`` and ``topic_passed`` are both ``True``
-            and ``score >= 7``. Any LLM-provided value is overwritten
-            by the :meth:`compute_passed` model validator.
+        overall_reasoning: An optional brief explanation justifying the
+            score, topic adherence, and structure evaluation.
+        overall_prediction: Derived automatically: ``True`` only if
+            ``structure_prediction`` and ``topic_prediction`` are both
+            ``True`` and ``score >= 7``. Any LLM-provided value is
+            overwritten by the :meth:`compute_passed` model validator.
     """
 
-    structure_passed: bool = Field(
+    structure_prediction: bool = Field(
         description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
     )
-    topic_passed: bool = Field(
+    structure_reasoning: str | None = Field(
+        default=None,
+        description="A brief explanation justifying the structure prediction decision (structure_prediction).",
+    )
+    topic_prediction: bool = Field(
         description="True if the haiku meaningfully addresses the target topic, otherwise False."
+    )
+    topic_reasoning: str | None = Field(
+        default=None,
+        description="A brief explanation justifying the topic prediction decision (topic_prediction).",
     )
     score: int = Field(
         ge=1,
@@ -56,23 +70,26 @@ class HaikuJudgeResult(BaseModel):
             "Quality score from 1-10 based on imagery, emotional resonance, and word choice."
         ),
     )
-    reasoning: str = Field(
-        description="A brief explanation justifying the score, topic adherence, and structure."
+    overall_reasoning: str | None = Field(
+        default=None,
+        description="A brief explanation justifying the score, topic adherence, and structure.",
     )
-    passed: bool = Field(
+    overall_prediction: bool = Field(
         default=False,
-        description="Derived automatically: True ONLY if structure_passed AND topic_passed AND score >= 7.",
+        description="Derived automatically: True ONLY if structure_prediction AND topic_prediction AND score >= 7.",
     )
 
     @model_validator(mode="after")
     def compute_passed(self) -> Self:
-        r"""Compute ``passed`` from the contributing fields.
+        r"""Compute ``overall_prediction`` from the contributing fields.
 
-        Overrides any LLM-provided value to guarantee that ``passed``
-        is always consistent with ``structure_passed``,
-        ``topic_passed``, and ``score``.
+        Overrides any LLM-provided value to guarantee that
+        ``overall_prediction`` is always consistent with
+        ``structure_prediction``, ``topic_prediction``, and ``score``.
         """
-        self.passed = self.structure_passed and self.topic_passed and self.score >= 7
+        self.overall_prediction = (
+            self.structure_prediction and self.topic_prediction and self.score >= 7
+        )
         return self
 
 

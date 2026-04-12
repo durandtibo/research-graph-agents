@@ -14,12 +14,12 @@ from argos.autoprompt.haiku.dataset import prepare_dataset
 from argos.autoprompt.haiku.error_analyzer import ErrorAnalyzer
 from argos.autoprompt.haiku.error_finder import ErrorFinder
 from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
-from argos.autoprompt.haiku.history import BaseHistory, JsonHistory
 from argos.autoprompt.haiku.inference import InferencePipeline
 from argos.autoprompt.haiku.judge import create_judge_graph
 from argos.autoprompt.haiku.predictor import Predictor
 from argos.autoprompt.haiku.prompt import generate_next_judge_system_prompt
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
+from argos.utils.history import BaseHistory, JsonHistory
 from argos.utils.logging import configure_logging, log_markdown
 
 if TYPE_CHECKING:

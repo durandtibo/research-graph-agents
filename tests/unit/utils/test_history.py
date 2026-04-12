@@ -6,7 +6,7 @@ import pytest
 from feu.utils.io import save_json
 from iden.io import load_json
 
-from argos.autoprompt.haiku.history import (
+from argos.utils.history import (
     InMemoryHistory,
     JsonHistory,
 )

@@ -40,6 +40,14 @@ def test_create_analyzer_model_uses_custom_system_prompt(mock_llm: BaseChatModel
     assert system_message.prompt.template == custom_prompt
 
 
+@pytest.mark.parametrize("system_prompt", ["", " ", "\n\n"])
+def test_create_analyzer_model_uses_empty_system_prompt(
+    mock_llm: BaseChatModel, system_prompt: str
+) -> None:
+    with pytest.raises(ValueError, match="system_prompt must be a non-empty string"):
+        create_analyzer_model(mock_llm, system_prompt=system_prompt)
+
+
 def test_create_analyzer_model_prompt_contains_text_placeholder(mock_llm: BaseChatModel) -> None:
     model = create_analyzer_model(mock_llm)
     prompt_step = model.first

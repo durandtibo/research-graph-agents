@@ -42,12 +42,12 @@ class ErrorFinder(BaseErrorFinder):
     r"""Implement a simple error finder.
 
     Args:
-        path: The path where to store the errors.
+        root_path: The root path where to store the errors.
     """
 
     def __init__(
         self,
-        path: Path | None = None,
+        root_path: Path | None = None,
         *,
         haiku_col: str = columns.HAIKU,
         topic_col: str = columns.TOPIC,
@@ -58,7 +58,7 @@ class ErrorFinder(BaseErrorFinder):
         topic_prediction_col: str = columns.TOPIC_PREDICTION,
         topic_target_col: str = columns.TOPIC_TARGET,
     ) -> None:
-        self._path = path
+        self._root_path = root_path
         self._haiku_col = haiku_col
         self._topic_col = topic_col
         self._overall_prediction_col = overall_prediction_col
@@ -72,7 +72,7 @@ class ErrorFinder(BaseErrorFinder):
         args = repr_indent(
             repr_mapping(
                 {
-                    "path": self._path,
+                    "path": self._root_path,
                     "haiku_col": self._haiku_col,
                     "topic_col": self._topic_col,
                     "overall_prediction_col": self._overall_prediction_col,
@@ -90,17 +90,17 @@ class ErrorFinder(BaseErrorFinder):
     def structure_error_path(self) -> Path | None:
         r"""The path to the structure error file, or ``None`` if no root
         path was provided."""
-        if not self._path:
+        if not self._root_path:
             return None
-        return self._path.joinpath("errors_structure.json")
+        return self._root_path.joinpath("errors_structure.json")
 
     @property
     def topic_error_path(self) -> Path | None:
         r"""The path to the topic error file, or ``None`` if no root
         path was provided."""
-        if not self._path:
+        if not self._root_path:
             return None
-        return self._path.joinpath("errors_topic.json")
+        return self._root_path.joinpath("errors_topic.json")
 
     def find(self, predictions: pl.DataFrame) -> str:
         structure = self._find_structure_errors(predictions)
@@ -134,7 +134,8 @@ class ErrorFinder(BaseErrorFinder):
         return errors_str
 
     def _find_topic_errors(self, predictions: pl.DataFrame) -> str:
-        r"""Return a markdown-formatted report of topic prediction errors.
+        r"""Return a markdown-formatted report of topic prediction
+        errors.
 
         Args:
             predictions: A :class:`~polars.DataFrame` with the

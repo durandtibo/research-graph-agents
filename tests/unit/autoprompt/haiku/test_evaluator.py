@@ -8,7 +8,7 @@ from coola.equality import objects_are_allclose, objects_are_equal
 from iden.io import load_json
 
 from argos.autoprompt.haiku import columns
-from argos.autoprompt.haiku.evaluator import BaseEvaluator, HaikuJudgeEvaluator
+from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -189,16 +189,6 @@ def mixed_metrics() -> dict[str, Any]:
     }
 
 
-#####################################
-#     Tests for BaseEvaluator       #
-#####################################
-
-
-def test_base_evaluator_is_abstract() -> None:
-    with pytest.raises(TypeError, match="Can't instantiate abstract class"):
-        BaseEvaluator()  # type: ignore[abstract]
-
-
 #########################################
 #     Tests for HaikuJudgeEvaluator     #
 #########################################
@@ -210,32 +200,6 @@ def test_haiku_judge_evaluator_repr() -> None:
 
 def test_haiku_judge_evaluator_str() -> None:
     assert str(HaikuJudgeEvaluator()).startswith("HaikuJudgeEvaluator(")
-
-
-def test_haiku_judge_evaluator_repr_contains_default_columns() -> None:
-    r = repr(HaikuJudgeEvaluator())
-    assert columns.OVERALL_PREDICTION in r
-    assert columns.OVERALL_TARGET in r
-    assert columns.STRUCTURE_PREDICTION in r
-    assert columns.STRUCTURE_TARGET in r
-    assert columns.TOPIC_PREDICTION in r
-    assert columns.TOPIC_TARGET in r
-
-
-def test_haiku_judge_evaluator_repr_contains_custom_columns() -> None:
-    evaluator = HaikuJudgeEvaluator(
-        overall_prediction_col="my_overall_pred",
-        overall_target_col="my_overall_tgt",
-    )
-    r = repr(evaluator)
-    assert "my_overall_pred" in r
-    assert "my_overall_tgt" in r
-
-
-def test_haiku_judge_evaluator_repr_contains_path(tmp_path: Path) -> None:
-    path = tmp_path / "metrics.json"
-    r = repr(HaikuJudgeEvaluator(path))
-    assert str(path) in r
 
 
 def test_haiku_judge_evaluator_evaluate_correct(

@@ -54,8 +54,10 @@ class ErrorFinder(BaseErrorFinder):
         overall_prediction_col: str = columns.OVERALL_PREDICTION,
         overall_target_col: str = columns.OVERALL_TARGET,
         structure_prediction_col: str = columns.STRUCTURE_PREDICTION,
+        structure_reasoning_col: str = columns.STRUCTURE_REASONING,
         structure_target_col: str = columns.STRUCTURE_TARGET,
         topic_prediction_col: str = columns.TOPIC_PREDICTION,
+        topic_reasoning_col: str = columns.TOPIC_REASONING,
         topic_target_col: str = columns.TOPIC_TARGET,
     ) -> None:
         self._root_path = root_path
@@ -64,8 +66,10 @@ class ErrorFinder(BaseErrorFinder):
         self._overall_prediction_col = overall_prediction_col
         self._overall_target_col = overall_target_col
         self._structure_prediction_col = structure_prediction_col
+        self._structure_reasoning_col = structure_reasoning_col
         self._structure_target_col = structure_target_col
         self._topic_prediction_col = topic_prediction_col
+        self._topic_reasoning_col = topic_reasoning_col
         self._topic_target_col = topic_target_col
 
     def __repr__(self) -> str:
@@ -78,8 +82,10 @@ class ErrorFinder(BaseErrorFinder):
                     "overall_prediction_col": self._overall_prediction_col,
                     "overall_target_col": self._overall_target_col,
                     "structure_prediction_col": self._structure_prediction_col,
+                    "structure_reasoning_col": self._structure_reasoning_col,
                     "structure_target_col": self._structure_target_col,
                     "topic_prediction_col": self._topic_prediction_col,
+                    "topic_reasoning_col": self._topic_reasoning_col,
                     "topic_target_col": self._topic_target_col,
                 }
             )
@@ -127,6 +133,7 @@ class ErrorFinder(BaseErrorFinder):
             haiku_col=self._haiku_col,
             topic_col=self._topic_col,
             prediction_col=self._structure_prediction_col,
+            reasoning_col=self._structure_reasoning_col,
             target_col=self._structure_target_col,
         )
         errors_str = format_errors_as_markdown(errors, error_type="structure")
@@ -150,6 +157,7 @@ class ErrorFinder(BaseErrorFinder):
             haiku_col=self._haiku_col,
             topic_col=self._topic_col,
             prediction_col=self._topic_prediction_col,
+            reasoning_col=self._topic_reasoning_col,
             target_col=self._topic_target_col,
         )
         errors_str = format_errors_as_markdown(errors, error_type="topic")

@@ -7,6 +7,7 @@ from feu.utils.io import save_json
 from iden.io import load_json
 
 from argos.autoprompt.haiku.history import (
+    InMemoryHistory,
     JsonHistory,
 )
 
@@ -19,6 +20,55 @@ def json_path(tmp_path: Path) -> Path:
     path = tmp_path.joinpath("data").joinpath("history.json")
     save_json([{"key": "value"}], path)
     return path
+
+
+#####################################
+#     Tests for InMemoryHistory     #
+#####################################
+
+
+def test_in_memory_history_init_empty() -> None:
+    history = InMemoryHistory()
+    assert history.get_values() == []
+
+
+def test_in_memory_history_init_not_empty() -> None:
+    history = InMemoryHistory([{"key": "value"}])
+    assert history.get_values() == [{"key": "value"}]
+
+
+def test_in_memory_history_append_empty() -> None:
+    history = InMemoryHistory()
+    history.append({"hello": "world"})
+    assert history.get_values() == [{"hello": "world"}]
+
+
+def test_in_memory_history_append_not_empty() -> None:
+    history = InMemoryHistory([{"key": "value"}])
+    history.append({"hello": "world"})
+    assert history.get_values() == [{"key": "value"}, {"hello": "world"}]
+
+
+def test_in_memory_history_get_values_empty() -> None:
+    history = InMemoryHistory()
+    assert history.get_values() == []
+
+
+def test_in_memory_history_get_values_not_empty() -> None:
+    history = InMemoryHistory([{"key": "value"}])
+    assert history.get_values() == [{"key": "value"}]
+
+
+def test_in_memory_history_clear_empty() -> None:
+    history = InMemoryHistory()
+    history.clear()
+    assert history.get_values() == []
+
+
+def test_in_memory_history_clear_not_empty() -> None:
+    history = InMemoryHistory([{"key": "value"}])
+    history.clear()
+    assert history.get_values() == []
 
 
 #################################

@@ -157,8 +157,9 @@ def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> 
 
     Args:
         frame: A DataFrame that can have struct columns.
-        separator: Rename output column names as combination of the struct column name,
-            name separator and field name.
+        separator: If provided, renamed output columns follow the
+            ``<struct_col><separator><field>`` pattern. If ``None``,
+            the original field names are kept as-is.
 
     Returns:
         A DataFrame where all the struct columns are unnested.

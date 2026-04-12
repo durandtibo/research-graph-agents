@@ -26,7 +26,10 @@ def create_judge_graph(config: LlmConfig) -> CompiledStateGraph:
     r"""Create the graph of the haiku judge.
 
     Args:
-        config: The LLM config.
+        config: The
+            :class:`~argos.autoprompt.haiku.config.LlmConfig`
+            that specifies the judge model (provider, temperature,
+            system prompt, and retry settings).
 
     Returns:
         A compiled :class:`~langgraph.graph.state.CompiledStateGraph`

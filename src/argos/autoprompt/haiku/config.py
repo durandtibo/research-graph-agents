@@ -80,8 +80,7 @@ class ExperimentConfig:
 
     @property
     def path_artifact(self) -> Path:
-        r"""Return the path to the artifact directory for the current
-        iteration.
+        r"""Return the artifact directory path for the current iteration.
 
         Returns:
             ``<path_experiment>/artifacts/<iteration:04d>``

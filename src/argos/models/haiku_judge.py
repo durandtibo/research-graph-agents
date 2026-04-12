@@ -61,7 +61,7 @@ class HaikuJudgeResult(BaseModel):
     )
     topic_reasoning: str | None = Field(
         default=None,
-        description="An optional brief explanation justifying the topic_prediction decision.",
+        description="A brief explanation justifying the topic prediction decision (topic_prediction).",
     )
     score: int = Field(
         ge=1,

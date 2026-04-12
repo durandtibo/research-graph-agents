@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import Mock
 
 import polars as pl
@@ -10,7 +11,6 @@ from langchain_core.runnables import Runnable
 from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.error_analyzer import ErrorAnalyzer
 from argos.autoprompt.haiku.error_finder import BaseErrorFinder
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pathlib import Path

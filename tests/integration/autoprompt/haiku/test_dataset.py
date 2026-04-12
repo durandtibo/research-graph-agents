@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import polars as pl
 
+from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.dataset import prepare_dataset
 
 #####################################
@@ -15,7 +16,13 @@ def test_prepare_dataset_returns_dataframe() -> None:
 
 def test_prepare_dataset_columns() -> None:
     df = prepare_dataset()
-    assert df.columns == ["topic", "haiku", "structure_target", "topic_target", "target"]
+    assert df.columns == [
+        columns.TOPIC,
+        columns.HAIKU,
+        columns.STRUCTURE_TARGET,
+        columns.TOPIC_TARGET,
+        columns.OVERALL_TARGET,
+    ]
 
 
 def test_prepare_dataset_num_rows() -> None:
@@ -27,10 +34,10 @@ def test_prepare_dataset_schema() -> None:
     df = prepare_dataset()
     assert df.schema == pl.Schema(
         {
-            "topic": pl.String,
-            "haiku": pl.String,
-            "structure_target": pl.Boolean,
-            "topic_target": pl.Boolean,
-            "target": pl.Boolean,
+            columns.TOPIC: pl.String,
+            columns.HAIKU: pl.String,
+            columns.STRUCTURE_TARGET: pl.Boolean,
+            columns.TOPIC_TARGET: pl.Boolean,
+            columns.OVERALL_TARGET: pl.Boolean,
         }
     )

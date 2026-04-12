@@ -227,3 +227,67 @@ def test_haiku_judge_evaluator_evaluate_with_path(
     assert objects_are_equal(metrics, correct_metrics)
     assert path.is_file()
     assert objects_are_equal(load_json(path), correct_metrics)
+
+
+def test_haiku_judge_evaluator_evaluate_without_path_does_not_save_file(
+    correct_predictions: pl.DataFrame, tmp_path: Path
+) -> None:
+    evaluator = HaikuJudgeEvaluator()
+    evaluator.evaluate(correct_predictions)
+    assert not any(tmp_path.iterdir())
+
+
+def test_haiku_judge_evaluator_evaluate_return_keys(
+    correct_predictions: pl.DataFrame,
+) -> None:
+    evaluator = HaikuJudgeEvaluator()
+    metrics = evaluator.evaluate(correct_predictions)
+    assert set(metrics.keys()) == {"overall", "structure", "topic"}
+
+
+def test_haiku_judge_evaluator_evaluate_return_metric_keys(
+    correct_predictions: pl.DataFrame,
+) -> None:
+    evaluator = HaikuJudgeEvaluator()
+    metrics = evaluator.evaluate(correct_predictions)
+    expected_keys = {
+        "n_samples",
+        "accuracy",
+        "true_positive",
+        "true_negative",
+        "false_positive",
+        "false_negative",
+        "precision",
+        "recall",
+        "f1_score",
+        "specificity",
+    }
+    for criterion in ("overall", "structure", "topic"):
+        assert set(metrics[criterion].keys()) == expected_keys
+
+
+def test_haiku_judge_evaluator_evaluate_custom_column_names() -> None:
+    df = pl.DataFrame(
+        {
+            "my_overall_pred": [1, 0, 1],
+            "my_overall_tgt": [1, 0, 1],
+            "my_struct_pred": [1, 1, 0],
+            "my_struct_tgt": [1, 1, 0],
+            "my_topic_pred": [0, 1, 1],
+            "my_topic_tgt": [0, 1, 1],
+        }
+    )
+    evaluator = HaikuJudgeEvaluator(
+        overall_prediction_col="my_overall_pred",
+        overall_target_col="my_overall_tgt",
+        structure_prediction_col="my_struct_pred",
+        structure_target_col="my_struct_tgt",
+        topic_prediction_col="my_topic_pred",
+        topic_target_col="my_topic_tgt",
+    )
+    metrics = evaluator.evaluate(df)
+    assert set(metrics.keys()) == {"overall", "structure", "topic"}
+    assert metrics["overall"]["accuracy"] == 1.0
+    assert metrics["structure"]["accuracy"] == 1.0
+    assert metrics["topic"]["accuracy"] == 1.0
+

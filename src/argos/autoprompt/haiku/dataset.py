@@ -9,6 +9,7 @@ import logging
 import polars as pl
 from coola.utils.timing import timeblock
 
+from argos.autoprompt.haiku import columns
 from argos.datasets import generate_haiku_dataset
 from argos.utils.dataframe import summarize_boolean_columns
 
@@ -34,7 +35,7 @@ def prepare_dataset() -> pl.DataFrame:
         logger.info(f"\n{dataset}")
 
     stats = summarize_boolean_columns(
-        dataset.select(["target", "structure_target", "topic_target"])
+        dataset.select([columns.OVERALL_TARGET, columns.STRUCTURE_TARGET, columns.TOPIC_TARGET])
     )
     logger.info(f"statistics about the dataset\n{stats}")
     return dataset

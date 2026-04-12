@@ -290,4 +290,3 @@ def test_haiku_judge_evaluator_evaluate_custom_column_names() -> None:
     assert metrics["overall"]["accuracy"] == 1.0
     assert metrics["structure"]["accuracy"] == 1.0
     assert metrics["topic"]["accuracy"] == 1.0
-

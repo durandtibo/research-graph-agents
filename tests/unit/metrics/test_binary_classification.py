@@ -681,7 +681,7 @@ def test_compute_binary_classification_metrics_custom_column_names() -> None:
 
 
 @pytest.mark.parametrize(
-    "target,prediction,expected",
+    ("target", "prediction", "expected"),
     [
         pytest.param(
             [1],

@@ -109,7 +109,7 @@ def generate_error_analysis(config: ExperimentConfig, predictions: pl.DataFrame)
         The error analysis.
     """
     analyzer = ErrorAnalyzer(
-        error_finder=ErrorFinder(path=config.path_artifact),
+        error_finder=ErrorFinder(root_path=config.path_artifact),
         model=None,
         path=config.path_artifact.joinpath("error_analysis.md"),
     )

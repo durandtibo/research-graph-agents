@@ -164,7 +164,7 @@ def test_error_finder_find_mixed(mixed_predictions: pl.DataFrame) -> None:
 
 
 def test_error_finder_find_with_path(correct_predictions: pl.DataFrame, tmp_path: Path) -> None:
-    finder = ErrorFinder(path=tmp_path.joinpath("data"))
+    finder = ErrorFinder(root_path=tmp_path.joinpath("data"))
     out = finder.find(correct_predictions)
     assert "## Examples with Structure Errors" in out
     assert "0 haikus have incorrect structure predictions." in out

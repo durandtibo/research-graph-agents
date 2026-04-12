@@ -12,6 +12,7 @@ from langchain_core.runnables import RunnableConfig
 from argos.autoprompt.haiku.config import ExperimentConfig, LlmConfig
 from argos.autoprompt.haiku.dataset import prepare_dataset
 from argos.autoprompt.haiku.error_analyzer import ErrorAnalyzer
+from argos.autoprompt.haiku.error_finder import ErrorFinder
 from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
 from argos.autoprompt.haiku.history import BaseHistory, JsonHistory
 from argos.autoprompt.haiku.inference import InferencePipeline
@@ -107,7 +108,11 @@ def generate_error_analysis(config: ExperimentConfig, predictions: pl.DataFrame)
     Returns:
         The error analysis.
     """
-    analyzer = ErrorAnalyzer(path=config.path_artifact)
+    analyzer = ErrorAnalyzer(
+        error_finder=ErrorFinder(path=config.path_artifact),
+        model=None,
+        path=config.path_artifact.joinpath("error_analysis.md"),
+    )
     logger.info(f"analyzer:\n{analyzer}")
     analysis = analyzer.analyze(predictions)
     log_markdown(analysis, title="Error Analysis")

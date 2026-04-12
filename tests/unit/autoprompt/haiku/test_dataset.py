@@ -6,6 +6,7 @@ import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
+from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.dataset import prepare_dataset
 
 MODULE = "argos.autoprompt.haiku.dataset"
@@ -16,35 +17,35 @@ def mock_dataset() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\n"
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
         ]
     )

@@ -54,7 +54,7 @@ class HaikuJudgeResult(BaseModel):
     )
     structure_reasoning: str | None = Field(
         default=None,
-        description="An optional brief explanation justifying the structure_prediction decision.",
+        description="A brief explanation justifying the structure prediction decision (structure_prediction).",
     )
     topic_prediction: bool = Field(
         description="True if the haiku meaningfully addresses the target topic, otherwise False."

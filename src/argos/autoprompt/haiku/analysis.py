@@ -41,7 +41,7 @@ def analyze_errors(results: pl.DataFrame, path: Path) -> None:
     """
     logger.info("Analyzing structure errors...")
     structure_errors = find_errors(
-        predictions=results, col_target="structure_target", col_prediction="structure_passed"
+        predictions=results, target_col="structure_target", prediction_col="structure_passed"
     )
     log_markdown(
         format_errors_as_markdown(structure_errors, error_type="structure"),
@@ -51,7 +51,7 @@ def analyze_errors(results: pl.DataFrame, path: Path) -> None:
 
     logger.info("Analyzing topic errors...")
     topic_errors = find_errors(
-        predictions=results, col_target="topic_target", col_prediction="topic_passed"
+        predictions=results, target_col="topic_target", prediction_col="topic_passed"
     )
     log_markdown(format_errors_as_markdown(topic_errors, error_type="topic"), title="Topic Errors")
     save_json(topic_errors, path.joinpath("error_analysis_topic.json"), exist_ok=True)

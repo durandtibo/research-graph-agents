@@ -88,12 +88,16 @@ class ErrorFinder(BaseErrorFinder):
 
     @property
     def structure_error_path(self) -> Path | None:
+        r"""The path to the structure error file, or ``None`` if no root
+        path was provided."""
         if not self._path:
             return None
         return self._path.joinpath("errors_structure.json")
 
     @property
     def topic_error_path(self) -> Path | None:
+        r"""The path to the topic error file, or ``None`` if no root
+        path was provided."""
         if not self._path:
             return None
         return self._path.joinpath("errors_topic.json")
@@ -107,6 +111,16 @@ class ErrorFinder(BaseErrorFinder):
         )
 
     def _find_structure_errors(self, predictions: pl.DataFrame) -> str:
+        r"""Return a markdown-formatted report of structure prediction
+        errors.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` with the
+                predictions.
+
+        Returns:
+            A markdown string summarising the structure errors.
+        """
         errors = find_structure_errors(
             predictions=predictions,
             path=self.structure_error_path,
@@ -120,6 +134,15 @@ class ErrorFinder(BaseErrorFinder):
         return errors_str
 
     def _find_topic_errors(self, predictions: pl.DataFrame) -> str:
+        r"""Return a markdown-formatted report of topic prediction errors.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` with the
+                predictions.
+
+        Returns:
+            A markdown string summarising the topic errors.
+        """
         errors = find_topic_errors(
             predictions=predictions,
             path=self.topic_error_path,

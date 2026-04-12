@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import asdict
+
 import polars as pl
 import pytest
 
@@ -186,8 +188,25 @@ def test_binary_classification_results_allclose_true_same_object() -> None:
     assert results.allclose(results)
 
 
-def test_binary_classification_results_allclose_false_different_value() -> None:
-    assert not BinaryClassificationResults(
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("n_samples", 101),
+        ("accuracy", 0.8),
+        ("true_positive", 51),
+        ("true_negative", 41),
+        ("false_positive", 6),
+        ("false_negative", 6),
+        ("precision", 0.8),
+        ("recall", 0.8),
+        ("f1_score", 0.8),
+        ("specificity", 0.8),
+    ],
+)
+def test_binary_classification_results_allclose_false_different_value(
+    field: str, value: float | int
+) -> None:
+    base = dict(
         n_samples=100,
         accuracy=0.9,
         true_positive=50,
@@ -198,19 +217,9 @@ def test_binary_classification_results_allclose_false_different_value() -> None:
         recall=0.9,
         f1_score=0.9,
         specificity=0.9,
-    ).allclose(
-        BinaryClassificationResults(
-            n_samples=101,
-            accuracy=0.9,
-            true_positive=50,
-            true_negative=40,
-            false_positive=5,
-            false_negative=5,
-            precision=0.9,
-            recall=0.9,
-            f1_score=0.9,
-            specificity=0.9,
-        )
+    )
+    assert not BinaryClassificationResults(**base).allclose(
+        BinaryClassificationResults(**{**base, field: value})
     )
 
 
@@ -303,8 +312,25 @@ def test_binary_classification_results_equal_true_same_object() -> None:
     assert results.equal(results)
 
 
-def test_binary_classification_results_equal_false_different_value() -> None:
-    assert not BinaryClassificationResults(
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("n_samples", 101),
+        ("accuracy", 0.8),
+        ("true_positive", 51),
+        ("true_negative", 41),
+        ("false_positive", 6),
+        ("false_negative", 6),
+        ("precision", 0.8),
+        ("recall", 0.8),
+        ("f1_score", 0.8),
+        ("specificity", 0.8),
+    ],
+)
+def test_binary_classification_results_equal_false_different_value(
+    field: str, value: float | int
+) -> None:
+    base = dict(
         n_samples=100,
         accuracy=0.9,
         true_positive=50,
@@ -315,19 +341,9 @@ def test_binary_classification_results_equal_false_different_value() -> None:
         recall=0.9,
         f1_score=0.9,
         specificity=0.9,
-    ).equal(
-        BinaryClassificationResults(
-            n_samples=101,
-            accuracy=0.9,
-            true_positive=50,
-            true_negative=40,
-            false_positive=5,
-            false_negative=5,
-            precision=0.9,
-            recall=0.9,
-            f1_score=0.9,
-            specificity=0.9,
-        )
+    )
+    assert not BinaryClassificationResults(**base).equal(
+        BinaryClassificationResults(**{**base, field: value})
     )
 
 
@@ -653,3 +669,154 @@ def test_compute_binary_classification_metrics_raises_on_non_binary_values() -> 
     df = pl.DataFrame({"target": [1, 2, 3], "prediction": [1, 0, 1]})
     with pytest.raises(ValueError, match="non-binary values"):
         compute_binary_classification_metrics(df, target_col="target", prediction_col="prediction")
+
+
+def test_compute_binary_classification_metrics_raises_on_non_binary_prediction_col() -> None:
+    df = pl.DataFrame({"target": [1, 0, 1], "prediction": [1, 0, 2]})
+    with pytest.raises(ValueError, match="non-binary values"):
+        compute_binary_classification_metrics(df, target_col="target", prediction_col="prediction")
+
+
+def test_compute_binary_classification_metrics_custom_column_names() -> None:
+    df = pl.DataFrame({"t": [1, 0, 1, 0], "p": [1, 0, 1, 0]})
+    result = compute_binary_classification_metrics(df, target_col="t", prediction_col="p")
+    assert result == BinaryClassificationResults(
+        n_samples=4,
+        true_positive=2,
+        true_negative=2,
+        false_positive=0,
+        false_negative=0,
+        accuracy=1.0,
+        precision=1.0,
+        recall=1.0,
+        f1_score=1.0,
+        specificity=1.0,
+    )
+
+
+@pytest.mark.parametrize(
+    "target,prediction,expected",
+    [
+        (
+            [1],
+            [1],
+            BinaryClassificationResults(
+                n_samples=1,
+                true_positive=1,
+                true_negative=0,
+                false_positive=0,
+                false_negative=0,
+                accuracy=1.0,
+                precision=1.0,
+                recall=1.0,
+                f1_score=1.0,
+                specificity=0.0,
+            ),
+        ),
+        (
+            [0],
+            [0],
+            BinaryClassificationResults(
+                n_samples=1,
+                true_positive=0,
+                true_negative=1,
+                false_positive=0,
+                false_negative=0,
+                accuracy=1.0,
+                precision=0.0,
+                recall=0.0,
+                f1_score=0.0,
+                specificity=1.0,
+            ),
+        ),
+        (
+            [1],
+            [0],
+            BinaryClassificationResults(
+                n_samples=1,
+                true_positive=0,
+                true_negative=0,
+                false_positive=0,
+                false_negative=1,
+                accuracy=0.0,
+                precision=0.0,
+                recall=0.0,
+                f1_score=0.0,
+                specificity=0.0,
+            ),
+        ),
+        (
+            [0],
+            [1],
+            BinaryClassificationResults(
+                n_samples=1,
+                true_positive=0,
+                true_negative=0,
+                false_positive=1,
+                false_negative=0,
+                accuracy=0.0,
+                precision=0.0,
+                recall=0.0,
+                f1_score=0.0,
+                specificity=0.0,
+            ),
+        ),
+    ],
+)
+def test_compute_binary_classification_metrics_single_sample(
+    target: list[int],
+    prediction: list[int],
+    expected: BinaryClassificationResults,
+) -> None:
+    df = pl.DataFrame({"target": target, "prediction": prediction})
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
+    assert result == expected
+
+
+def test_compute_binary_classification_metrics_all_positives_target() -> None:
+    df = pl.DataFrame({"target": [1, 1, 1], "prediction": [1, 1, 1]})
+    result = compute_binary_classification_metrics(
+        df, target_col="target", prediction_col="prediction"
+    )
+    assert result == BinaryClassificationResults(
+        n_samples=3,
+        true_positive=3,
+        true_negative=0,
+        false_positive=0,
+        false_negative=0,
+        accuracy=1.0,
+        precision=1.0,
+        recall=1.0,
+        f1_score=1.0,
+        specificity=0.0,
+    )
+
+
+def test_binary_classification_results_asdict() -> None:
+    results = BinaryClassificationResults(
+        n_samples=10,
+        accuracy=0.8,
+        true_positive=5,
+        true_negative=3,
+        false_positive=1,
+        false_negative=1,
+        precision=0.833,
+        recall=0.833,
+        f1_score=0.833,
+        specificity=0.75,
+    )
+    d = asdict(results)
+    assert d == {
+        "n_samples": 10,
+        "accuracy": 0.8,
+        "true_positive": 5,
+        "true_negative": 3,
+        "false_positive": 1,
+        "false_negative": 1,
+        "precision": 0.833,
+        "recall": 0.833,
+        "f1_score": 0.833,
+        "specificity": 0.75,
+    }

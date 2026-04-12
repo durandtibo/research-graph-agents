@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 from iden.io import save_text
 from langchain_core.runnables import RunnableConfig
 
-from argos.autoprompt.haiku.analysis import analyze_errors
 from argos.autoprompt.haiku.config import ExperimentConfig, LlmConfig
 from argos.autoprompt.haiku.dataset import prepare_dataset
+from argos.autoprompt.haiku.error_analyzer import ErrorAnalyzer
 from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
 from argos.autoprompt.haiku.history import BaseHistory, JsonHistory
 from argos.autoprompt.haiku.inference import InferencePipeline
@@ -107,8 +107,11 @@ def generate_error_analysis(config: ExperimentConfig, predictions: pl.DataFrame)
     Returns:
         The error analysis.
     """
-    analyze_errors(predictions, config.path_artifact)
-    return ""
+    analyzer = ErrorAnalyzer(path=config.path_artifact)
+    logger.info(f"analyzer:\n{analyzer}")
+    analysis = analyzer.analyze(predictions)
+    log_markdown(analysis, title="Error Analysis")
+    return analysis
 
 
 def run_one_iteration(config: ExperimentConfig, history: BaseHistory) -> None:
@@ -145,7 +148,7 @@ def main() -> None:
         Path(__file__)
         .resolve()
         .parent.parent.joinpath("results")
-        .joinpath("haiku")
+        .joinpath("autoprompt")
         .joinpath("haiku")
     )
 

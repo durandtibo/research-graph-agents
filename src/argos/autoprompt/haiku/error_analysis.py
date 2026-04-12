@@ -17,7 +17,6 @@ import polars as pl
 from iden.io import save_json
 
 from argos.autoprompt.haiku import columns
-from argos.utils.logging import log_markdown
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -70,10 +69,6 @@ def find_structure_errors(
         haiku_col=haiku_col,
         topic_col=topic_col,
     )
-    log_markdown(
-        format_errors_as_markdown(errors, error_type="structure"),
-        title="Structure Errors",
-    )
     if path:
         save_json(errors, path, exist_ok=True)
     return errors
@@ -123,10 +118,6 @@ def find_topic_errors(
         prediction_col=prediction_col,
         haiku_col=haiku_col,
         topic_col=topic_col,
-    )
-    log_markdown(
-        format_errors_as_markdown(errors, error_type="topic"),
-        title="Topic Errors",
     )
     if path:
         save_json(errors, path, exist_ok=True)

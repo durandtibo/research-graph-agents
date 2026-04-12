@@ -14,6 +14,8 @@ __all__ = [
 
 HAIKU = "haiku"
 TOPIC = "topic"
+PREDICTION = "prediction"
+TARGET = "target"
 
 OVERALL_PREDICTION = "overall_prediction"
 OVERALL_SCORE_PREDICTION = "overall_score_prediction"

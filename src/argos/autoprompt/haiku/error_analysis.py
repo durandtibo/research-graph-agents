@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any
 import polars as pl
 from iden.io import save_json
 
+from argos.autoprompt.haiku import columns
 from argos.utils.logging import log_markdown
 
 if TYPE_CHECKING:
@@ -26,8 +27,11 @@ logger: logging.Logger = logging.getLogger(__name__)
 def find_structure_errors(
     predictions: pl.DataFrame,
     path: Path | None = None,
-    target_col: str = "structure_target",
-    prediction_col: str = "structure_passed",
+    *,
+    haiku_col: str = columns.HAIKU,
+    topic_col: str = columns.TOPIC,
+    prediction_col: str = columns.STRUCTURE_PREDICTION,
+    target_col: str = columns.STRUCTURE_TARGET,
 ) -> list[dict[str, str | bool]]:
     r"""Find haiku examples where the structure prediction does not match
     the ground-truth label, log a markdown summary, and optionally save
@@ -39,10 +43,10 @@ def find_structure_errors(
             ``haiku``, ``target_col``, and ``prediction_col``.
         path: Optional path where the error list is saved as a JSON
             file. If ``None``, no file is written.
-        target_col: The column name containing the ground-truth
-            structure labels. Defaults to ``"structure_target"``.
         prediction_col: The column name containing the predicted
             structure labels. Defaults to ``"structure_passed"``.
+        target_col: The column name containing the ground-truth
+            structure labels. Defaults to ``"structure_target"``.
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
@@ -50,7 +54,11 @@ def find_structure_errors(
     """
     logger.info("Analyzing structure errors...")
     errors = find_errors(
-        predictions=predictions, col_target=target_col, col_prediction=prediction_col
+        predictions=predictions,
+        target_col=target_col,
+        prediction_col=prediction_col,
+        haiku_col=haiku_col,
+        topic_col=topic_col,
     )
     log_markdown(
         format_errors_as_markdown(errors, error_type="structure"),
@@ -62,7 +70,12 @@ def find_structure_errors(
 
 
 def find_errors(
-    predictions: pl.DataFrame, col_target: str, col_prediction: str
+    predictions: pl.DataFrame,
+    *,
+    prediction_col: str,
+    target_col: str,
+    haiku_col: str = columns.HAIKU,
+    topic_col: str = columns.TOPIC,
 ) -> list[dict[str, str | bool]]:
     r"""Find haiku examples where the prediction does not match the
     ground-truth label.
@@ -71,17 +84,18 @@ def find_errors(
         predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns ``topic``,
             ``haiku``, ``col_target``, and ``col_prediction``.
-        col_target: The column name containing the ground-truth labels.
-        col_prediction: The column name containing the predicted labels.
+
+        prediction_col: The column name containing the predicted labels.
+        target_col: The column name containing the ground-truth labels.
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
             keys ``topic``, ``haiku``, ``target``, and ``prediction``.
     """
     return (
-        predictions.filter(pl.col(col_target) != pl.col(col_prediction))
-        .select(["topic", "haiku", col_target, col_prediction])
-        .rename({col_target: "target", col_prediction: "prediction"})
+        predictions.filter(pl.col(target_col) != pl.col(prediction_col))
+        .select([topic_col, haiku_col, target_col, prediction_col])
+        .rename({target_col: "target", prediction_col: "prediction"})
         .to_dicts()
     )
 
@@ -129,8 +143,9 @@ def format_errors_as_markdown_table(errors: list[dict[Any, Any]]) -> str:
     """
     lines = ["| # | Topic | Haiku | Target | Prediction |", "|----|----|----|----|----|"]
     for i, example in enumerate(errors, start=1):
-        haiku = example["haiku"].replace("\n", " / ")
+        haiku = example[columns.HAIKU].replace("\n", " / ")
         lines.append(
-            f"| {i} | {example['topic']} | {haiku} | {example['target']} | {example['prediction']} |"
+            f"| {i} | {example[columns.TOPIC]} | {haiku} | {example[columns.TARGET]} "
+            f"| {example[columns.PREDICTION]} |"
         )
     return "\n".join(lines)

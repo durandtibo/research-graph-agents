@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 from iden.io import load_json
 
+from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.error_analysis import (
     find_errors,
     find_structure_errors,
@@ -17,10 +18,10 @@ if TYPE_CHECKING:
 
 SINGLE_ERROR = [
     {
-        "topic": "A",
-        "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
-        "target": False,
-        "prediction": True,
+        columns.TOPIC: "A",
+        columns.HAIKU: "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
+        columns.TARGET: False,
+        columns.PREDICTION: True,
     }
 ]
 
@@ -32,22 +33,22 @@ SINGLE_ERROR_TABLE = (
 
 MULTIPLE_ERRORS = [
     {
-        "topic": "A",
-        "haiku": "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
-        "target": False,
-        "prediction": True,
+        columns.TOPIC: "A",
+        columns.HAIKU: "Soft paws on the rug\nPurring in her sleep\nDreaming of a mouse",
+        columns.TARGET: False,
+        columns.PREDICTION: True,
     },
     {
-        "topic": "B",
-        "haiku": "Eyes of glowing green\nWatching from the dark\nReady for a pounce",
-        "target": True,
-        "prediction": False,
+        columns.TOPIC: "B",
+        columns.HAIKU: "Eyes of glowing green\nWatching from the dark\nReady for a pounce",
+        columns.TARGET: True,
+        columns.PREDICTION: False,
     },
     {
-        "topic": "C",
-        "haiku": "Tail is standing high\nRubbing on my leg\nBegging for a treat",
-        "target": False,
-        "prediction": False,
+        columns.TOPIC: "C",
+        columns.HAIKU: "Tail is standing high\nRubbing on my leg\nBegging for a treat",
+        columns.TARGET: False,
+        columns.PREDICTION: False,
     },
 ]
 
@@ -70,14 +71,10 @@ def test_find_structure_errors_all_correct(tmp_path: Path) -> None:
     out = find_structure_errors(
         predictions=pl.DataFrame(
             {
-                "topic": ["u", "v", "w", "x"],
-                "haiku": ["A", "B", "C", "D"],
-                "passed": [True, True, False, False],
-                "target": [True, True, False, False],
-                "structure_passed": [True, True, False, False],
-                "structure_target": [True, True, False, False],
-                "topic_passed": [True, True, False, False],
-                "topic_target": [True, True, False, False],
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.STRUCTURE_PREDICTION: [True, True, False, False],
+                columns.STRUCTURE_TARGET: [True, True, False, False],
             }
         ),
         path=path,
@@ -92,31 +89,27 @@ def test_find_structure_errors_all_incorrect(tmp_path: Path) -> None:
     out = find_structure_errors(
         predictions=pl.DataFrame(
             {
-                "topic": ["u", "v", "w", "x"],
-                "haiku": ["A", "B", "C", "D"],
-                "passed": [True, True, False, False],
-                "target": [False, False, True, True],
-                "structure_passed": [True, True, False, False],
-                "structure_target": [False, False, True, True],
-                "topic_passed": [True, True, False, False],
-                "topic_target": [False, False, True, True],
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.STRUCTURE_PREDICTION: [True, True, False, False],
+                columns.STRUCTURE_TARGET: [False, False, True, True],
             }
         ),
         path=path,
     )
     assert out == [
-        {"topic": "u", "haiku": "A", "target": False, "prediction": True},
-        {"topic": "v", "haiku": "B", "target": False, "prediction": True},
-        {"topic": "w", "haiku": "C", "target": True, "prediction": False},
-        {"topic": "x", "haiku": "D", "target": True, "prediction": False},
+        {columns.TOPIC: "u", columns.HAIKU: "A", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "v", columns.HAIKU: "B", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "w", columns.HAIKU: "C", columns.TARGET: True, columns.PREDICTION: False},
+        {columns.TOPIC: "x", columns.HAIKU: "D", columns.TARGET: True, columns.PREDICTION: False},
     ]
 
     assert path.is_file()
     assert load_json(path) == [
-        {"topic": "u", "haiku": "A", "target": False, "prediction": True},
-        {"topic": "v", "haiku": "B", "target": False, "prediction": True},
-        {"topic": "w", "haiku": "C", "target": True, "prediction": False},
-        {"topic": "x", "haiku": "D", "target": True, "prediction": False},
+        {columns.TOPIC: "u", columns.HAIKU: "A", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "v", columns.HAIKU: "B", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "w", columns.HAIKU: "C", columns.TARGET: True, columns.PREDICTION: False},
+        {columns.TOPIC: "x", columns.HAIKU: "D", columns.TARGET: True, columns.PREDICTION: False},
     ]
 
 
@@ -125,14 +118,10 @@ def test_find_structure_errors_empty(tmp_path: Path) -> None:
     out = find_structure_errors(
         predictions=pl.DataFrame(
             {
-                "topic": [],
-                "haiku": [],
-                "passed": [],
-                "target": [],
-                "structure_passed": [],
-                "structure_target": [],
-                "topic_passed": [],
-                "topic_target": [],
+                columns.TOPIC: [],
+                columns.HAIKU: [],
+                columns.STRUCTURE_PREDICTION: [],
+                columns.STRUCTURE_TARGET: [],
             }
         ),
         path=path,
@@ -146,14 +135,10 @@ def test_find_structure_errors_without_path() -> None:
     out = find_structure_errors(
         predictions=pl.DataFrame(
             {
-                "topic": ["u", "v", "w", "x"],
-                "haiku": ["A", "B", "C", "D"],
-                "passed": [True, True, False, False],
-                "target": [True, True, False, False],
-                "structure_passed": [True, True, False, False],
-                "structure_target": [True, True, False, False],
-                "topic_passed": [True, True, False, False],
-                "topic_target": [True, True, False, False],
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.STRUCTURE_PREDICTION: [True, True, False, False],
+                columns.STRUCTURE_TARGET: [True, True, False, False],
             }
         ),
     )
@@ -170,14 +155,14 @@ def test_find_errors_all_correct() -> None:
         find_errors(
             predictions=pl.DataFrame(
                 {
-                    "topic": ["u", "v", "w", "x"],
-                    "haiku": ["A", "B", "C", "D"],
-                    "passed": [True, True, False, False],
-                    "target": [True, True, False, False],
+                    columns.TOPIC: ["u", "v", "w", "x"],
+                    columns.HAIKU: ["A", "B", "C", "D"],
+                    columns.OVERALL_PREDICTION: [True, True, False, False],
+                    columns.OVERALL_TARGET: [True, True, False, False],
                 }
             ),
-            col_target="target",
-            col_prediction="passed",
+            target_col=columns.OVERALL_TARGET,
+            prediction_col=columns.OVERALL_PREDICTION,
         )
         == []
     )
@@ -187,19 +172,19 @@ def test_find_errors_all_incorrect() -> None:
     assert find_errors(
         predictions=pl.DataFrame(
             {
-                "topic": ["u", "v", "w", "x"],
-                "haiku": ["A", "B", "C", "D"],
-                "passed": [True, True, False, False],
-                "target": [False, False, True, True],
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.OVERALL_PREDICTION: [True, True, False, False],
+                columns.OVERALL_TARGET: [False, False, True, True],
             }
         ),
-        col_target="target",
-        col_prediction="passed",
+        target_col=columns.OVERALL_TARGET,
+        prediction_col=columns.OVERALL_PREDICTION,
     ) == [
-        {"topic": "u", "haiku": "A", "target": False, "prediction": True},
-        {"topic": "v", "haiku": "B", "target": False, "prediction": True},
-        {"topic": "w", "haiku": "C", "target": True, "prediction": False},
-        {"topic": "x", "haiku": "D", "target": True, "prediction": False},
+        {columns.TOPIC: "u", columns.HAIKU: "A", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "v", columns.HAIKU: "B", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "w", columns.HAIKU: "C", columns.TARGET: True, columns.PREDICTION: False},
+        {columns.TOPIC: "x", columns.HAIKU: "D", columns.TARGET: True, columns.PREDICTION: False},
     ]
 
 
@@ -207,26 +192,33 @@ def test_find_errors_partially_incorrect() -> None:
     assert find_errors(
         predictions=pl.DataFrame(
             {
-                "topic": ["u", "v", "w", "x"],
-                "haiku": ["A", "B", "C", "D"],
-                "passed": [True, True, False, False],
-                "target": [False, True, False, True],
+                columns.TOPIC: ["u", "v", "w", "x"],
+                columns.HAIKU: ["A", "B", "C", "D"],
+                columns.OVERALL_PREDICTION: [True, True, False, False],
+                columns.OVERALL_TARGET: [False, True, False, True],
             }
         ),
-        col_target="target",
-        col_prediction="passed",
+        target_col=columns.OVERALL_TARGET,
+        prediction_col=columns.OVERALL_PREDICTION,
     ) == [
-        {"topic": "u", "haiku": "A", "target": False, "prediction": True},
-        {"topic": "x", "haiku": "D", "target": True, "prediction": False},
+        {columns.TOPIC: "u", columns.HAIKU: "A", columns.TARGET: False, columns.PREDICTION: True},
+        {columns.TOPIC: "x", columns.HAIKU: "D", columns.TARGET: True, columns.PREDICTION: False},
     ]
 
 
 def test_find_incorrect_structure_haiku_empty() -> None:
     assert (
         find_errors(
-            predictions=pl.DataFrame({"topic": [], "haiku": [], "passed": [], "target": []}),
-            col_target="target",
-            col_prediction="passed",
+            predictions=pl.DataFrame(
+                {
+                    columns.TOPIC: [],
+                    columns.HAIKU: [],
+                    columns.OVERALL_PREDICTION: [],
+                    columns.OVERALL_TARGET: [],
+                }
+            ),
+            target_col=columns.OVERALL_TARGET,
+            prediction_col=columns.OVERALL_PREDICTION,
         )
         == []
     )
@@ -250,7 +242,7 @@ def test_format_errors_as_markdown_single_error() -> None:
 
 
 def test_format_errors_as_markdown_multiple_errors() -> None:
-    assert format_errors_as_markdown(MULTIPLE_ERRORS, error_type="topic") == (
+    assert format_errors_as_markdown(MULTIPLE_ERRORS, error_type=columns.TOPIC) == (
         "3 haikus have incorrect topic predictions. "
         "The table below details these errors:\n"
         f"- **Topic**: The topic of the haiku (valid only if the topic target is true).\n"

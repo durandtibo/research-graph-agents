@@ -1,3 +1,5 @@
+r"""Contain code to analyze the errors."""
+
 from __future__ import annotations
 
 __all__ = ["BaseErrorAnalyzer", "ErrorAnalyzer"]

@@ -234,7 +234,7 @@ def test_evaluate_judge_classification_metrics_custom_column_names() -> None:
 
 
 @pytest.mark.parametrize(
-    "overall_preds,overall_tgts,expected_accuracy",
+    ("overall_preds", "overall_tgts", "expected_accuracy"),
     [
         ([1, 1, 1], [1, 1, 1], 1.0),
         ([0, 0, 0], [0, 0, 0], 1.0),
@@ -259,4 +259,3 @@ def test_evaluate_judge_classification_metrics_overall_accuracy(
     )
     result = evaluate_judge_classification_metrics(df)
     assert result["overall"].accuracy == expected_accuracy
-

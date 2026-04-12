@@ -2,7 +2,7 @@ r"""Contain utility functions to manage the history."""
 
 from __future__ import annotations
 
-__all__ = ["BaseHistory", "JsonHistory"]
+__all__ = ["BaseHistory", "InMemoryHistory", "JsonHistory"]
 
 import logging
 from abc import ABC, abstractmethod
@@ -39,6 +39,26 @@ class BaseHistory(ABC):
     @abstractmethod
     def clear(self) -> None:
         r"""Clear the history."""
+
+
+class InMemoryHistory(BaseHistory):
+    r"""Implement a history that stores data in memory.
+
+    Args:
+        data: The initial data to store in the history.
+    """
+
+    def __init__(self, data: list | None = None) -> None:
+        self._data = data or []
+
+    def append(self, data: dict[Any, Any]) -> None:
+        self._data.append(data)
+
+    def get_values(self) -> list[dict[Any, Any]]:
+        return self._data
+
+    def clear(self) -> None:
+        self._data.clear()
 
 
 class JsonHistory(BaseHistory):

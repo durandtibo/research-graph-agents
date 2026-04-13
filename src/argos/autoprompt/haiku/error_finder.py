@@ -24,17 +24,17 @@ if TYPE_CHECKING:
 
 
 class BaseErrorFinder(ABC):
-    r"""Define the base class to implement an error analyzer."""
+    r"""Define the base class to implement an error finder."""
 
     @abstractmethod
     def find(self, predictions: pl.DataFrame) -> str:
-        r"""Compute a textual analysis of the errors.
+        r"""Find the prediction errors and return a formatted report.
 
         Args:
             predictions: A DataFrame with the predictions.
 
         Returns:
-            The analysis of the errors.
+            A string report describing the errors found.
         """
 
 
@@ -43,6 +43,35 @@ class ErrorFinder(BaseErrorFinder):
 
     Args:
         root_path: The root path where to store the errors.
+            If ``None``, no files are written.
+        haiku_col: Column name containing the haiku text. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.HAIKU`.
+        topic_col: Column name containing the topic text. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC`.
+        overall_prediction_col: Column name for the overall predicted
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.OVERALL_PREDICTION`.
+        overall_target_col: Column name for the overall ground-truth
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.OVERALL_TARGET`.
+        structure_prediction_col: Column name for the structure
+            predicted label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_PREDICTION`.
+        structure_reasoning_col: Column name for the structure
+            reasoning text. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_REASONING`.
+        structure_target_col: Column name for the structure
+            ground-truth label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_TARGET`.
+        topic_prediction_col: Column name for the topic predicted
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_PREDICTION`.
+        topic_reasoning_col: Column name for the topic reasoning text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_REASONING`.
+        topic_target_col: Column name for the topic ground-truth
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_TARGET`.
     """
 
     def __init__(
@@ -54,8 +83,10 @@ class ErrorFinder(BaseErrorFinder):
         overall_prediction_col: str = columns.OVERALL_PREDICTION,
         overall_target_col: str = columns.OVERALL_TARGET,
         structure_prediction_col: str = columns.STRUCTURE_PREDICTION,
+        structure_reasoning_col: str = columns.STRUCTURE_REASONING,
         structure_target_col: str = columns.STRUCTURE_TARGET,
         topic_prediction_col: str = columns.TOPIC_PREDICTION,
+        topic_reasoning_col: str = columns.TOPIC_REASONING,
         topic_target_col: str = columns.TOPIC_TARGET,
     ) -> None:
         self._root_path = root_path
@@ -64,8 +95,10 @@ class ErrorFinder(BaseErrorFinder):
         self._overall_prediction_col = overall_prediction_col
         self._overall_target_col = overall_target_col
         self._structure_prediction_col = structure_prediction_col
+        self._structure_reasoning_col = structure_reasoning_col
         self._structure_target_col = structure_target_col
         self._topic_prediction_col = topic_prediction_col
+        self._topic_reasoning_col = topic_reasoning_col
         self._topic_target_col = topic_target_col
 
     def __repr__(self) -> str:
@@ -78,8 +111,10 @@ class ErrorFinder(BaseErrorFinder):
                     "overall_prediction_col": self._overall_prediction_col,
                     "overall_target_col": self._overall_target_col,
                     "structure_prediction_col": self._structure_prediction_col,
+                    "structure_reasoning_col": self._structure_reasoning_col,
                     "structure_target_col": self._structure_target_col,
                     "topic_prediction_col": self._topic_prediction_col,
+                    "topic_reasoning_col": self._topic_reasoning_col,
                     "topic_target_col": self._topic_target_col,
                 }
             )
@@ -127,6 +162,7 @@ class ErrorFinder(BaseErrorFinder):
             haiku_col=self._haiku_col,
             topic_col=self._topic_col,
             prediction_col=self._structure_prediction_col,
+            reasoning_col=self._structure_reasoning_col,
             target_col=self._structure_target_col,
         )
         errors_str = format_errors_as_markdown(errors, error_type="structure")
@@ -150,6 +186,7 @@ class ErrorFinder(BaseErrorFinder):
             haiku_col=self._haiku_col,
             topic_col=self._topic_col,
             prediction_col=self._topic_prediction_col,
+            reasoning_col=self._topic_reasoning_col,
             target_col=self._topic_target_col,
         )
         errors_str = format_errors_as_markdown(errors, error_type="topic")

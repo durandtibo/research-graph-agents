@@ -31,6 +31,7 @@ def find_structure_errors(
     haiku_col: str = columns.HAIKU,
     topic_col: str = columns.TOPIC,
     prediction_col: str = columns.STRUCTURE_PREDICTION,
+    reasoning_col: str = columns.STRUCTURE_REASONING,
     target_col: str = columns.STRUCTURE_TARGET,
 ) -> list[dict[str, str | bool]]:
     r"""Find haiku examples where the structure prediction does not match
@@ -66,6 +67,7 @@ def find_structure_errors(
         predictions=predictions,
         target_col=target_col,
         prediction_col=prediction_col,
+        reasoning_col=reasoning_col,
         haiku_col=haiku_col,
         topic_col=topic_col,
     )
@@ -81,6 +83,7 @@ def find_topic_errors(
     haiku_col: str = columns.HAIKU,
     topic_col: str = columns.TOPIC,
     prediction_col: str = columns.TOPIC_PREDICTION,
+    reasoning_col: str = columns.TOPIC_REASONING,
     target_col: str = columns.TOPIC_TARGET,
 ) -> list[dict[str, str | bool]]:
     r"""Find haiku examples where the topic prediction does not match the
@@ -116,6 +119,7 @@ def find_topic_errors(
         predictions=predictions,
         target_col=target_col,
         prediction_col=prediction_col,
+        reasoning_col=reasoning_col,
         haiku_col=haiku_col,
         topic_col=topic_col,
     )
@@ -128,6 +132,7 @@ def find_errors(
     predictions: pl.DataFrame,
     *,
     prediction_col: str,
+    reasoning_col: str,
     target_col: str,
     haiku_col: str = columns.HAIKU,
     topic_col: str = columns.TOPIC,
@@ -138,9 +143,11 @@ def find_errors(
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns identified by
-            ``topic_col``, ``haiku_col``, ``target_col``, and
-            ``prediction_col``.
+            ``topic_col``, ``haiku_col``, ``target_col``,
+            ``prediction_col``, and ``reasoning_col``.
         prediction_col: The column name containing the predicted labels.
+        reasoning_col: The column name containing the reasoning text
+            that justifies the predicted label.
         target_col: The column name containing the ground-truth labels.
         haiku_col: The column name containing the haiku text.
             Defaults to
@@ -151,12 +158,19 @@ def find_errors(
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
-            keys ``topic``, ``haiku``, ``target``, and ``prediction``.
+            keys ``topic``, ``haiku``, ``target``, ``prediction``, and
+            ``reasoning``.
     """
     return (
         predictions.filter(pl.col(target_col) != pl.col(prediction_col))
-        .select([topic_col, haiku_col, target_col, prediction_col])
-        .rename({target_col: "target", prediction_col: "prediction"})
+        .select([topic_col, haiku_col, target_col, prediction_col, reasoning_col])
+        .rename(
+            {
+                prediction_col: columns.PREDICTION,
+                reasoning_col: columns.REASONING,
+                target_col: columns.TARGET,
+            }
+        )
         .to_dicts()
     )
 
@@ -185,6 +199,7 @@ def format_errors_as_markdown(errors: list[dict[Any, Any]], error_type: str) -> 
         f"- **Haiku**: The evaluated text, with line breaks (`\\n`) replaced by slashes (` / `)\n"
         f"- **Target**: The true, correct {error_type} label.\n"
         f"- **Prediction**: The model's output {error_type} label.\n"
+        f"- **Reasoning**: The explanation behind the model's prediction.\n"
         f"\n{table}\n"
     )
 
@@ -202,11 +217,14 @@ def format_errors_as_markdown_table(errors: list[dict[Any, Any]]) -> str:
         A markdown table string with columns ``#``, ``Topic``,
             ``Haiku``, ``Target``, and ``Prediction``.
     """
-    lines = ["| # | Topic | Haiku | Target | Prediction |", "|----|----|----|----|----|"]
+    lines = [
+        "| # | Topic | Haiku | Target | Prediction | Reasoning |",
+        "|----|----|----|----|----|----|",
+    ]
     for i, example in enumerate(errors, start=1):
         haiku = example[columns.HAIKU].replace("\n", " / ")
         lines.append(
             f"| {i} | {example[columns.TOPIC]} | {haiku} | {example[columns.TARGET]} "
-            f"| {example[columns.PREDICTION]} |"
+            f"| {example[columns.PREDICTION]} | {example[columns.REASONING]} |"
         )
     return "\n".join(lines)

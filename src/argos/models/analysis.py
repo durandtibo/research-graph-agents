@@ -22,7 +22,11 @@ ANALYZER_SYSTEM_PROMPT = "Analyze the content of the text and provide a short an
 
 
 class AnalyzerInput(TypedDict):
-    r"""Define the input to analyze text."""
+    r"""Define the input to analyze text.
+
+    Attributes:
+        text: The text to analyze.
+    """
 
     text: str
 
@@ -34,7 +38,8 @@ def create_analyzer_model(
 
     Args:
         llm: The LLM used to process the text.
-        system_prompt: The system prompt used to define the analysis of the text.
+        system_prompt: The system prompt that instructs the LLM on how
+            to analyze the text.
 
     Returns:
         An :class:`~langchain_core.runnables.RunnableSequence` chain

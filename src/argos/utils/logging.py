@@ -3,7 +3,7 @@ library."""
 
 from __future__ import annotations
 
-__all__ = ["configure_logging", "log_markdown"]
+__all__ = ["configure_logging", "log_dict_pretty", "log_markdown"]
 
 import logging
 
@@ -15,6 +15,7 @@ if is_rich_available():  # pragma: no cover
     from rich.console import Console
     from rich.markdown import Markdown
     from rich.panel import Panel
+    from rich.pretty import Pretty
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -91,3 +92,26 @@ def log_markdown(msg: str, level: int = logging.INFO, title: str | None = None) 
         if title:
             msg = f"{title}:\n{msg}"
         logger.log(level, msg)
+
+
+def log_dict_pretty(data: dict, level: int = logging.INFO, title: str | None = None) -> None:
+    r"""Log a message with markdown formatting if rich is available.
+
+    If the ``rich`` package is installed, the message is rendered as
+    markdown and printed to the console via
+    :class:`~rich.console.Console`. Otherwise, the message is logged
+    with the standard :mod:`logging` module at the specified level.
+
+    Args:
+        data: The dictionary to log.
+        level: The log level used when ``rich`` is not available.
+            Defaults to ``logging.INFO``.
+        title: The title of the log message.
+    """
+    if is_rich_available():
+        console = Console()
+        console.print(Panel(Pretty(data), title=title))
+    else:
+        if title:
+            data = f"{title}:\n{data}"
+        logger.log(level, data)

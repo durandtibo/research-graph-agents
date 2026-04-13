@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, TypedDict
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 
-from argos.prompts.prompt_generation import PROMPT_GENERATOR_SYSTEM_PROMPT_0
+from argos.prompts.prompt_generation import PROMPT_GENERATOR_SYSTEM_PROMPT
 from argos.utils.prompt import check_non_empty_prompt
 
 if TYPE_CHECKING:
@@ -44,7 +44,7 @@ class PromptGeneratorOutput(BaseModel):
 
 
 def create_prompt_generator_model(
-    llm: BaseChatModel, system_prompt: str = PROMPT_GENERATOR_SYSTEM_PROMPT_0
+    llm: BaseChatModel, system_prompt: str = PROMPT_GENERATOR_SYSTEM_PROMPT
 ) -> RunnableSequence[PromptGeneratorInput, PromptGeneratorOutput]:
     r"""Create a simple prompt generator model.
 

@@ -2,7 +2,8 @@ r"""Contain system prompts for the haiku judge."""
 
 from __future__ import annotations
 
-__all__ = ["PROMPT_GENERATOR_SYSTEM_PROMPT_0"]
+__all__ = ["PROMPT_GENERATOR_SYSTEM_PROMPT", "PROMPT_GENERATOR_SYSTEM_PROMPT_0"]
+
 
 PROMPT_GENERATOR_SYSTEM_PROMPT_0 = """# SYSTEM PROMPT: Expert Prompt Optimizer
 
@@ -40,3 +41,7 @@ When generating the new prompt, you MUST apply the following industry best pract
 ## Output Format
 You must output your response in the following strict format. Do not include introductory or concluding conversational text.
 """
+
+# The default system prompt for the prompt generator. The associated prompt can change.
+# Use an explicit version to make the code more reproducible.
+PROMPT_GENERATOR_SYSTEM_PROMPT = PROMPT_GENERATOR_SYSTEM_PROMPT_0

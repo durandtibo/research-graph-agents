@@ -10,7 +10,7 @@ from argos.models.prompt_generation import (
     PromptGeneratorOutput,
     create_prompt_generator_model,
 )
-from argos.prompts.prompt_generation import PROMPT_GENERATOR_SYSTEM_PROMPT_0
+from argos.prompts.prompt_generation import PROMPT_GENERATOR_SYSTEM_PROMPT
 
 
 @pytest.fixture
@@ -44,7 +44,7 @@ def test_create_prompt_generator_model_uses_default_system_prompt(mock_llm: Base
     model = create_prompt_generator_model(mock_llm)
     prompt_step = model.first
     system_message = prompt_step.messages[0]
-    assert system_message.prompt.template == PROMPT_GENERATOR_SYSTEM_PROMPT_0
+    assert system_message.prompt.template == PROMPT_GENERATOR_SYSTEM_PROMPT
 
 
 def test_create_prompt_generator_model_uses_custom_system_prompt(mock_llm: BaseChatModel) -> None:

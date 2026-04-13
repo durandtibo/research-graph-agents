@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from argos.testing.fixtures import colorlog_available, rich_available
-from argos.utils.logging import configure_logging, log_markdown
+from argos.utils.logging import configure_logging, log_dict_pretty, log_markdown
 
 MODULE = "argos.utils.logging"
 
@@ -87,3 +87,54 @@ def test_log_markdown_passes_custom_level_to_logger() -> None:
         log_markdown("# Hello", level=logging.WARNING)
 
     mock_logger.log.assert_called_once_with(logging.WARNING, "# Hello")
+
+
+#####################################
+#     Tests for log_dict_pretty     #
+#####################################
+
+
+@rich_available
+def test_log_dict_pretty_with_rich() -> None:
+    with patch(f"{MODULE}.logger") as mock_logger:
+        log_dict_pretty({"hello": "world"})
+
+    mock_logger.log.assert_not_called()
+
+
+@rich_available
+def test_log_dict_pretty_with_rich_with_title() -> None:
+    with patch(f"{MODULE}.logger") as mock_logger:
+        log_dict_pretty({"hello": "world"}, title="cats")
+
+    mock_logger.log.assert_not_called()
+
+
+def test_log_dict_pretty_without_rich() -> None:
+    with (
+        patch(f"{MODULE}.is_rich_available", return_value=False),
+        patch(f"{MODULE}.logger") as mock_logger,
+    ):
+        log_dict_pretty({"hello": "world"})
+
+    mock_logger.log.assert_called_once_with(logging.INFO, {"hello": "world"})
+
+
+def test_log_dict_pretty_with_title_without_rich() -> None:
+    with (
+        patch(f"{MODULE}.is_rich_available", return_value=False),
+        patch(f"{MODULE}.logger") as mock_logger,
+    ):
+        log_dict_pretty({"hello": "world"}, title="cats")
+
+    mock_logger.log.assert_called_once_with(logging.INFO, "cats:\n{'hello': 'world'}")
+
+
+def test_log_dict_pretty_passes_custom_level_to_logger() -> None:
+    with (
+        patch(f"{MODULE}.is_rich_available", return_value=False),
+        patch(f"{MODULE}.logger") as mock_logger,
+    ):
+        log_dict_pretty({"hello": "world"}, level=logging.WARNING)
+
+    mock_logger.log.assert_called_once_with(logging.WARNING, {"hello": "world"})

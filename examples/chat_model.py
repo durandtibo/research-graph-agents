@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.chat_model import create_chat_model
-from argos.autoprompt.haiku.config import LlmConfig
+from argos.autoprompt.haiku.config import ChatModelConfig
 from argos.autoprompt.haiku.judge import create_judge_graph
 from argos.models.analysis import create_analyzer_model
 from argos.models.haiku_judge import create_haiku_judge_model
@@ -23,7 +23,7 @@ def create_text_input() -> str:
     return "blah blah blah"
 
 
-def main_chat_model(config: LlmConfig) -> None:
+def main_chat_model(config: ChatModelConfig) -> None:
     r"""Define a demo a simple chat model."""
     logger.info("\n\n" + "=" * 50 + " chat model " + "=" * 50 + "\n")
     llm = create_chat_model(config)
@@ -36,7 +36,7 @@ def main_chat_model(config: LlmConfig) -> None:
     logger.info(f"output.content:\n{out.content}")
 
 
-def main_chat_model_with_template(config: LlmConfig) -> None:
+def main_chat_model_with_template(config: ChatModelConfig) -> None:
     r"""Define a demo a simple chat model."""
     logger.info("\n\n" + "=" * 50 + " chat model with template " + "=" * 50 + "\n")
     llm = create_chat_model(config)
@@ -49,7 +49,7 @@ def main_chat_model_with_template(config: LlmConfig) -> None:
     logger.info(f"output ({type(out)})\n{out.content}")
 
 
-def main_chat_model_with_structured_output(config: LlmConfig) -> None:
+def main_chat_model_with_structured_output(config: ChatModelConfig) -> None:
     r"""Define a demo a simple chat model."""
     logger.info("\n\n" + "=" * 50 + " chat model with structured output " + "=" * 50 + "\n")
     llm = create_chat_model(config)
@@ -67,7 +67,7 @@ def main_chat_model_with_structured_output(config: LlmConfig) -> None:
     logger.info(f"output ({type(out)})\n{out}")
 
 
-def main_graph(config: LlmConfig) -> None:
+def main_graph(config: ChatModelConfig) -> None:
     r"""Define a demo a simple chat model."""
     logger.info("\n\n" + "=" * 50 + " graph " + "=" * 50 + "\n")
     model = create_judge_graph(config)
@@ -86,7 +86,7 @@ def main_graph(config: LlmConfig) -> None:
 
 def main() -> None:
     r"""Define the main function."""
-    config = LlmConfig(
+    config = ChatModelConfig(
         model="ollama:smollm:135m",
         # model="ollama:gemma3:1b",
         system_prompt=HAIKU_ERROR_ANALYSIS_SYSTEM_PROMPT_1,

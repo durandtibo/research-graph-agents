@@ -8,7 +8,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import RunnableLambda
 from langgraph.graph.state import CompiledStateGraph
 
-from argos.autoprompt.haiku.config import LlmConfig
+from argos.autoprompt.haiku.config import ChatModelConfig
 from argos.autoprompt.haiku.judge import create_judge_graph
 from argos.models.haiku_judge import HaikuJudgeResult
 
@@ -16,8 +16,8 @@ MODULE = "argos.autoprompt.haiku.judge"
 
 
 @pytest.fixture
-def config() -> LlmConfig:
-    return LlmConfig(model="gpt-4o", system_prompt="You are a haiku judge.")
+def config() -> ChatModelConfig:
+    return ChatModelConfig(model="gpt-4o", system_prompt="You are a haiku judge.")
 
 
 @pytest.fixture
@@ -51,7 +51,7 @@ def mock_llm(judge_result: HaikuJudgeResult) -> BaseChatModel:
 
 
 def test_create_judge_graph_returns_compiled_state_graph(
-    config: LlmConfig, mock_llm: BaseChatModel
+    config: ChatModelConfig, mock_llm: BaseChatModel
 ) -> None:
     """create_judge_graph should return a CompiledStateGraph
     instance."""
@@ -62,7 +62,7 @@ def test_create_judge_graph_returns_compiled_state_graph(
 
 
 def test_create_judge_graph_init_chat_model_called_with_correct_model(
-    config: LlmConfig, mock_llm: BaseChatModel
+    config: ChatModelConfig, mock_llm: BaseChatModel
 ) -> None:
     """init_chat_model must be called with the model name passed to
     create_judge_graph."""
@@ -72,7 +72,7 @@ def test_create_judge_graph_init_chat_model_called_with_correct_model(
 
 
 def test_create_judge_graph_create_haiku_judge_model_receives_llm_and_system_prompt(
-    config: LlmConfig, mock_llm: BaseChatModel
+    config: ChatModelConfig, mock_llm: BaseChatModel
 ) -> None:
     """create_haiku_judge_model must be called with the LLM and the
     judge system prompt."""
@@ -85,7 +85,7 @@ def test_create_judge_graph_create_haiku_judge_model_receives_llm_and_system_pro
 
 
 def test_create_judge_graph_multiple_calls_return_distinct_graphs(
-    config: LlmConfig, mock_llm: BaseChatModel
+    config: ChatModelConfig, mock_llm: BaseChatModel
 ) -> None:
     """Each invocation must return a new, independent
     CompiledStateGraph."""
@@ -104,7 +104,7 @@ def test_create_judge_graph_temperature_warning(caplog: pytest.LogCaptureFixture
         ),
     ):
         create_judge_graph(
-            LlmConfig(model="gpt-4o", system_prompt="You are a haiku judge.", temperature=0.2)
+            ChatModelConfig(model="gpt-4o", system_prompt="You are a haiku judge.", temperature=0.2)
         )
         assert (
             caplog.messages[-1]
@@ -113,7 +113,7 @@ def test_create_judge_graph_temperature_warning(caplog: pytest.LogCaptureFixture
 
 
 def test_create_judge_graph_invoke(
-    config: LlmConfig, mock_llm: BaseChatModel, judge_result: HaikuJudgeResult
+    config: ChatModelConfig, mock_llm: BaseChatModel, judge_result: HaikuJudgeResult
 ) -> None:
     with patch(f"{MODULE}.init_chat_model", return_value=mock_llm):
         graph = create_judge_graph(config)

@@ -2,7 +2,7 @@ r"""Contain the experiment configuration."""
 
 from __future__ import annotations
 
-__all__ = ["ExperimentConfig", "LlmConfig"]
+__all__ = ["ChatModelConfig", "ExperimentConfig"]
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class LlmConfig:
+class ChatModelConfig:
     r"""A generic LLM configuration.
 
     Attributes:
@@ -58,9 +58,9 @@ class ExperimentConfig:
 
     path_experiment: Path
     iteration: int = 0
-    prompt_generator: LlmConfig = None
-    judge: LlmConfig = None
-    error_analyzer: LlmConfig = None
+    prompt_generator: ChatModelConfig = None
+    judge: ChatModelConfig = None
+    error_analyzer: ChatModelConfig = None
 
     @property
     def path_history(self) -> Path:

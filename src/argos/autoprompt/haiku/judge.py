@@ -17,12 +17,12 @@ from argos.nodes import HaikuJudgeState, HaikuState
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
 
-    from argos.autoprompt.haiku.config import LlmConfig
+    from argos.autoprompt.haiku.config import ChatModelConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def create_judge_graph(config: LlmConfig) -> CompiledStateGraph:
+def create_judge_graph(config: ChatModelConfig) -> CompiledStateGraph:
     r"""Create the graph of the haiku judge.
 
     Args:

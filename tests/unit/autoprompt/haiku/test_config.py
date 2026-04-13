@@ -2,45 +2,44 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-
-from argos.autoprompt.haiku.config import ExperimentConfig, LlmConfig
+from argos.autoprompt.haiku.config import ChatModelConfig, ExperimentConfig
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-#############################
-#     Tests for LlmConfig   #
-#############################
+#####################################
+#     Tests for ChatModelConfig     #
+#####################################
 
 
-def test_llm_config_required_fields() -> None:
-    config = LlmConfig(model="gpt-4o", system_prompt="You are a judge.")
+def test_chat_model_config_required_fields() -> None:
+    config = ChatModelConfig(model="gpt-4o", system_prompt="You are a judge.")
     assert config.model == "gpt-4o"
     assert config.system_prompt == "You are a judge."
 
 
-def test_llm_config_default_batch_size() -> None:
-    config = LlmConfig(model="gpt-4o", system_prompt="prompt")
+def test_chat_model_config_default_batch_size() -> None:
+    config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.batch_size == 1
 
 
-def test_llm_config_default_max_retries() -> None:
-    config = LlmConfig(model="gpt-4o", system_prompt="prompt")
+def test_chat_model_config_default_max_retries() -> None:
+    config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.max_retries == 9999
 
 
-def test_llm_config_default_temperature() -> None:
-    config = LlmConfig(model="gpt-4o", system_prompt="prompt")
+def test_chat_model_config_default_temperature() -> None:
+    config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.temperature == 0.0
 
 
-def test_llm_config_default_init_kwargs() -> None:
-    config = LlmConfig(model="gpt-4o", system_prompt="prompt")
+def test_chat_model_config_default_init_kwargs() -> None:
+    config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.init_kwargs is None
 
 
-def test_llm_config_custom_values() -> None:
-    config = LlmConfig(
+def test_chat_model_config_custom_values() -> None:
+    config = ChatModelConfig(
         model="claude-3",
         system_prompt="Be helpful.",
         batch_size=5,
@@ -56,26 +55,26 @@ def test_llm_config_custom_values() -> None:
     assert config.init_kwargs == {"timeout": 30}
 
 
-def test_llm_config_equality() -> None:
-    c1 = LlmConfig(model="gpt-4o", system_prompt="prompt")
-    c2 = LlmConfig(model="gpt-4o", system_prompt="prompt")
+def test_chat_model_config_equality() -> None:
+    c1 = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
+    c2 = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert c1 == c2
 
 
-def test_llm_config_inequality_different_model() -> None:
-    c1 = LlmConfig(model="gpt-4o", system_prompt="prompt")
-    c2 = LlmConfig(model="gpt-3.5", system_prompt="prompt")
+def test_chat_model_config_inequality_different_model() -> None:
+    c1 = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
+    c2 = ChatModelConfig(model="gpt-3.5", system_prompt="prompt")
     assert c1 != c2
 
 
-def test_llm_config_inequality_different_prompt() -> None:
-    c1 = LlmConfig(model="gpt-4o", system_prompt="prompt A")
-    c2 = LlmConfig(model="gpt-4o", system_prompt="prompt B")
+def test_chat_model_config_inequality_different_prompt() -> None:
+    c1 = ChatModelConfig(model="gpt-4o", system_prompt="prompt A")
+    c2 = ChatModelConfig(model="gpt-4o", system_prompt="prompt B")
     assert c1 != c2
 
 
-def test_llm_config_is_mutable() -> None:
-    config = LlmConfig(model="gpt-4o", system_prompt="prompt")
+def test_chat_model_config_is_mutable() -> None:
+    config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     config.temperature = 0.5
     assert config.temperature == 0.5
 
@@ -103,9 +102,9 @@ def test_experiment_config_default_optional_fields_are_none(tmp_path: Path) -> N
 
 
 def test_experiment_config_custom_values(tmp_path: Path) -> None:
-    judge_cfg = LlmConfig(model="gpt-4o", system_prompt="judge prompt")
-    generator_cfg = LlmConfig(model="gpt-3.5", system_prompt="generator prompt")
-    analyzer_cfg = LlmConfig(model="claude-3", system_prompt="analyzer prompt")
+    judge_cfg = ChatModelConfig(model="gpt-4o", system_prompt="judge prompt")
+    generator_cfg = ChatModelConfig(model="gpt-3.5", system_prompt="generator prompt")
+    analyzer_cfg = ChatModelConfig(model="claude-3", system_prompt="analyzer prompt")
 
     config = ExperimentConfig(
         path_experiment=tmp_path,

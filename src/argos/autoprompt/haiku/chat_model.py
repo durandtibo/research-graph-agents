@@ -12,12 +12,12 @@ from langchain.chat_models import init_chat_model
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
 
-    from argos.autoprompt.haiku.config import LlmConfig
+    from argos.autoprompt.haiku.config import ChatModelConfig
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def create_chat_model(config: LlmConfig) -> BaseChatModel:
+def create_chat_model(config: ChatModelConfig) -> BaseChatModel:
     r"""Create the chat model based on the config.
 
     Args:

@@ -12,7 +12,7 @@ from iden.io import save_text
 from langchain_core.runnables import RunnableConfig
 
 from argos.autoprompt.haiku.chat_model import create_chat_model
-from argos.autoprompt.haiku.config import ExperimentConfig, LlmConfig
+from argos.autoprompt.haiku.config import ChatModelConfig, ExperimentConfig
 from argos.autoprompt.haiku.dataset import prepare_dataset
 from argos.autoprompt.haiku.error_analyzer import ErrorAnalyzer
 from argos.autoprompt.haiku.error_finder import ErrorFinder
@@ -217,15 +217,15 @@ def main() -> None:
                 path_experiment=path_experiment.joinpath(
                     hashlib.sha256(bytes(str(judge_system_prompt), "utf-8")).hexdigest()[:10]
                 ).joinpath(judge_model.replace(":", "_")),
-                judge=LlmConfig(
+                judge=ChatModelConfig(
                     model=judge_model, system_prompt=judge_system_prompt, batch_size=20
                 ),
-                error_analyzer=LlmConfig(
+                error_analyzer=ChatModelConfig(
                     model="ollama:gemma3:1b",
                     # model="anthropic:claude-haiku-4-5-20251001",
                     system_prompt=HAIKU_ERROR_ANALYSIS_SYSTEM_PROMPT_1,
                 ),
-                prompt_generator=LlmConfig(
+                prompt_generator=ChatModelConfig(
                     model="ollama:gemma3:1b",
                     # model="anthropic:claude-haiku-4-5-20251001",
                     system_prompt=PROMPT_GENERATOR_SYSTEM_PROMPT_0,

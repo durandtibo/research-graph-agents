@@ -6,6 +6,7 @@ from unittest.mock import Mock
 import polars as pl
 import pytest
 from iden.io import load_text
+from langchain_core.messages import AIMessage
 from langchain_core.runnables import Runnable
 
 from argos.autoprompt.haiku import columns
@@ -23,9 +24,7 @@ def mock_error_finder() -> BaseErrorFinder:
 
 @pytest.fixture
 def mock_model() -> Runnable:
-    model = Mock(spec=Runnable)
-    model.invoke.side_effect = ["analysis of the errors"]
-    return model
+    return Mock(spec=Runnable, invoke=Mock(side_effect=[AIMessage("analysis of the errors")]))
 
 
 @pytest.fixture
@@ -133,3 +132,28 @@ def test_error_analyzer_analyze_with_path(
     mock_model.invoke.assert_called_once_with({"text": "a list of errors blabla..."})
     assert path.is_file()
     assert load_text(path) == "analysis of the errors"
+
+
+def test_error_analyzer_analyze_model_outputs_aimessage(
+    mock_error_finder: BaseErrorFinder, mock_model: Runnable, correct_predictions: pl.DataFrame
+) -> None:
+    assert (
+        ErrorAnalyzer(error_finder=mock_error_finder, model=mock_model).analyze(correct_predictions)
+        == "analysis of the errors"
+    )
+    mock_error_finder.find.assert_called_once_with(correct_predictions)
+    mock_model.invoke.assert_called_once_with({"text": "a list of errors blabla..."})
+
+
+def test_error_analyzer_analyze_model_outputs_dict(
+    mock_error_finder: BaseErrorFinder, correct_predictions: pl.DataFrame
+) -> None:
+    mock_model = Mock(
+        spec=Runnable, invoke=Mock(side_effect=[{"analysis": "analysis of the errors"}])
+    )
+    assert (
+        ErrorAnalyzer(error_finder=mock_error_finder, model=mock_model).analyze(correct_predictions)
+        == "analysis of the errors"
+    )
+    mock_error_finder.find.assert_called_once_with(correct_predictions)
+    mock_model.invoke.assert_called_once_with({"text": "a list of errors blabla..."})

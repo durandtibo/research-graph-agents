@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from coola.utils.format import repr_indent, repr_mapping
 from iden.io import save_text
+from langchain_core.messages import AIMessage
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -17,6 +18,7 @@ if TYPE_CHECKING:
     from langchain_core.runnables import Runnable
 
     from argos.autoprompt.haiku.error_finder import BaseErrorFinder
+    from argos.models.analysis import AnalyzerInput
 
 
 class BaseErrorAnalyzer(ABC):
@@ -46,7 +48,7 @@ class ErrorAnalyzer(BaseErrorAnalyzer):
     def __init__(
         self,
         error_finder: BaseErrorFinder,
-        model: Runnable[dict[str, str], str],
+        model: Runnable[AnalyzerInput, AIMessage | dict[str, str]],
         path: Path | None = None,
     ) -> None:
         self._error_finder = error_finder
@@ -67,7 +69,8 @@ class ErrorAnalyzer(BaseErrorAnalyzer):
 
     def analyze(self, predictions: pl.DataFrame) -> str:
         errors = self._error_finder.find(predictions)
-        analysis = self._model.invoke({"text": errors})
+        out = self._model.invoke({"text": errors})
+        analysis = out.content if isinstance(out, AIMessage) else out["analysis"]
         if self._path:
             save_text(analysis, self._path, exist_ok=True)
         return analysis

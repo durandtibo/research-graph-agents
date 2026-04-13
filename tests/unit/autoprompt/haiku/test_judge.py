@@ -25,8 +25,8 @@ def judge_result() -> HaikuJudgeResult:
     return HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=8,
-        overall_reasoning="Great imagery and strong structure.",
+        score_prediction=8,
+        score_reasoning="Great imagery and strong structure.",
         overall_prediction=True,
     )
 

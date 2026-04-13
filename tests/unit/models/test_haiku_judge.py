@@ -15,8 +15,8 @@ def judge_result() -> HaikuJudgeResult:
     return HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=8,
-        overall_reasoning="Great imagery and strong structure.",
+        score_prediction=8,
+        score_reasoning="Great imagery and strong structure.",
         overall_prediction=True,
     )
 
@@ -40,13 +40,13 @@ def test_haiku_judge_result_valid_passed() -> None:
     result = HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=8,
-        overall_reasoning="Great imagery and strong structure.",
+        score_prediction=8,
+        score_reasoning="Great imagery and strong structure.",
         overall_prediction=True,
     )
     assert result.structure_prediction
     assert result.topic_prediction
-    assert result.score == 8
+    assert result.score_prediction == 8
     assert result.overall_prediction
 
 
@@ -54,34 +54,34 @@ def test_haiku_judge_result_valid_failed() -> None:
     result = HaikuJudgeResult(
         structure_prediction=False,
         topic_prediction=True,
-        score=8,
-        overall_reasoning="Great imagery but incorrect structure.",
+        score_prediction=8,
+        score_reasoning="Great imagery but incorrect structure.",
         overall_prediction=False,
     )
     assert not result.structure_prediction
     assert result.topic_prediction
-    assert result.score == 8
+    assert result.score_prediction == 8
     assert not result.overall_prediction
 
 
 def test_haiku_judge_result_invalid_score_too_low() -> None:
-    with pytest.raises(ValueError, match=r"score\n  Input should be greater than or equal to 1"):
+    with pytest.raises(ValueError, match=r"score_prediction\n  Input should be greater than or equal to 1"):
         HaikuJudgeResult(
             structure_prediction=True,
             topic_prediction=True,
-            score=0,
-            overall_reasoning="meow",
+            score_prediction=0,
+            score_reasoning="meow",
             overall_prediction=True,
         )
 
 
 def test_haiku_judge_result_invalid_score_too_high() -> None:
-    with pytest.raises(ValueError, match=r"score\n  Input should be less than or equal to 10"):
+    with pytest.raises(ValueError, match=r"score_prediction\n  Input should be less than or equal to 10"):
         HaikuJudgeResult(
             structure_prediction=True,
             topic_prediction=True,
-            score=11,
-            overall_reasoning="meow",
+            score_prediction=11,
+            score_reasoning="meow",
             overall_prediction=True,
         )
 
@@ -90,8 +90,8 @@ def test_haiku_judge_result_passed_auto_corrected_structure_failed() -> None:
     result = HaikuJudgeResult(
         structure_prediction=False,
         topic_prediction=True,
-        score=8,
-        overall_reasoning="meow",
+        score_prediction=8,
+        score_reasoning="meow",
         overall_prediction=True,  # LLM inconsistency: overridden to False
     )
     assert not result.overall_prediction
@@ -101,8 +101,8 @@ def test_haiku_judge_result_passed_auto_corrected_topic_failed() -> None:
     result = HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=False,
-        score=8,
-        overall_reasoning="meow",
+        score_prediction=8,
+        score_reasoning="meow",
         overall_prediction=True,  # LLM inconsistency: overridden to False
     )
     assert not result.overall_prediction
@@ -112,8 +112,8 @@ def test_haiku_judge_result_passed_auto_corrected_score_too_low() -> None:
     result = HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=6,
-        overall_reasoning="meow",
+        score_prediction=6,
+        score_reasoning="meow",
         overall_prediction=True,  # LLM inconsistency: overridden to False
     )
     assert not result.overall_prediction
@@ -123,27 +123,27 @@ def test_haiku_judge_result_passed_auto_corrected_all_pass() -> None:
     result = HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=7,
-        overall_reasoning="meow",
+        score_prediction=7,
+        score_reasoning="meow",
         overall_prediction=False,  # LLM inconsistency: overridden to True
     )
     assert result.overall_prediction
 
 
-def test_haiku_judge_result_optional_overall_reasoning_default_none() -> None:
+def test_haiku_judge_result_optional_score_reasoning_default_none() -> None:
     result = HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=8,
+        score_prediction=8,
     )
-    assert result.overall_reasoning is None
+    assert result.score_reasoning is None
 
 
 def test_haiku_judge_result_optional_structure_reasoning_default_none() -> None:
     result = HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=8,
+        score_prediction=8,
     )
     assert result.structure_reasoning is None
 
@@ -152,7 +152,7 @@ def test_haiku_judge_result_optional_topic_reasoning_default_none() -> None:
     result = HaikuJudgeResult(
         structure_prediction=True,
         topic_prediction=True,
-        score=8,
+        score_prediction=8,
     )
     assert result.topic_reasoning is None
 
@@ -163,12 +163,12 @@ def test_haiku_judge_result_with_all_reasoning_fields() -> None:
         structure_reasoning="All lines follow 5-7-5.",
         topic_prediction=True,
         topic_reasoning="The haiku clearly evokes autumn.",
-        score=9,
-        overall_reasoning="Exceptional imagery and structure.",
+        score_prediction=9,
+        score_reasoning="Exceptional imagery and structure.",
     )
     assert result.structure_reasoning == "All lines follow 5-7-5."
     assert result.topic_reasoning == "The haiku clearly evokes autumn."
-    assert result.overall_reasoning == "Exceptional imagery and structure."
+    assert result.score_reasoning == "Exceptional imagery and structure."
 
 
 ##############################################

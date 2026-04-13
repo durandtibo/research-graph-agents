@@ -5,9 +5,9 @@ from __future__ import annotations
 __all__ = ["BaseErrorAnalyzer", "ErrorAnalyzer"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from coola.utils.format import repr_indent, repr_mapping
+from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 from iden.io import save_text
 from langchain_core.messages import AIMessage
 
@@ -56,15 +56,11 @@ class ErrorAnalyzer(BaseErrorAnalyzer):
         self._path = path
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "error_finder": self._error_finder,
-                    "model": self._model,
-                    "path": self._path,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping(self._get_kwargs()))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping(self._get_kwargs()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def analyze(self, predictions: pl.DataFrame) -> str:
@@ -74,3 +70,10 @@ class ErrorAnalyzer(BaseErrorAnalyzer):
         if self._path:
             save_text(analysis, self._path, exist_ok=True)
         return analysis
+
+    def _get_kwargs(self) -> dict[str, Any]:
+        return {
+            "error_finder": self._error_finder,
+            "model": self._model,
+            "path": self._path,
+        }

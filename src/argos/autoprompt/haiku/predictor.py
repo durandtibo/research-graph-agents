@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
-from coola.utils.format import repr_indent, repr_mapping
+from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 from coola.utils.timing import timeblock
 from langchain_core.runnables import Runnable, RunnableConfig
 
@@ -68,16 +68,11 @@ class Predictor(BasePredictor):
         self._config = config or RunnableConfig(max_concurrency=batch_size)
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "model": self._model,
-                    "batch_size": self._batch_size,
-                    "output_columns": self._output_columns,
-                    "config": self._config,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping(self._get_kwargs()))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping(self._get_kwargs()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
@@ -91,6 +86,14 @@ class Predictor(BasePredictor):
         if self._output_columns is not None:
             predictions = predictions.select(self._output_columns)
         return predictions
+
+    def _get_kwargs(self) -> dict[str, Any]:
+        return {
+            "model": self._model,
+            "batch_size": self._batch_size,
+            "output_columns": self._output_columns,
+            "config": self._config,
+        }
 
 
 def generate_predictions(

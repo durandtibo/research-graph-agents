@@ -7,7 +7,7 @@ __all__ = ["BasePromptGenerator", "HistoryPromptGenerator"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
-from coola.utils.format import repr_indent, repr_mapping
+from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 from iden.io import save_json
 
 if TYPE_CHECKING:
@@ -51,15 +51,11 @@ class HistoryPromptGenerator(BasePromptGenerator):
         self._path = path
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "history": self._history,
-                    "model": self._model,
-                    "path": self._path,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping(self._get_kwargs()))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping(self._get_kwargs()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def generate(self) -> str:
@@ -73,3 +69,10 @@ class HistoryPromptGenerator(BasePromptGenerator):
         if self._path:
             save_json(out.model_dump(), self._path, exist_ok=True)
         return out.prompt
+
+    def _get_kwargs(self) -> dict[str, Any]:
+        return {
+            "history": self._history,
+            "model": self._model,
+            "path": self._path,
+        }

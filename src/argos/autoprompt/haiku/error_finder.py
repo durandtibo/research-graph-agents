@@ -5,9 +5,9 @@ from __future__ import annotations
 __all__ = ["BaseErrorFinder", "ErrorFinder"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from coola.utils.format import repr_indent, repr_mapping
+from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 
 from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.error_analysis import (
@@ -102,23 +102,11 @@ class ErrorFinder(BaseErrorFinder):
         self._topic_target_col = topic_target_col
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "path": self._root_path,
-                    "haiku_col": self._haiku_col,
-                    "topic_col": self._topic_col,
-                    "overall_prediction_col": self._overall_prediction_col,
-                    "overall_target_col": self._overall_target_col,
-                    "structure_prediction_col": self._structure_prediction_col,
-                    "structure_reasoning_col": self._structure_reasoning_col,
-                    "structure_target_col": self._structure_target_col,
-                    "topic_prediction_col": self._topic_prediction_col,
-                    "topic_reasoning_col": self._topic_reasoning_col,
-                    "topic_target_col": self._topic_target_col,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping(self._get_kwargs()))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping(self._get_kwargs()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     @property
@@ -127,7 +115,7 @@ class ErrorFinder(BaseErrorFinder):
         path was provided."""
         if not self._root_path:
             return None
-        return self._root_path.joinpath("errors_structure.json")
+        return self._root_path.joinpath("error_structure.json")
 
     @property
     def topic_error_path(self) -> Path | None:
@@ -135,7 +123,7 @@ class ErrorFinder(BaseErrorFinder):
         path was provided."""
         if not self._root_path:
             return None
-        return self._root_path.joinpath("errors_topic.json")
+        return self._root_path.joinpath("error_topic.json")
 
     def find(self, predictions: pl.DataFrame) -> str:
         structure = self._find_structure_errors(predictions)
@@ -192,3 +180,18 @@ class ErrorFinder(BaseErrorFinder):
         errors_str = format_errors_as_markdown(errors, error_type="topic")
         log_markdown(errors_str, title="Topic Errors")
         return errors_str
+
+    def _get_kwargs(self) -> dict[str, Any]:
+        return {
+            "path": self._root_path,
+            "haiku_col": self._haiku_col,
+            "topic_col": self._topic_col,
+            "overall_prediction_col": self._overall_prediction_col,
+            "overall_target_col": self._overall_target_col,
+            "structure_prediction_col": self._structure_prediction_col,
+            "structure_reasoning_col": self._structure_reasoning_col,
+            "structure_target_col": self._structure_target_col,
+            "topic_prediction_col": self._topic_prediction_col,
+            "topic_reasoning_col": self._topic_reasoning_col,
+            "topic_target_col": self._topic_target_col,
+        }

@@ -214,8 +214,6 @@ def main() -> None:
     for judge_model in models:
         for judge_system_prompt in judge_system_prompts:
             config = ExperimentConfig(
-                judge_model=judge_model,
-                judge_system_prompt=judge_system_prompt,
                 path_experiment=path_experiment.joinpath(
                     hashlib.sha256(bytes(str(judge_system_prompt), "utf-8")).hexdigest()[:10]
                 ).joinpath(judge_model.replace(":", "_")),

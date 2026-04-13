@@ -44,29 +44,22 @@ class ExperimentConfig:
     r"""The experiment configuration.
 
     Attributes:
-        judge_model: The model identifier for the haiku judge LLM.
-        judge_system_prompt: The system prompt used by the haiku judge.
         path_experiment: Root directory where all experiment outputs
             (results, artifacts, history) are stored.
-        batch_size: Number of examples processed per inference batch.
-            Defaults to ``20``.
         iteration: Current iteration index used to namespace artifact
             subdirectories. Defaults to ``0``.
-        judge: Optional :class:`LlmConfig` for the judge model.
-            Defaults to ``None``.
         prompt_generator: Optional :class:`LlmConfig` for the prompt
             generator model. Defaults to ``None``.
+        judge: Optional :class:`LlmConfig` for the judge model.
+            Defaults to ``None``.
         error_analyzer: Optional :class:`LlmConfig` for the error
             analyzer model. Defaults to ``None``.
     """
 
-    judge_model: str
-    judge_system_prompt: str
     path_experiment: Path
-    batch_size: int = 20
     iteration: int = 0
-    judge: LlmConfig = None
     prompt_generator: LlmConfig = None
+    judge: LlmConfig = None
     error_analyzer: LlmConfig = None
 
     @property

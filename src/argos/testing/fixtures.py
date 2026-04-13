@@ -1,6 +1,6 @@
-r"""Define some pytest fixtures for testing.
+r"""Define pytest mark decorators for conditional test skipping.
 
-`pytest` is required to use these fixtures.
+``pytest`` is required to use these decorators.
 """
 
 from __future__ import annotations

@@ -24,17 +24,17 @@ if TYPE_CHECKING:
 
 
 class BaseErrorFinder(ABC):
-    r"""Define the base class to implement an error analyzer."""
+    r"""Define the base class to implement an error finder."""
 
     @abstractmethod
     def find(self, predictions: pl.DataFrame) -> str:
-        r"""Compute a textual analysis of the errors.
+        r"""Find the prediction errors and return a formatted report.
 
         Args:
             predictions: A DataFrame with the predictions.
 
         Returns:
-            The analysis of the errors.
+            A string report describing the errors found.
         """
 
 
@@ -43,6 +43,35 @@ class ErrorFinder(BaseErrorFinder):
 
     Args:
         root_path: The root path where to store the errors.
+            If ``None``, no files are written.
+        haiku_col: Column name containing the haiku text. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.HAIKU`.
+        topic_col: Column name containing the topic text. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC`.
+        overall_prediction_col: Column name for the overall predicted
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.OVERALL_PREDICTION`.
+        overall_target_col: Column name for the overall ground-truth
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.OVERALL_TARGET`.
+        structure_prediction_col: Column name for the structure
+            predicted label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_PREDICTION`.
+        structure_reasoning_col: Column name for the structure
+            reasoning text. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_REASONING`.
+        structure_target_col: Column name for the structure
+            ground-truth label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_TARGET`.
+        topic_prediction_col: Column name for the topic predicted
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_PREDICTION`.
+        topic_reasoning_col: Column name for the topic reasoning text.
+            Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_REASONING`.
+        topic_target_col: Column name for the topic ground-truth
+            label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_TARGET`.
     """
 
     def __init__(

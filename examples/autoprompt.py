@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from iden.io import save_text
 from langchain_core.runnables import RunnableConfig
 
+from argos.autoprompt.haiku.chat_model import create_chat_model
 from argos.autoprompt.haiku.config import ExperimentConfig, LlmConfig
 from argos.autoprompt.haiku.dataset import prepare_dataset
 from argos.autoprompt.haiku.error_analyzer import ErrorAnalyzer
@@ -18,6 +19,8 @@ from argos.autoprompt.haiku.inference import InferencePipeline
 from argos.autoprompt.haiku.judge import create_judge_graph
 from argos.autoprompt.haiku.predictor import Predictor
 from argos.autoprompt.haiku.prompt import generate_next_judge_system_prompt
+from argos.models.analysis import create_analyzer_model
+from argos.prompts.haiku_error_analysis import HAIKU_ERROR_ANALYSIS_SYSTEM_PROMPT_1
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 from argos.utils.history import BaseHistory, JsonHistory
 from argos.utils.logging import configure_logging, log_markdown
@@ -77,6 +80,7 @@ def generate_predictions(config: ExperimentConfig) -> pl.DataFrame:
     logger.info(f"Inference pipeline:\n{inferpipe}")
     predictions = inferpipe.process()
     logger.info(predictions)
+    logger.info(f"columns: {sorted(predictions.columns)}")
     return predictions
 
 
@@ -110,7 +114,10 @@ def generate_error_analysis(config: ExperimentConfig, predictions: pl.DataFrame)
     """
     analyzer = ErrorAnalyzer(
         error_finder=ErrorFinder(root_path=config.path_artifact),
-        model=None,
+        model=create_analyzer_model(
+            llm=create_chat_model(config.error_analyzer),
+            system_prompt=config.error_analyzer.system_prompt,
+        ),
         path=config.path_artifact.joinpath("error_analysis.md"),
     )
     logger.info(f"analyzer:\n{analyzer}")
@@ -195,6 +202,10 @@ def main() -> None:
                 ).joinpath(judge_model.replace(":", "_")),
                 judge=LlmConfig(
                     model=judge_model, system_prompt=judge_system_prompt, batch_size=20
+                ),
+                error_analyzer=LlmConfig(
+                    model="ollama:smollm:135m",
+                    system_prompt=HAIKU_ERROR_ANALYSIS_SYSTEM_PROMPT_1,
                 ),
             )
             run(config)

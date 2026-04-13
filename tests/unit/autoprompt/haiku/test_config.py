@@ -7,12 +7,12 @@ from argos.autoprompt.haiku.config import ChatModelConfig, ExperimentConfig
 if TYPE_CHECKING:
     from pathlib import Path
 
-#############################
-#     Tests for LlmConfig   #
-#############################
+###################################
+#     Tests for ChatModelConfig   #
+###################################
 
 
-def test_llm_config_required_fields() -> None:
+def test_chat_model_config_required_fields() -> None:
     config = ChatModelConfig(model="gpt-4o", system_prompt="You are a judge.")
     assert config.model == "gpt-4o"
     assert config.system_prompt == "You are a judge."

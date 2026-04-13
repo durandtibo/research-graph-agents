@@ -7,9 +7,9 @@ from argos.autoprompt.haiku.config import ChatModelConfig, ExperimentConfig
 if TYPE_CHECKING:
     from pathlib import Path
 
-###################################
-#     Tests for ChatModelConfig   #
-###################################
+#####################################
+#     Tests for ChatModelConfig     #
+#####################################
 
 
 def test_chat_model_config_required_fields() -> None:

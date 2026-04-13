@@ -17,4 +17,4 @@ CONSTRAINTS:
 * You must not exceed a maximum of 10 sentences.
 * Do not list out individual errors; focus strictly on the macro-level patterns and insights.
 * Be direct, objective, and prioritize the most critical or frequent error patterns first.
-"""
+""".strip()

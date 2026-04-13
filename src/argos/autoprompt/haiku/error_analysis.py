@@ -196,6 +196,7 @@ def format_errors_as_markdown(errors: list[dict[Any, Any]], error_type: str) -> 
         f"- **Haiku**: The evaluated text, with line breaks (`\\n`) replaced by slashes (` / `)\n"
         f"- **Target**: The true, correct {error_type} label.\n"
         f"- **Prediction**: The model's output {error_type} label.\n"
+        f"- **Reasoning**: The explanation behind the model's prediction.\n"
         f"\n{table}\n"
     )
 

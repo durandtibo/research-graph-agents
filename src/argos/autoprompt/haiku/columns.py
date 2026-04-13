@@ -5,6 +5,7 @@ __all__ = [
     "OVERALL_PREDICTION",
     "OVERALL_SCORE_PREDICTION",
     "OVERALL_TARGET",
+    "SCORE_REASONING",
     "STRUCTURE_PREDICTION",
     "STRUCTURE_TARGET",
     "TOPIC",
@@ -20,7 +21,7 @@ TARGET = "target"
 OVERALL_PREDICTION = "overall_prediction"
 OVERALL_SCORE_PREDICTION = "overall_score_prediction"
 OVERALL_TARGET = "overall_target"
-OVERALL_REASONING = "score_reasoning"
+SCORE_REASONING = "score_reasoning"
 
 STRUCTURE_PREDICTION = "structure_prediction"
 STRUCTURE_TARGET = "structure_target"

@@ -23,11 +23,13 @@ def config() -> LlmConfig:
 @pytest.fixture
 def judge_result() -> HaikuJudgeResult:
     return HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=8,
-        score_reasoning="Great imagery and strong structure.",
         overall_prediction=True,
+        score_prediction=8,
+        score_reasoning="score explanation",
+        structure_prediction=True,
+        structure_reasoning="structure explanation",
+        topic_prediction=True,
+        topic_reasoning="topic explanation",
     )
 
 

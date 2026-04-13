@@ -26,8 +26,10 @@ def correct_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: True,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r1s",
                 columns.STRUCTURE_TARGET: True,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t1s",
                 columns.TOPIC_TARGET: True,
             },
             {
@@ -40,8 +42,10 @@ def correct_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: True,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r2s",
                 columns.STRUCTURE_TARGET: True,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t2s",
                 columns.TOPIC_TARGET: True,
             },
             {
@@ -52,8 +56,10 @@ def correct_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: True,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r3s",
                 columns.STRUCTURE_TARGET: True,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t3s",
                 columns.TOPIC_TARGET: True,
             },
             {
@@ -64,8 +70,10 @@ def correct_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: True,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r4s",
                 columns.STRUCTURE_TARGET: True,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t4s",
                 columns.TOPIC_TARGET: True,
             },
         ]
@@ -86,8 +94,10 @@ def mixed_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: False,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r1s",
                 columns.STRUCTURE_TARGET: False,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t1s",
                 columns.TOPIC_TARGET: True,
             },
             {
@@ -100,8 +110,10 @@ def mixed_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: False,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r2s",
                 columns.STRUCTURE_TARGET: False,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t2s",
                 columns.TOPIC_TARGET: True,
             },
             {
@@ -112,8 +124,10 @@ def mixed_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: False,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r3s",
                 columns.STRUCTURE_TARGET: True,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t3s",
                 columns.TOPIC_TARGET: False,
             },
             {
@@ -124,8 +138,10 @@ def mixed_predictions() -> pl.DataFrame:
                 columns.OVERALL_PREDICTION: True,
                 columns.OVERALL_TARGET: False,
                 columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "r4s",
                 columns.STRUCTURE_TARGET: True,
                 columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "t4s",
                 columns.TOPIC_TARGET: False,
             },
         ]
@@ -151,7 +167,7 @@ def test_error_finder_find_correct(correct_predictions: pl.DataFrame) -> None:
     assert "0 haikus have incorrect structure predictions." in out
     assert "## Examples with Topic Errors" in out
     assert "0 haikus have incorrect topic predictions." in out
-    assert "| # | Topic | Haiku | Target | Prediction |" in out
+    assert "| # | Topic | Haiku | Target | Prediction | Reasoning |" in out
 
 
 def test_error_finder_find_mixed(mixed_predictions: pl.DataFrame) -> None:
@@ -160,7 +176,7 @@ def test_error_finder_find_mixed(mixed_predictions: pl.DataFrame) -> None:
     assert "2 haikus have incorrect structure predictions." in out
     assert "## Examples with Topic Errors" in out
     assert "2 haikus have incorrect topic predictions." in out
-    assert "| # | Topic | Haiku | Target | Prediction |" in out
+    assert "| # | Topic | Haiku | Target | Prediction | Reasoning |" in out
 
 
 def test_error_finder_find_with_path(correct_predictions: pl.DataFrame, tmp_path: Path) -> None:
@@ -170,6 +186,6 @@ def test_error_finder_find_with_path(correct_predictions: pl.DataFrame, tmp_path
     assert "0 haikus have incorrect structure predictions." in out
     assert "## Examples with Topic Errors" in out
     assert "0 haikus have incorrect topic predictions." in out
-    assert "| # | Topic | Haiku | Target | Prediction |" in out
+    assert "| # | Topic | Haiku | Target | Prediction | Reasoning |" in out
     assert finder.structure_error_path.is_file()
     assert finder.topic_error_path.is_file()

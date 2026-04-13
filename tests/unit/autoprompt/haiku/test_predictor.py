@@ -169,7 +169,7 @@ def mock_predictions() -> pl.DataFrame:
                 "topic_target": True,
                 "overall_reasoning": "reason3",
             },
-        ]
+        ],
     )
 
 

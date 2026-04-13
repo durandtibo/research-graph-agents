@@ -108,7 +108,7 @@ Return:
   2. Explicit justification for topic relevance (cite words or imagery)
   3. Brief quality assessment
 
-Keep reasoning concise (2-4 sentences). No extra text.
+Keep overall_reasoning concise (2-4 sentences). No extra text.
 
 ---
 

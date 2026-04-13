@@ -73,7 +73,7 @@ class InferencePipeline(BaseInferencePipeline):
 
         predictions = self._predictor.predict(self._dataset)
         if self._path:
-            logger.info(f"Writing predictions ({predictions.shape}) in {self._path}...")
+            logger.info(f"Writing predictions (shape={predictions.shape}) to {self._path}...")
             self._path.parent.mkdir(parents=True, exist_ok=True)
             predictions.write_parquet(self._path)
         return predictions

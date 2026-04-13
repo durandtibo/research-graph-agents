@@ -87,6 +87,7 @@ class Predictor(BasePredictor):
             batch_size=self._batch_size,
             config=self._config,
         )
+        predictions = predictions.select(sorted(predictions.columns))
         if self._output_columns is not None:
             predictions = predictions.select(self._output_columns)
         return predictions

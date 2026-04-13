@@ -87,7 +87,7 @@ class HaikuJudgeResult(BaseModel):
         Overrides any LLM-provided value to guarantee that
         ``overall_prediction`` is always consistent with
         ``structure_prediction``, ``topic_prediction``, and ``score_prediction``.
-        
+
         Returns:
             The updated model instance with ``overall_prediction`` set.
         """

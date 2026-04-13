@@ -65,7 +65,9 @@ def test_haiku_judge_result_valid_failed() -> None:
 
 
 def test_haiku_judge_result_invalid_score_too_low() -> None:
-    with pytest.raises(ValueError, match=r"score_prediction\n  Input should be greater than or equal to 1"):
+    with pytest.raises(
+        ValueError, match=r"score_prediction\n  Input should be greater than or equal to 1"
+    ):
         HaikuJudgeResult(
             structure_prediction=True,
             topic_prediction=True,
@@ -76,7 +78,9 @@ def test_haiku_judge_result_invalid_score_too_low() -> None:
 
 
 def test_haiku_judge_result_invalid_score_too_high() -> None:
-    with pytest.raises(ValueError, match=r"score_prediction\n  Input should be less than or equal to 10"):
+    with pytest.raises(
+        ValueError, match=r"score_prediction\n  Input should be less than or equal to 10"
+    ):
         HaikuJudgeResult(
             structure_prediction=True,
             topic_prediction=True,

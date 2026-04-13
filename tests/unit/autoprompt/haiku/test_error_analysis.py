@@ -417,6 +417,7 @@ def test_format_errors_as_markdown_single_error() -> None:
         "- **Haiku**: The evaluated text, with line breaks (`\\n`) replaced by slashes (` / `)\n"
         "- **Target**: The true, correct structure label.\n"
         "- **Prediction**: The model's output structure label.\n"
+        "- **Reasoning**: The explanation behind the model's prediction.\n"
         f"\n{SINGLE_ERROR_TABLE}\n"
     )
 
@@ -429,6 +430,7 @@ def test_format_errors_as_markdown_multiple_errors() -> None:
         "- **Haiku**: The evaluated text, with line breaks (`\\n`) replaced by slashes (` / `)\n"
         "- **Target**: The true, correct topic label.\n"
         "- **Prediction**: The model's output topic label.\n"
+        "- **Reasoning**: The explanation behind the model's prediction.\n"
         f"\n{MULTIPLE_ERRORS_TABLE}\n"
     )
 

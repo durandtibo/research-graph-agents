@@ -41,8 +41,8 @@ def find_structure_errors(
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns identified by
-            ``topic_col``, ``haiku_col``, ``target_col``, and
-            ``prediction_col``.
+            ``topic_col``, ``haiku_col``, ``target_col``,
+            ``prediction_col``, and ``reasoning_col``.
         path: Optional path where the error list is saved as a JSON
             file. If ``None``, no file is written.
         haiku_col: The column name containing the haiku text.
@@ -54,13 +54,17 @@ def find_structure_errors(
         prediction_col: The column name containing the predicted
             structure labels. Defaults to
             :data:`~argos.autoprompt.haiku.columns.STRUCTURE_PREDICTION`.
+        reasoning_col: The column name containing the reasoning text
+            that justifies the predicted structure label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.STRUCTURE_REASONING`.
         target_col: The column name containing the ground-truth
             structure labels. Defaults to
             :data:`~argos.autoprompt.haiku.columns.STRUCTURE_TARGET`.
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
-            keys ``topic``, ``haiku``, ``target``, and ``prediction``.
+            keys ``topic``, ``haiku``, ``target``, ``prediction``, and
+            ``reasoning``.
     """
     logger.info("Analyzing structure errors...")
     errors = find_errors(
@@ -93,8 +97,8 @@ def find_topic_errors(
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns identified by
-            ``topic_col``, ``haiku_col``, ``target_col``, and
-            ``prediction_col``.
+            ``topic_col``, ``haiku_col``, ``target_col``,
+            ``prediction_col``, and ``reasoning_col``.
         path: Optional path where the error list is saved as a JSON
             file. If ``None``, no file is written.
         haiku_col: The column name containing the haiku text.
@@ -106,13 +110,17 @@ def find_topic_errors(
         prediction_col: The column name containing the predicted
             topic labels. Defaults to
             :data:`~argos.autoprompt.haiku.columns.TOPIC_PREDICTION`.
+        reasoning_col: The column name containing the reasoning text
+            that justifies the predicted topic label. Defaults to
+            :data:`~argos.autoprompt.haiku.columns.TOPIC_REASONING`.
         target_col: The column name containing the ground-truth
             topic labels. Defaults to
             :data:`~argos.autoprompt.haiku.columns.TOPIC_TARGET`.
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
-            keys ``topic``, ``haiku``, ``target``, and ``prediction``.
+            keys ``topic``, ``haiku``, ``target``, ``prediction``, and
+            ``reasoning``.
     """
     logger.info("Analyzing topic errors...")
     errors = find_errors(
@@ -182,7 +190,7 @@ def format_errors_as_markdown(errors: list[dict[Any, Any]], error_type: str) -> 
     Args:
         errors: A list of error dicts as returned by
             :func:`find_errors`, each containing ``topic``, ``haiku``,
-            ``target``, and ``prediction``.
+            ``target``, ``prediction``, and ``reasoning``.
         error_type: A human-readable label for the type of error
             (e.g. ``"structure"`` or ``"topic"``), used in the summary
             text and column descriptions.
@@ -210,12 +218,12 @@ def format_errors_as_markdown_table(errors: list[dict[Any, Any]]) -> str:
     Args:
         errors: A list of error dicts as returned by
             :func:`find_errors`, each containing ``topic``, ``haiku``,
-            ``target``, and ``prediction``. Newlines in ``haiku``
-            values are replaced with `` / `` for readability.
+            ``target``, ``prediction``, and ``reasoning``. Newlines in
+            ``haiku`` values are replaced with `` / `` for readability.
 
     Returns:
         A markdown table string with columns ``#``, ``Topic``,
-            ``Haiku``, ``Target``, and ``Prediction``.
+            ``Haiku``, ``Target``, ``Prediction``, and ``Reasoning``.
     """
     lines = [
         "| # | Topic | Haiku | Target | Prediction | Reasoning |",

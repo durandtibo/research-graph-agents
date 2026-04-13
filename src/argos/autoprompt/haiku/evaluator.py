@@ -7,7 +7,7 @@ __all__ = ["BaseEvaluator", "HaikuJudgeEvaluator"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
-from coola.utils.format import repr_indent, repr_mapping
+from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 from feu.utils.io import save_json
 
 from argos.autoprompt.haiku import columns
@@ -81,19 +81,11 @@ class HaikuJudgeEvaluator(BaseEvaluator):
         self._topic_target_col = topic_target_col
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "path": self._path,
-                    "overall_prediction_col": self._overall_prediction_col,
-                    "overall_target_col": self._overall_target_col,
-                    "structure_prediction_col": self._structure_prediction_col,
-                    "structure_target_col": self._structure_target_col,
-                    "topic_prediction_col": self._topic_prediction_col,
-                    "topic_target_col": self._topic_target_col,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping(self._get_kwargs()))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping(self._get_kwargs()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def evaluate(self, predictions: pl.DataFrame) -> dict[str, Any]:
@@ -110,3 +102,14 @@ class HaikuJudgeEvaluator(BaseEvaluator):
         if self._path:
             save_json(metrics, self._path, exist_ok=True)
         return metrics
+
+    def _get_kwargs(self) -> dict[str, Any]:
+        return {
+            "path": self._path,
+            "overall_prediction_col": self._overall_prediction_col,
+            "overall_target_col": self._overall_target_col,
+            "structure_prediction_col": self._structure_prediction_col,
+            "structure_target_col": self._structure_target_col,
+            "topic_prediction_col": self._topic_prediction_col,
+            "topic_target_col": self._topic_target_col,
+        }

@@ -6,10 +6,10 @@ __all__ = ["BaseInferencePipeline", "InferencePipeline"]
 
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import polars as pl
-from coola.utils.format import repr_indent, repr_mapping
+from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -55,15 +55,11 @@ class InferencePipeline(BaseInferencePipeline):
         self._path = path
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "dataset": f"shape: {self._dataset.shape}",
-                    "predictor": self._predictor,
-                    "path": self._path,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping(self._get_kwargs()))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping(self._get_kwargs()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def process(self) -> pl.DataFrame:
@@ -77,3 +73,10 @@ class InferencePipeline(BaseInferencePipeline):
             self._path.parent.mkdir(parents=True, exist_ok=True)
             predictions.write_parquet(self._path)
         return predictions
+
+    def _get_kwargs(self) -> dict[str, Any]:
+        return {
+            "dataset": f"shape: {self._dataset.shape}",
+            "predictor": self._predictor,
+            "path": self._path,
+        }

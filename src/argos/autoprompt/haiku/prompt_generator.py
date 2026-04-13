@@ -8,12 +8,17 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 from coola.utils.format import repr_indent, repr_mapping
+from iden.io import save_json
 
 if TYPE_CHECKING:
-    from langchain_core.messages import AIMessage
+    from pathlib import Path
+
     from langchain_core.runnables import Runnable
 
-    from argos.models.analysis import AnalyzerInput
+    from argos.models.prompt_generation import (
+        PromptGeneratorInput,
+        PromptGeneratorOutput,
+    )
 
 
 class BasePromptGenerator(ABC):
@@ -29,27 +34,42 @@ class BasePromptGenerator(ABC):
 
 
 class HistoryPromptGenerator(BasePromptGenerator):
-    r"""Generate a new prompt based on the history of previous
-    prompts."""
+    r"""Generate a new prompt based on the history of previous prompts.
+
+    Args:
+        history: The history of previous prompts.
+    """
 
     def __init__(
         self,
         history: list[dict[str, Any]],
-        model: Runnable[AnalyzerInput, AIMessage],
+        model: Runnable[PromptGeneratorInput, PromptGeneratorOutput],
+        path: Path | None = None,
     ) -> None:
         self._history = history
         self._model = model
+        self._path = path
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"history": self._history, "model": self._model}))
+        args = repr_indent(
+            repr_mapping(
+                {
+                    "history": self._history,
+                    "model": self._model,
+                    "path": self._path,
+                }
+            )
+        )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def generate(self) -> str:
         history_str = (
             f"The prompt history is provided below as a JSON array. "
             f"Items are listed in order of execution, starting with the "
-            f"first iteration and ending with the most recent. "
+            f"first iteration and ending with the most recent."
             f"\n{self._history}"
         )
-        out = self._model.invoke({"text": history_str})
-        return out.content
+        out = self._model.invoke({"history": history_str})
+        if self._path:
+            save_json(out.model_dump(), self._path, exist_ok=True)
+        return out.prompt

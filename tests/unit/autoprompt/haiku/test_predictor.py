@@ -79,8 +79,8 @@ def mock_outputs() -> list[dict[str, Any]]:
             "evaluation": HaikuJudgeResult(
                 structure_prediction=True,
                 topic_prediction=True,
-                score=10,
-                overall_reasoning="reason1",
+                score_prediction=10,
+                score_reasoning="reason1",
                 overall_prediction=True,
             ),
         },
@@ -92,8 +92,8 @@ def mock_outputs() -> list[dict[str, Any]]:
             "evaluation": HaikuJudgeResult(
                 structure_prediction=True,
                 topic_prediction=True,
-                score=9,
-                overall_reasoning="reason2",
+                score_prediction=9,
+                score_reasoning="reason2",
                 overall_prediction=True,
             ),
         },
@@ -105,8 +105,8 @@ def mock_outputs() -> list[dict[str, Any]]:
             "evaluation": HaikuJudgeResult(
                 structure_prediction=True,
                 topic_prediction=True,
-                score=8,
-                overall_reasoning="reason3",
+                score_prediction=8,
+                score_reasoning="reason3",
                 overall_prediction=True,
             ),
         },
@@ -124,7 +124,7 @@ def mock_predictions() -> pl.DataFrame:
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "score": 10,
+                "score_prediction": 10,
                 "overall_prediction": True,
                 "target": True,
                 "structure_prediction": True,
@@ -133,7 +133,7 @@ def mock_predictions() -> pl.DataFrame:
                 "topic_prediction": True,
                 "topic_reasoning": None,
                 "topic_target": True,
-                "overall_reasoning": "reason1",
+                "score_reasoning": "reason1",
             },
             {
                 "topic": "cat",
@@ -142,7 +142,7 @@ def mock_predictions() -> pl.DataFrame:
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "score": 9,
+                "score_prediction": 9,
                 "overall_prediction": True,
                 "target": True,
                 "structure_prediction": True,
@@ -151,14 +151,14 @@ def mock_predictions() -> pl.DataFrame:
                 "topic_prediction": True,
                 "topic_reasoning": None,
                 "topic_target": True,
-                "overall_reasoning": "reason2",
+                "score_reasoning": "reason2",
             },
             {
                 "topic": "mountain",
                 "haiku": (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "score": 8,
+                "score_prediction": 8,
                 "overall_prediction": True,
                 "target": True,
                 "structure_prediction": True,
@@ -167,7 +167,7 @@ def mock_predictions() -> pl.DataFrame:
                 "topic_prediction": True,
                 "topic_reasoning": None,
                 "topic_target": True,
-                "overall_reasoning": "reason3",
+                "score_reasoning": "reason3",
             },
         ],
     )
@@ -210,8 +210,8 @@ def test_predictor_predict_batch_size_1(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=10,
-                    overall_reasoning="reason1",
+                    score_prediction=10,
+                    score_reasoning="reason1",
                     overall_prediction=True,
                 ),
             }
@@ -225,8 +225,8 @@ def test_predictor_predict_batch_size_1(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=9,
-                    overall_reasoning="reason2",
+                    score_prediction=9,
+                    score_reasoning="reason2",
                     overall_prediction=True,
                 ),
             },
@@ -240,8 +240,8 @@ def test_predictor_predict_batch_size_1(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=8,
-                    overall_reasoning="reason3",
+                    score_prediction=8,
+                    score_reasoning="reason3",
                     overall_prediction=True,
                 ),
             },
@@ -268,8 +268,8 @@ def test_predictor_predict_batch_size_2(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=10,
-                    overall_reasoning="reason1",
+                    score_prediction=10,
+                    score_reasoning="reason1",
                     overall_prediction=True,
                 ),
             },
@@ -281,8 +281,8 @@ def test_predictor_predict_batch_size_2(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=9,
-                    overall_reasoning="reason2",
+                    score_prediction=9,
+                    score_reasoning="reason2",
                     overall_prediction=True,
                 ),
             },
@@ -296,8 +296,8 @@ def test_predictor_predict_batch_size_2(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=8,
-                    overall_reasoning="reason3",
+                    score_prediction=8,
+                    score_reasoning="reason3",
                     overall_prediction=True,
                 ),
             },
@@ -377,8 +377,8 @@ def test_generate_predictions_batch_size_1(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=10,
-                    overall_reasoning="reason1",
+                    score_prediction=10,
+                    score_reasoning="reason1",
                     overall_prediction=True,
                 ),
             }
@@ -392,8 +392,8 @@ def test_generate_predictions_batch_size_1(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=9,
-                    overall_reasoning="reason2",
+                    score_prediction=9,
+                    score_reasoning="reason2",
                     overall_prediction=True,
                 ),
             },
@@ -407,8 +407,8 @@ def test_generate_predictions_batch_size_1(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=8,
-                    overall_reasoning="reason3",
+                    score_prediction=8,
+                    score_reasoning="reason3",
                     overall_prediction=True,
                 ),
             },
@@ -434,8 +434,8 @@ def test_generate_predictions_batch_size_2(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=10,
-                    overall_reasoning="reason1",
+                    score_prediction=10,
+                    score_reasoning="reason1",
                     overall_prediction=True,
                 ),
             },
@@ -447,8 +447,8 @@ def test_generate_predictions_batch_size_2(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=9,
-                    overall_reasoning="reason2",
+                    score_prediction=9,
+                    score_reasoning="reason2",
                     overall_prediction=True,
                 ),
             },
@@ -462,8 +462,8 @@ def test_generate_predictions_batch_size_2(
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
-                    score=8,
-                    overall_reasoning="reason3",
+                    score_prediction=8,
+                    score_reasoning="reason3",
                     overall_prediction=True,
                 ),
             },

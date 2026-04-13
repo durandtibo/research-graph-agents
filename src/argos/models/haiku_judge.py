@@ -22,8 +22,8 @@ logger: logging.Logger = logging.getLogger(__name__)
 class HaikuJudgeResult(BaseModel):
     r"""Define the structured result produced by the haiku judge LLM.
 
-    ``structure_prediction``, ``topic_prediction``, ``score``, and
-    ``overall_reasoning`` are populated by the LLM via structured
+    ``structure_prediction``, ``topic_prediction``, ``score_prediction``,
+    and ``score_reasoning`` are populated by the LLM via structured
     output. ``overall_prediction`` is always derived automatically from
     those fields by the model validator, so it is guaranteed to be
     consistent.
@@ -38,15 +38,16 @@ class HaikuJudgeResult(BaseModel):
             the target topic, otherwise ``False``.
         topic_reasoning: A brief explanation justifying the
             ``topic_prediction`` decision. Optional.
-        score: Quality score from 1 to 10 based on imagery, emotional
+        score_prediction: Quality score from 1 to 10 based on imagery, emotional
             resonance, and word choice. Constrained to the range
             ``[1, 10]``.
-        overall_reasoning: A brief explanation justifying the score,
-            topic adherence, and structure evaluation. Optional.
+        score_reasoning: A brief explanation justifying the
+            ``score_prediction`` decision. Optional.
         overall_prediction: Derived automatically: ``True`` only if
             ``structure_prediction`` and ``topic_prediction`` are both
-            ``True`` and ``score >= 7``. Any LLM-provided value is
-            overwritten by the :meth:`compute_passed` model validator.
+            ``True`` and ``score_prediction >= 7``. Any LLM-provided
+            value is overwritten by the :meth:`compute_passed` model
+            validator.
     """
 
     structure_prediction: bool = Field(
@@ -63,20 +64,20 @@ class HaikuJudgeResult(BaseModel):
         default=None,
         description="A brief explanation justifying the topic_prediction decision.",
     )
-    score: int = Field(
+    score_prediction: int = Field(
         ge=1,
         le=10,
         description=(
             "Quality score from 1-10 based on imagery, emotional resonance, and word choice."
         ),
     )
-    overall_reasoning: str | None = Field(
+    score_reasoning: str | None = Field(
         default=None,
-        description="A brief explanation justifying the score, topic adherence, and structure.",
+        description="A brief explanation justifying the score decision.",
     )
     overall_prediction: bool = Field(
         default=False,
-        description="Derived automatically: True ONLY if structure_prediction AND topic_prediction AND score >= 7.",
+        description="Derived automatically: True ONLY if structure_prediction AND topic_prediction AND score_prediction >= 7.",
     )
 
     @model_validator(mode="after")
@@ -85,13 +86,13 @@ class HaikuJudgeResult(BaseModel):
 
         Overrides any LLM-provided value to guarantee that
         ``overall_prediction`` is always consistent with
-        ``structure_prediction``, ``topic_prediction``, and ``score``.
-
+        ``structure_prediction``, ``topic_prediction``, and ``score_prediction``.
+        
         Returns:
             The updated model instance with ``overall_prediction`` set.
         """
         self.overall_prediction = (
-            self.structure_prediction and self.topic_prediction and self.score >= 7
+            self.structure_prediction and self.topic_prediction and self.score_prediction >= 7
         )
         return self
 

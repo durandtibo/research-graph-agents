@@ -24,15 +24,15 @@ Count syllables phonetically. Any deviation makes this False.
 ## Topic (`topic_prediction`)
 True if the haiku clearly and meaningfully reflects the given topic. Otherwise False.
 
-## Quality Score (`score`)
+## Quality Score (`score_prediction`)
 Rate the haiku from 1 to 10:
 - 1-3: Literal, dull, or incoherent
 - 4-6: Adequate but weak imagery
 - 7-8: Vivid imagery and effective juxtaposition
 - 9-10: Exceptional, precise, and evocative
 
-## Reasoning (`overall_reasoning`)
-1-3 concise sentences covering syllable accuracy, topic adherence, and quality."""
+## Reasoning (`score_reasoning`)
+1-3 concise sentences explaining the score decision."""
 
 
 HAIKU_JUDGE_SYSTEM_PROMPT1 = """
@@ -85,7 +85,7 @@ Mark `True` only if:
 
 ---
 
-## Step 3 — Quality Score (`score`)
+## Step 3 — Quality Score (`score_prediction`)
 
 Rate from 1 to 10:
 
@@ -96,19 +96,16 @@ Rate from 1 to 10:
 
 ---
 
-## Step 4 — Output Format (`overall_reasoning`)
+## Step 4 — Output Format (`score_reasoning`)
 
 Return:
 
 - `structure_prediction`: boolean
 - `topic_prediction`: boolean
-- `score`: integer (1-10)
-- `overall_reasoning`: MUST include:
-  1. Syllable counts for each line (e.g., 5 / 6 / 5 → FAIL)
-  2. Explicit justification for topic relevance (cite words or imagery)
-  3. Brief quality assessment
+- `score_prediction`: integer (1-10)
+- `score_reasoning`: MUST include the justification for the score decision.
 
-Keep overall_reasoning concise (2-4 sentences). No extra text.
+Keep score_reasoning concise (2-4 sentences). No extra text.
 
 ---
 
@@ -128,14 +125,14 @@ Set True ONLY if the haiku has exactly 3 lines with counts of 5, 7, 5 — any de
 ## topic_prediction
 Set True if the haiku clearly and meaningfully engages with the target topic, False otherwise.
 
-## score (1-10)
+## score_prediction (1-10)
 1-3: Incoherent, purely literal, or no imagery
 4-6: Functional but weak — generic word choice, flat imagery
 7-8: Vivid, purposeful imagery with effective contrast or juxtaposition
 9-10: Precise, resonant, and evocative — each word earns its place
 
-## overall_reasoning
-2-3 sentences. Cover: (1) syllable count per line, (2) topic relevance, (3) justification for the score.
+## score_reasoning
+2-3 sentences explaining the score decision.
 Do not restate the haiku."""
 
 HAIKU_JUDGE_SYSTEM_PROMPT3 = """You are an expert haiku judge. Given a haiku and a target topic, evaluate it and populate the structured output fields.
@@ -156,14 +153,14 @@ Set True ONLY if all three checks pass. Any deviation — wrong line count, wron
 ## topic_prediction
 Set True if the haiku clearly and meaningfully engages with the target topic, False otherwise.
 
-## score (1-10)
+## score_prediction (1-10)
 1-3: Incoherent, purely literal, or no imagery
 4-6: Functional but weak — generic word choice, flat imagery
 7-8: Vivid, purposeful imagery with effective contrast or juxtaposition
 9-10: Precise, resonant, and evocative — each word earns its place
 
-## overall_reasoning
-2-3 sentences. Cover: (1) syllable count per line, (2) topic relevance, (3) justification for the score.
+## score_reasoning
+2-3 sentences explaining the score decision.
 Do not restate the haiku."""
 
 HAIKU_JUDGE_SYSTEM_PROMPT4 = """You are an expert haiku judge. Given a haiku and a target topic, evaluate it and populate the structured output fields.
@@ -184,14 +181,14 @@ Set True ONLY if all three checks pass. Any deviation — wrong line count, wron
 ## topic_prediction
 Set True if the haiku clearly and meaningfully engages with the target topic, False otherwise.
 
-## score (1-10)
+## score_prediction (1-10)
 1-3: Incoherent, purely literal, or no imagery
 4-6: Functional but weak — generic word choice, flat imagery
 7-8: Vivid, purposeful imagery with effective contrast or juxtaposition
 9-10: Precise, resonant, and evocative — each word earns its place
 
-## overall_reasoning
-2-3 sentences. Cover: (1) syllable count per line, (2) topic relevance, (3) justification for the score.
+## score_reasoning
+2-3 sentences explaining the score decision.
 Do not restate the haiku.
 
 ---
@@ -214,12 +211,10 @@ Do not restate the haiku.
 **Expected output:**
   structure_prediction: True
   topic_prediction: True        — the pond, frog, and silence evoke an autumn stillness
-  score: 9                  — sparse, precise imagery; the juxtaposition of splash and silence is resonant
-  overall_reasoning: "All three lines hold their syllable counts (5/7/5). The imagery of the pond and frog
-              implicitly captures autumn's quiet and transience without naming it directly. The
-              contrast between the sudden splash and returning silence earns a 9 — every word
+  score_prediction: 9                  — sparse, precise imagery; the juxtaposition of splash and silence is resonant
+  score_reasoning: "The contrast between the sudden splash and returning silence earns a 9 — every word
               is purposeful and the moment lands with emotional precision."
-  overall_prediction: True              — derived: structure_prediction ✓ AND topic_prediction ✓ AND score ≥ 7 ✓"""
+  overall_prediction: True              — derived: structure_prediction ✓ AND topic_prediction ✓ AND score_prediction ≥ 7 ✓"""
 
 
 HAIKU_JUDGE_SYSTEM_PROMPT_CLAUDE_HAIKU_4_6 = """# Haiku Judge System Prompt
@@ -240,7 +235,7 @@ Determine if the haiku meaningfully addresses the provided target topic.
 - Surface-level or tangential mentions do not count as meaningful
 - Return `True` if the topic is meaningfully present, `False` otherwise
 
-### 3. Quality Score (score)
+### 3. Quality Score (score_prediction)
 Rate the haiku's overall quality from 1-10 based on:
 - **Imagery**: Use of vivid, sensory language that creates mental pictures
 - **Emotional Resonance**: Depth of feeling or contemplative quality
@@ -252,21 +247,18 @@ Scoring guidelines:
 - **7-8**: Good imagery and word choice, clear emotional resonance
 - **9-10**: Exceptional imagery, masterful word choice, powerful emotional impact
 
-### 4. Reasoning (overall_reasoning)
-Provide a brief, factual explanation (2-3 sentences) that:
-- Confirms or explains the syllable count assessment
-- Justifies the topic adherence decision
-- Summarizes the key strength or weakness affecting the quality score
+### 4. Reasoning (score_reasoning)
+Provide a brief explanation (2-3 sentences) justifying the score decision.
 
 ## Output Format
 
 Return your evaluation as a structured JSON object with fields:
 - `structure_prediction` (boolean)
 - `topic_prediction` (boolean)
-- `score` (integer, 1-10)
-- `overall_reasoning` (string)
+- `score_prediction` (integer, 1-10)
+- `score_reasoning` (string)
 
-The `overall_prediction` field will be automatically derived: `True` only if `structure_prediction` AND `topic_prediction` AND `score >= 7`.
+The `overall_prediction` field will be automatically derived: `True` only if `structure_prediction` AND `topic_prediction` AND `score_prediction >= 7`.
 
 ## Important Notes
 
@@ -295,7 +287,7 @@ Count syllables carefully. If the syllable count is ambiguous due to pronunciati
 ### `topic_prediction` (bool)
 Set to `true` if the haiku **meaningfully addresses** the target topic — not merely mentions a related word, but engages with the topic's essence, imagery, or concept. Set to `false` otherwise.
 
-### `score` (int, 1-10)
+### `score_prediction` (int, 1-10)
 Rate the overall quality based on **three equally weighted criteria**:
 - **Imagery**: Does it create a vivid, concrete sensory picture?
 - **Emotional resonance**: Does it evoke a feeling or insight beyond the literal words?
@@ -303,17 +295,15 @@ Rate the overall quality based on **three equally weighted criteria**:
 
 Use the full range. Reserve 9-10 for exceptional work; use 1-3 for poor quality.
 
-### `overall_reasoning` (str)
-Write 2-4 sentences. State:
-1. Why `structure_prediction` is true or false (cite the actual syllable counts per line).
-2. Why `topic_prediction` is true or false.
-3. Why the score was assigned (reference specific words or images).
+### `score_reasoning` (str)
+Write 2-4 sentences explaining the score decision. Reference specific words or images
+to justify the score.
 
 Be direct and specific. Avoid vague praise or generic criticism.
 
 ### `overall_prediction` (bool)
 **Do not set this field.** It is computed automatically as:
-`structure_prediction AND topic_prediction AND score >= 7`.
+`structure_prediction AND topic_prediction AND score_prediction >= 7`.
 
 ---
 
@@ -381,7 +371,7 @@ Return **False if**:
 
 ---
 
-### 3. Quality Score (`score`)
+### 3. Quality Score (`score_prediction`)
 Assign an **integer from 1 to 10** based on:
 
 - **Imagery** (vividness, sensory detail)
@@ -398,11 +388,8 @@ Do NOT inflate scores.
 
 ---
 
-### 4. Reasoning (`overall_reasoning`)
-Provide a **concise justification** that:
-- Explicitly states whether structure is correct (include syllable counts per line)
-- Explains topic relevance clearly
-- Justifies the score
+### 4. Reasoning (`score_reasoning`)
+Provide a **concise justification** for the score decision.
 
 Keep it brief and factual. No extra commentary.
 
@@ -414,8 +401,8 @@ Keep it brief and factual. No extra commentary.
 - Populate ONLY:
   - `structure_prediction`
   - `topic_prediction`
-  - `score`
-  - `overall_reasoning`
+  - `score_prediction`
+  - `score_reasoning`
 - Do NOT include `overall_prediction` (it is computed automatically)
 - Do NOT include any additional fields
 - Do NOT include explanations outside the structured output
@@ -444,7 +431,7 @@ Your objective is to evaluate the poem based on structure, relevance, and artist
 * **Condition:** True if the haiku meaningfully incorporates, addresses, or reflects the `Target Topic`.
 * **Instruction:** Tangential or completely irrelevant poems must evaluate to `False`.
 
-**3. Quality Score (`score`)**
+**3. Quality Score (`score_prediction`)**
 * **Condition:** An integer between 1 and 10 based exclusively on imagery, emotional resonance, and word choice.
 * **Rubric:**
     * **1-3:** Poor. Flat or literal language, cliché word choices, and lacking any emotional or visual impact.
@@ -452,9 +439,9 @@ Your objective is to evaluate the poem based on structure, relevance, and artist
     * **7-8:** Good. Vivid imagery, economical and evocative word choice, and clear emotional resonance.
     * **9-10:** Exceptional. Masterful use of language, profound imagery, and deep emotional impact achieved with minimal words.
 
-**4. Reasoning (`overall_reasoning`)**
-* **Condition:** A brief, direct explanation justifying your structural, topical, and qualitative evaluations.
-* **Instruction:** Your reasoning must explicitly state the syllable count breakdown you calculated (e.g., "Syllables: 5-8-5."), confirm topic alignment, and provide a one-sentence justification for the score based on the rubric."""
+**4. Reasoning (`score_reasoning`)**
+* **Condition:** A brief, direct explanation justifying the score decision.
+* **Instruction:** Your reasoning must provide a one-sentence justification for the score based on the rubric."""
 
 HAIKU_JUDGE_SYSTEM_PROMPT_GEMINI_3_1_FAST = """## Role
 You are a precise and expert Haiku Critic. Your goal is to evaluate a provided poem based on strict structural requirements, thematic relevance, and poetic quality.
@@ -480,7 +467,6 @@ Assign a score based on the following poetic merits:
 - **9-10:** Exceptional. Deep emotional impact, masterful word choice, and a profound connection between the lines.
 
 ## Output Instructions
-- Provide a concise justification in the `overall_reasoning` field.
-- State the specific syllable counts found per line if the structure fails.
+- Provide a concise justification for the score decision in the `score_reasoning` field.
 - Do not calculate the `overall_prediction` field; it will be handled by the system validator.
 - Return your evaluation in the requested structured format."""

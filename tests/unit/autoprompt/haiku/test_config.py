@@ -18,27 +18,27 @@ def test_chat_model_config_required_fields() -> None:
     assert config.system_prompt == "You are a judge."
 
 
-def test_llm_config_default_batch_size() -> None:
+def test_chat_model_config_default_batch_size() -> None:
     config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.batch_size == 1
 
 
-def test_llm_config_default_max_retries() -> None:
+def test_chat_model_config_default_max_retries() -> None:
     config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.max_retries == 9999
 
 
-def test_llm_config_default_temperature() -> None:
+def test_chat_model_config_default_temperature() -> None:
     config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.temperature == 0.0
 
 
-def test_llm_config_default_init_kwargs() -> None:
+def test_chat_model_config_default_init_kwargs() -> None:
     config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert config.init_kwargs is None
 
 
-def test_llm_config_custom_values() -> None:
+def test_chat_model_config_custom_values() -> None:
     config = ChatModelConfig(
         model="claude-3",
         system_prompt="Be helpful.",
@@ -55,25 +55,25 @@ def test_llm_config_custom_values() -> None:
     assert config.init_kwargs == {"timeout": 30}
 
 
-def test_llm_config_equality() -> None:
+def test_chat_model_config_equality() -> None:
     c1 = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     c2 = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     assert c1 == c2
 
 
-def test_llm_config_inequality_different_model() -> None:
+def test_chat_model_config_inequality_different_model() -> None:
     c1 = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     c2 = ChatModelConfig(model="gpt-3.5", system_prompt="prompt")
     assert c1 != c2
 
 
-def test_llm_config_inequality_different_prompt() -> None:
+def test_chat_model_config_inequality_different_prompt() -> None:
     c1 = ChatModelConfig(model="gpt-4o", system_prompt="prompt A")
     c2 = ChatModelConfig(model="gpt-4o", system_prompt="prompt B")
     assert c1 != c2
 
 
-def test_llm_config_is_mutable() -> None:
+def test_chat_model_config_is_mutable() -> None:
     config = ChatModelConfig(model="gpt-4o", system_prompt="prompt")
     config.temperature = 0.5
     assert config.temperature == 0.5

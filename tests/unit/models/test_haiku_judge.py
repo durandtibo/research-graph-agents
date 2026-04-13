@@ -13,11 +13,13 @@ from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 @pytest.fixture
 def judge_result() -> HaikuJudgeResult:
     return HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=8,
-        score_reasoning="Great imagery and strong structure.",
         overall_prediction=True,
+        score_prediction=8,
+        score_reasoning="score explanation",
+        structure_prediction=True,
+        structure_reasoning="structure explanation",
+        topic_prediction=True,
+        topic_reasoning="topic explanation",
     )
 
 
@@ -38,11 +40,13 @@ def mock_llm(judge_result: HaikuJudgeResult) -> BaseChatModel:
 
 def test_haiku_judge_result_valid_passed() -> None:
     result = HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=8,
-        score_reasoning="Great imagery and strong structure.",
         overall_prediction=True,
+        score_prediction=8,
+        score_reasoning="score explanation",
+        structure_prediction=True,
+        structure_reasoning="structure explanation",
+        topic_prediction=True,
+        topic_reasoning="topic explanation",
     )
     assert result.structure_prediction
     assert result.topic_prediction
@@ -52,11 +56,13 @@ def test_haiku_judge_result_valid_passed() -> None:
 
 def test_haiku_judge_result_valid_failed() -> None:
     result = HaikuJudgeResult(
-        structure_prediction=False,
-        topic_prediction=True,
-        score_prediction=8,
-        score_reasoning="Great imagery but incorrect structure.",
         overall_prediction=False,
+        score_prediction=8,
+        score_reasoning="score explanation",
+        structure_prediction=False,
+        structure_reasoning="structure explanation",
+        topic_prediction=True,
+        topic_reasoning="topic explanation",
     )
     assert not result.structure_prediction
     assert result.topic_prediction
@@ -69,11 +75,13 @@ def test_haiku_judge_result_invalid_score_too_low() -> None:
         ValueError, match=r"score_prediction\n  Input should be greater than or equal to 1"
     ):
         HaikuJudgeResult(
-            structure_prediction=True,
-            topic_prediction=True,
-            score_prediction=0,
-            score_reasoning="meow",
             overall_prediction=True,
+            score_prediction=0,
+            score_reasoning="score explanation",
+            structure_prediction=True,
+            structure_reasoning="structure explanation",
+            topic_prediction=True,
+            topic_reasoning="topic explanation",
         )
 
 
@@ -82,93 +90,76 @@ def test_haiku_judge_result_invalid_score_too_high() -> None:
         ValueError, match=r"score_prediction\n  Input should be less than or equal to 10"
     ):
         HaikuJudgeResult(
-            structure_prediction=True,
-            topic_prediction=True,
-            score_prediction=11,
-            score_reasoning="meow",
             overall_prediction=True,
+            score_prediction=11,
+            score_reasoning="score explanation",
+            structure_prediction=True,
+            structure_reasoning="structure explanation",
+            topic_prediction=True,
+            topic_reasoning="topic explanation",
         )
 
 
 def test_haiku_judge_result_passed_auto_corrected_structure_failed() -> None:
     result = HaikuJudgeResult(
-        structure_prediction=False,
-        topic_prediction=True,
-        score_prediction=8,
-        score_reasoning="meow",
         overall_prediction=True,  # LLM inconsistency: overridden to False
+        score_prediction=8,
+        score_reasoning="score explanation",
+        structure_prediction=False,
+        structure_reasoning="structure explanation",
+        topic_prediction=True,
+        topic_reasoning="topic explanation",
     )
     assert not result.overall_prediction
 
 
 def test_haiku_judge_result_passed_auto_corrected_topic_failed() -> None:
     result = HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=False,
-        score_prediction=8,
-        score_reasoning="meow",
         overall_prediction=True,  # LLM inconsistency: overridden to False
+        score_prediction=8,
+        score_reasoning="score explanation",
+        structure_prediction=True,
+        structure_reasoning="structure explanation",
+        topic_prediction=False,
+        topic_reasoning="topic explanation",
     )
     assert not result.overall_prediction
 
 
 def test_haiku_judge_result_passed_auto_corrected_score_too_low() -> None:
     result = HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=6,
-        score_reasoning="meow",
         overall_prediction=True,  # LLM inconsistency: overridden to False
+        score_prediction=6,
+        score_reasoning="score explanation",
+        structure_prediction=True,
+        structure_reasoning="structure explanation",
+        topic_prediction=True,
+        topic_reasoning="topic explanation",
     )
     assert not result.overall_prediction
 
 
 def test_haiku_judge_result_passed_auto_corrected_all_pass() -> None:
     result = HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=7,
-        score_reasoning="meow",
         overall_prediction=False,  # LLM inconsistency: overridden to True
+        score_prediction=7,
+        score_reasoning="score explanation",
+        structure_prediction=True,
+        structure_reasoning="structure explanation",
+        topic_prediction=True,
+        topic_reasoning="topic explanation",
     )
     assert result.overall_prediction
 
 
-def test_haiku_judge_result_optional_score_reasoning_default_none() -> None:
-    result = HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=8,
-    )
-    assert result.score_reasoning is None
-
-
-def test_haiku_judge_result_optional_structure_reasoning_default_none() -> None:
-    result = HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=8,
-    )
-    assert result.structure_reasoning is None
-
-
-def test_haiku_judge_result_optional_topic_reasoning_default_none() -> None:
-    result = HaikuJudgeResult(
-        structure_prediction=True,
-        topic_prediction=True,
-        score_prediction=8,
-    )
-    assert result.topic_reasoning is None
-
-
 def test_haiku_judge_result_with_all_reasoning_fields() -> None:
     result = HaikuJudgeResult(
+        score_prediction=9,
+        score_reasoning="Exceptional imagery and structure.",
         structure_prediction=True,
         structure_reasoning="All lines follow 5-7-5.",
         topic_prediction=True,
         topic_reasoning="The haiku clearly evokes autumn.",
-        score_prediction=9,
-        score_reasoning="Exceptional imagery and structure.",
     )
     assert result.structure_reasoning == "All lines follow 5-7-5."
     assert result.topic_reasoning == "The haiku clearly evokes autumn."

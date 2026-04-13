@@ -9,6 +9,7 @@ from langchain_core.language_models import BaseChatModel
 from langgraph.graph.state import Runnable
 from polars.testing import assert_frame_equal
 
+from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.predictor import Predictor, generate_predictions
 from argos.models.haiku_judge import HaikuJudgeResult
 
@@ -20,35 +21,35 @@ def mock_dataset() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\n"
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "structure_target": True,
-                "topic_target": True,
-                "target": True,
+                columns.STRUCTURE_TARGET: True,
+                columns.TOPIC_TARGET: True,
+                columns.OVERALL_TARGET: True,
             },
         ]
     )
@@ -70,8 +71,8 @@ def mock_model(mock_outputs: list[dict[str, Any]]) -> Runnable:
 def mock_outputs() -> list[dict[str, Any]]:
     return [
         {
-            "topic": "rain",
-            "haiku": (
+            columns.TOPIC: "rain",
+            columns.HAIKU: (
                 "Gray sky descends slow,\n"
                 "Cool drops kiss the thirsty ground,\n"
                 "Silence finds the leaf."
@@ -80,33 +81,39 @@ def mock_outputs() -> list[dict[str, Any]]:
                 structure_prediction=True,
                 topic_prediction=True,
                 score_prediction=10,
-                score_reasoning="reason1",
+                score_reasoning="score explanation",
+                structure_reasoning="structure explanation",
+                topic_reasoning="topic explanation",
                 overall_prediction=True,
             ),
         },
         {
-            "topic": "cat",
-            "haiku": (
+            columns.TOPIC: "cat",
+            columns.HAIKU: (
                 "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
             ),
             "evaluation": HaikuJudgeResult(
                 structure_prediction=True,
                 topic_prediction=True,
                 score_prediction=9,
-                score_reasoning="reason2",
+                score_reasoning="score explanation",
+                structure_reasoning="structure explanation",
+                topic_reasoning="topic explanation",
                 overall_prediction=True,
             ),
         },
         {
-            "topic": "mountain",
-            "haiku": (
+            columns.TOPIC: "mountain",
+            columns.HAIKU: (
                 "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
             ),
             "evaluation": HaikuJudgeResult(
                 structure_prediction=True,
                 topic_prediction=True,
                 score_prediction=8,
-                score_reasoning="reason3",
+                score_reasoning="score explanation",
+                structure_reasoning="structure explanation",
+                topic_reasoning="topic explanation",
                 overall_prediction=True,
             ),
         },
@@ -118,56 +125,56 @@ def mock_predictions() -> pl.DataFrame:
     return pl.from_dicts(
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "score_prediction": 10,
-                "overall_prediction": True,
-                "target": True,
-                "structure_prediction": True,
-                "structure_reasoning": None,
-                "structure_target": True,
-                "topic_prediction": True,
-                "topic_reasoning": None,
-                "topic_target": True,
-                "score_reasoning": "reason1",
+                columns.OVERALL_PREDICTION: True,
+                columns.SCORE_PREDICTION: 10,
+                columns.SCORE_REASONING: "score explanation",
+                columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "structure explanation",
+                columns.STRUCTURE_TARGET: True,
+                columns.OVERALL_TARGET: True,
+                columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "topic explanation",
+                columns.TOPIC_TARGET: True,
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\n"
                     "Silent paws upon the floor,\n"
                     "Sunbeam, peace descends."
                 ),
-                "score_prediction": 9,
-                "overall_prediction": True,
-                "target": True,
-                "structure_prediction": True,
-                "structure_reasoning": None,
-                "structure_target": True,
-                "topic_prediction": True,
-                "topic_reasoning": None,
-                "topic_target": True,
-                "score_reasoning": "reason2",
+                columns.OVERALL_PREDICTION: True,
+                columns.SCORE_PREDICTION: 9,
+                columns.SCORE_REASONING: "score explanation",
+                columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "structure explanation",
+                columns.STRUCTURE_TARGET: True,
+                columns.OVERALL_TARGET: True,
+                columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "topic explanation",
+                columns.TOPIC_TARGET: True,
             },
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "score_prediction": 8,
-                "overall_prediction": True,
-                "target": True,
-                "structure_prediction": True,
-                "structure_reasoning": None,
-                "structure_target": True,
-                "topic_prediction": True,
-                "topic_reasoning": None,
-                "topic_target": True,
-                "score_reasoning": "reason3",
+                columns.OVERALL_PREDICTION: True,
+                columns.SCORE_PREDICTION: 8,
+                columns.SCORE_REASONING: "score explanation",
+                columns.STRUCTURE_PREDICTION: True,
+                columns.STRUCTURE_REASONING: "structure explanation",
+                columns.STRUCTURE_TARGET: True,
+                columns.OVERALL_TARGET: True,
+                columns.TOPIC_PREDICTION: True,
+                columns.TOPIC_REASONING: "topic explanation",
+                columns.TOPIC_TARGET: True,
             },
         ],
     )
@@ -201,8 +208,8 @@ def test_predictor_predict_batch_size_1(
     mock_model.batch.side_effect = [
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
@@ -211,37 +218,43 @@ def test_predictor_predict_batch_size_1(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
-                    score_reasoning="reason1",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             }
         ],
         [
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
-                    score_reasoning="reason2",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
         ],
         [
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,
-                    score_reasoning="reason3",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
@@ -259,8 +272,8 @@ def test_predictor_predict_batch_size_2(
     mock_model.batch.side_effect = [
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
@@ -269,35 +282,41 @@ def test_predictor_predict_batch_size_2(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
-                    score_reasoning="reason1",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
-                    score_reasoning="reason2",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
         ],
         [
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,
-                    score_reasoning="reason3",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
@@ -311,38 +330,40 @@ def test_predictor_predict_batch_size_2(
 def test_predictor_predict_selects_output_columns(
     mock_dataset: pl.DataFrame, mock_model: Runnable
 ) -> None:
-    predictor = Predictor(model=mock_model, output_columns=["topic", "haiku", "overall_prediction"])
+    predictor = Predictor(
+        model=mock_model, output_columns=[columns.TOPIC, columns.HAIKU, columns.OVERALL_PREDICTION]
+    )
     predictions = predictor.predict(mock_dataset)
     assert_frame_equal(
         predictions,
         pl.from_dicts(
             [
                 {
-                    "topic": "rain",
-                    "haiku": (
+                    columns.TOPIC: "rain",
+                    columns.HAIKU: (
                         "Gray sky descends slow,\n"
                         "Cool drops kiss the thirsty ground,\n"
                         "Silence finds the leaf."
                     ),
-                    "overall_prediction": True,
+                    columns.OVERALL_PREDICTION: True,
                 },
                 {
-                    "topic": "cat",
-                    "haiku": (
+                    columns.TOPIC: "cat",
+                    columns.HAIKU: (
                         "Soft fur, warm light gleam,\n"
                         "Silent paws upon the floor,\n"
                         "Sunbeam, peace descends."
                     ),
-                    "overall_prediction": True,
+                    columns.OVERALL_PREDICTION: True,
                 },
                 {
-                    "topic": "mountain",
-                    "haiku": (
+                    columns.TOPIC: "mountain",
+                    columns.HAIKU: (
                         "Snow upon the peak\n"
                         "Clouds are resting on the stone\n"
                         "Quiet, cold, and still"
                     ),
-                    "overall_prediction": True,
+                    columns.OVERALL_PREDICTION: True,
                 },
             ]
         ),
@@ -368,8 +389,8 @@ def test_generate_predictions_batch_size_1(
     mock_model.batch.side_effect = [
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
@@ -378,37 +399,43 @@ def test_generate_predictions_batch_size_1(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
-                    score_reasoning="reason1",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             }
         ],
         [
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
-                    score_reasoning="reason2",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
         ],
         [
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,
-                    score_reasoning="reason3",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
@@ -425,8 +452,8 @@ def test_generate_predictions_batch_size_2(
     mock_model.batch.side_effect = [
         [
             {
-                "topic": "rain",
-                "haiku": (
+                columns.TOPIC: "rain",
+                columns.HAIKU: (
                     "Gray sky descends slow,\n"
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
@@ -435,36 +462,42 @@ def test_generate_predictions_batch_size_2(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
-                    score_reasoning="reason1",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
             {
-                "topic": "cat",
-                "haiku": (
+                columns.TOPIC: "cat",
+                columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
-                    score_reasoning="reason2",
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                     overall_prediction=True,
                 ),
             },
         ],
         [
             {
-                "topic": "mountain",
-                "haiku": (
+                columns.TOPIC: "mountain",
+                columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
                 "evaluation": HaikuJudgeResult(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,
-                    score_reasoning="reason3",
                     overall_prediction=True,
+                    score_reasoning="score explanation",
+                    structure_reasoning="structure explanation",
+                    topic_reasoning="topic explanation",
                 ),
             },
         ],

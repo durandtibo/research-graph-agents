@@ -33,16 +33,16 @@ class HaikuJudgeResult(BaseModel):
             three lines with syllable counts of 5, 7, and 5
             respectively.
         structure_reasoning: A brief explanation justifying the
-            ``structure_prediction`` decision. Optional.
+            ``structure_prediction`` decision.
         topic_prediction: ``True`` if the haiku meaningfully addresses
             the target topic, otherwise ``False``.
         topic_reasoning: A brief explanation justifying the
-            ``topic_prediction`` decision. Optional.
+            ``topic_prediction`` decision.
         score_prediction: Quality score from 1 to 10 based on imagery, emotional
             resonance, and word choice. Constrained to the range
             ``[1, 10]``.
         score_reasoning: A brief explanation justifying the
-            ``score_prediction`` decision. Optional.
+            ``score_prediction`` decision.
         overall_prediction: Derived automatically: ``True`` only if
             ``structure_prediction`` and ``topic_prediction`` are both
             ``True`` and ``score_prediction >= 7``. Any LLM-provided
@@ -50,19 +50,9 @@ class HaikuJudgeResult(BaseModel):
             validator.
     """
 
-    structure_prediction: bool = Field(
-        description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
-    )
-    structure_reasoning: str | None = Field(
-        default=None,
-        description="A brief explanation justifying the structure_prediction decision.",
-    )
-    topic_prediction: bool = Field(
-        description="True if the haiku meaningfully addresses the target topic, otherwise False."
-    )
-    topic_reasoning: str | None = Field(
-        default=None,
-        description="A brief explanation justifying the topic_prediction decision.",
+    overall_prediction: bool = Field(
+        default=False,
+        description="Derived automatically: True ONLY if structure_prediction AND topic_prediction AND score_prediction >= 7.",
     )
     score_prediction: int = Field(
         ge=1,
@@ -71,13 +61,20 @@ class HaikuJudgeResult(BaseModel):
             "Quality score from 1-10 based on imagery, emotional resonance, and word choice."
         ),
     )
-    score_reasoning: str | None = Field(
-        default=None,
-        description="A brief explanation justifying the score decision.",
+    score_reasoning: str = Field(
+        description="A brief and actionable explanation justifying the score decision.",
     )
-    overall_prediction: bool = Field(
-        default=False,
-        description="Derived automatically: True ONLY if structure_prediction AND topic_prediction AND score_prediction >= 7.",
+    structure_prediction: bool = Field(
+        description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
+    )
+    structure_reasoning: str = Field(
+        description="A brief and actionable explanation justifying the structure_prediction decision.",
+    )
+    topic_prediction: bool = Field(
+        description="True if the haiku meaningfully addresses the target topic, otherwise False."
+    )
+    topic_reasoning: str = Field(
+        description="A brief and actionable explanation justifying the topic_prediction decision.",
     )
 
     @model_validator(mode="after")

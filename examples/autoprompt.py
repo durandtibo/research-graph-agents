@@ -1,3 +1,5 @@
+r"""Implement an example for autoprompt."""
+
 from __future__ import annotations
 
 import hashlib
@@ -18,10 +20,14 @@ from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
 from argos.autoprompt.haiku.inference import InferencePipeline
 from argos.autoprompt.haiku.judge import create_judge_graph
 from argos.autoprompt.haiku.predictor import Predictor
-from argos.autoprompt.haiku.prompt import generate_next_judge_system_prompt
+from argos.autoprompt.haiku.prompt_generator import HistoryPromptGenerator
 from argos.models.analysis import create_analyzer_model
+from argos.models.prompt_generation import create_prompt_generator_model
 from argos.prompts.haiku_error_analysis import HAIKU_ERROR_ANALYSIS_SYSTEM_PROMPT_1
-from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
+from argos.prompts.haiku_judge2 import (
+    HAIKU_JUDGE_SYSTEM_PROMPT_NO_REASONING_1,
+)
+from argos.prompts.prompt_generation import PROMPT_GENERATOR_SYSTEM_PROMPT_0
 from argos.utils.history import BaseHistory, JsonHistory
 from argos.utils.logging import configure_logging, log_markdown
 
@@ -31,21 +37,51 @@ if TYPE_CHECKING:
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def generate_judge_system_prompt(config: ExperimentConfig) -> str:
+def generate_next_judge_system_prompt(config: ExperimentConfig, history: BaseHistory) -> str:
+    r"""Generate the next judge system prompt.
+
+    Args:
+        config: The experiment config.
+        history: The history with the previous system prompt.
+
+    Returns:
+        The judge system prompt for the iteration.
+    """
+    if config.iteration == 0:
+        logger.info("Using the initial system prompt...")
+        return config.judge_system_prompt
+
+    logger.info("Initializing the system prompt generator...")
+    prompt_generator = HistoryPromptGenerator(
+        history=history.get_values(),
+        model=create_prompt_generator_model(
+            llm=create_chat_model(config.prompt_generator),
+            system_prompt=config.prompt_generator.system_prompt,
+        ),
+        path=config.path_artifact.joinpath("generated_system_prompt.json"),
+    )
+    logger.info(f"prompt generator:\n{prompt_generator}")
+    return prompt_generator.generate()
+
+
+def generate_judge_system_prompt(config: ExperimentConfig, history: BaseHistory) -> str:
     r"""Generate the system prompt for the judge.
 
     Args:
         config: The experiment config.
+        history: The history with the previous system prompt.
 
     Returns:
         The judge system prompt for the iteration.
     """
     logger.info("Generating the judge system prompt...")
-    judge_system_prompt = generate_next_judge_system_prompt(config)
+    judge_system_prompt = generate_next_judge_system_prompt(config=config, history=history)
     log_markdown(judge_system_prompt, title=f"Judge System Prompt (iteration: {config.iteration})")
     save_text(
         judge_system_prompt, config.path_artifact.joinpath("judge_system_prompt.md"), exist_ok=True
     )
+    if config.iteration == 1:
+        raise NotImplementedError
     return judge_system_prompt
 
 
@@ -61,18 +97,6 @@ def generate_predictions(config: ExperimentConfig) -> pl.DataFrame:
         predictor=Predictor(
             model=create_judge_graph(config.judge),
             batch_size=config.judge.batch_size,
-            # output_columns=[
-            #     "topic",
-            #     "haiku",
-            #     "score",
-            #     "passed",
-            #     "target",
-            #     "structure_passed",
-            #     "structure_target",
-            #     "topic_passed",
-            #     "topic_target",
-            #     "reasoning",
-            # ],
             config=RunnableConfig(max_concurrency=config.batch_size),
         ),
         path=config.path_artifact.joinpath("predictions.parquet"),
@@ -112,37 +136,41 @@ def generate_error_analysis(config: ExperimentConfig, predictions: pl.DataFrame)
     Returns:
         The error analysis.
     """
+    logger.info("Initializing the error analyzer...")
+    system_prompt = config.error_analyzer.system_prompt
+    log_markdown(system_prompt, title="Error Analyzer System Prompt")
     analyzer = ErrorAnalyzer(
         error_finder=ErrorFinder(root_path=config.path_artifact),
         model=create_analyzer_model(
             llm=create_chat_model(config.error_analyzer),
-            system_prompt=config.error_analyzer.system_prompt,
+            system_prompt=system_prompt,
         ),
         path=config.path_artifact.joinpath("error_analysis.md"),
     )
-    logger.info(f"analyzer:\n{analyzer}")
+    logger.info(f"error analyzer:\n{analyzer}")
     analysis = analyzer.analyze(predictions)
-    log_markdown(analysis, title="Error Analysis")
+    log_markdown(analysis, title=f"Error Analysis (iteration: {config.iteration})")
     return analysis
 
 
 def run_one_iteration(config: ExperimentConfig, history: BaseHistory) -> None:
     r"""Run one iteration."""
-    logger.info("<" * 10 + f" iteration {config.iteration} " + ">" * 10)
+    logger.info("<" * 10 + f" start of iteration {config.iteration} " + ">" * 10)
     state = {}
 
-    config.judge.system_prompt = generate_judge_system_prompt(config)
-    state["judge_system_prompt"] = config.judge.system_prompt
+    config.judge.system_prompt = generate_judge_system_prompt(config=config, history=history)
+    state["system_prompt"] = config.judge.system_prompt
 
     predictions = generate_predictions(config)
     state["metrics"] = generate_metrics(config=config, predictions=predictions)
-    state["errors"] = generate_error_analysis(config=config, predictions=predictions)
+    state["errors_analysis"] = generate_error_analysis(config=config, predictions=predictions)
 
-    logger.info(f"End of iteration {config.iteration}\n{state}")
+    logger.info("<" * 10 + f" end of iteration {config.iteration} " + ">" * 10 + f"\nstate:{state}")
     history.append(state)
 
 
 def run(config: ExperimentConfig) -> None:
+    r"""Run an experiment given a config."""
     logger.info(config)
     history = JsonHistory(config.path_history)
     history.clear()
@@ -165,11 +193,11 @@ def main() -> None:
     )
 
     models = [
-        "ollama:smollm:135m",
+        # "ollama:smollm:135m",
         # "ollama:gemma3:1b",
         # "ollama:gemma3:4b",
         # "ollama:gemma3:12b",
-        # "anthropic:claude-haiku-4-5-20251001",
+        "anthropic:claude-haiku-4-5-20251001",
         # "anthropic:claude-sonnet-4-6",
         # "anthropic:claude-opus-4-6",
         # "google_genai:gemini-3.1-flash-lite-preview",
@@ -180,16 +208,7 @@ def main() -> None:
         # "openai:gpt-5.4",
     ]
     judge_system_prompts = [
-        HAIKU_JUDGE_SYSTEM_PROMPT,
-        # HAIKU_JUDGE_SYSTEM_PROMPT1,
-        # HAIKU_JUDGE_SYSTEM_PROMPT2,
-        # HAIKU_JUDGE_SYSTEM_PROMPT3,
-        # HAIKU_JUDGE_SYSTEM_PROMPT4,
-        # HAIKU_JUDGE_SYSTEM_PROMPT_CLAUDE_HAIKU_4_6,
-        # HAIKU_JUDGE_SYSTEM_PROMPT_CLAUDE_SONNET_4_6,
-        # HAIKU_JUDGE_SYSTEM_PROMPT_GPT_5_3,
-        # HAIKU_JUDGE_SYSTEM_PROMPT_GEMINI_3_1_FAST,
-        # HAIKU_JUDGE_SYSTEM_PROMPT_GEMINI_3_1_PRO,
+        HAIKU_JUDGE_SYSTEM_PROMPT_NO_REASONING_1,
     ]
 
     for judge_model in models:
@@ -204,8 +223,14 @@ def main() -> None:
                     model=judge_model, system_prompt=judge_system_prompt, batch_size=20
                 ),
                 error_analyzer=LlmConfig(
-                    model="ollama:smollm:135m",
+                    model="ollama:gemma3:1b",
+                    # model="anthropic:claude-haiku-4-5-20251001",
                     system_prompt=HAIKU_ERROR_ANALYSIS_SYSTEM_PROMPT_1,
+                ),
+                prompt_generator=LlmConfig(
+                    model="ollama:gemma3:1b",
+                    # model="anthropic:claude-haiku-4-5-20251001",
+                    system_prompt=PROMPT_GENERATOR_SYSTEM_PROMPT_0,
                 ),
             )
             run(config)

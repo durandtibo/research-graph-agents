@@ -32,17 +32,17 @@ class HaikuJudgeResult(BaseModel):
         structure_prediction: ``True`` only if the haiku has exactly
             three lines with syllable counts of 5, 7, and 5
             respectively.
-        structure_reasoning: An optional brief explanation justifying
-            the ``structure_prediction`` decision.
+        structure_reasoning: A brief explanation justifying the
+            ``structure_prediction`` decision. Optional.
         topic_prediction: ``True`` if the haiku meaningfully addresses
             the target topic, otherwise ``False``.
-        topic_reasoning: An optional brief explanation justifying the
-            ``topic_prediction`` decision.
+        topic_reasoning: A brief explanation justifying the
+            ``topic_prediction`` decision. Optional.
         score: Quality score from 1 to 10 based on imagery, emotional
             resonance, and word choice. Constrained to the range
             ``[1, 10]``.
-        overall_reasoning: An optional brief explanation justifying the
-            score, topic adherence, and structure evaluation.
+        overall_reasoning: A brief explanation justifying the score,
+            topic adherence, and structure evaluation. Optional.
         overall_prediction: Derived automatically: ``True`` only if
             ``structure_prediction`` and ``topic_prediction`` are both
             ``True`` and ``score >= 7``. Any LLM-provided value is
@@ -54,14 +54,14 @@ class HaikuJudgeResult(BaseModel):
     )
     structure_reasoning: str | None = Field(
         default=None,
-        description="A brief explanation justifying the structure prediction decision (structure_prediction).",
+        description="A brief explanation justifying the structure_prediction decision.",
     )
     topic_prediction: bool = Field(
         description="True if the haiku meaningfully addresses the target topic, otherwise False."
     )
     topic_reasoning: str | None = Field(
         default=None,
-        description="A brief explanation justifying the topic prediction decision (topic_prediction).",
+        description="A brief explanation justifying the topic_prediction decision.",
     )
     score: int = Field(
         ge=1,

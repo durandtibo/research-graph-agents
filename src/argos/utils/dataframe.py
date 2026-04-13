@@ -75,6 +75,9 @@ def concat_and_merge(df1: pl.DataFrame, df2: pl.DataFrame) -> pl.DataFrame:
 def list_of_dicts_to_dataframe(list_of_dicts: list[dict[Any, Any]]) -> pl.DataFrame:
     r"""Convert a list of dicts into a DataFrame.
 
+    Nested objects in each dict are recursively converted to plain dicts
+    before the DataFrame is constructed.
+
     Args:
         list_of_dicts: A list of dicts where each dict represents a
             single row, with keys as column names and values as the

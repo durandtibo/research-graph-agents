@@ -1,4 +1,4 @@
-r"""Contain utility functions for today."""
+r"""Contain utility functions to get the current date."""
 
 from __future__ import annotations
 

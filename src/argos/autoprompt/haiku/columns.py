@@ -1,4 +1,8 @@
-r"""Contain column names."""
+r"""Contain column name constants for the haiku autoprompt pipeline.
+
+These constants are used as column names in :class:`~polars.DataFrame`
+objects throughout the prediction, evaluation, and error-analysis stages.
+"""
 
 __all__ = [
     "HAIKU",

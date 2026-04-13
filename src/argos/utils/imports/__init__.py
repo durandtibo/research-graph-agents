@@ -1,4 +1,4 @@
-r"""Implement some utility functions to manage optional dependencies."""
+r"""Contain utility functions to manage optional dependencies."""
 
 from __future__ import annotations
 

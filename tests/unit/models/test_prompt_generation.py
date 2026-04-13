@@ -4,20 +4,29 @@ from unittest.mock import Mock
 
 import pytest
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage
-from langchain_core.runnables import RunnableSequence
+from langchain_core.runnables import RunnableLambda, RunnableSequence
 
-from argos.models.prompt_generation import create_prompt_generator_model
+from argos.models.prompt_generation import (
+    PromptGeneratorOutput,
+    create_prompt_generator_model,
+)
 from argos.prompts.prompt_generation import PROMPT_GENERATOR_SYSTEM_PROMPT_0
 
 
 @pytest.fixture
-def mock_llm() -> BaseChatModel:
+def mock_output() -> PromptGeneratorOutput:
+    return PromptGeneratorOutput(reasoning="blabla", prompt="my new prompt")
+
+
+@pytest.fixture
+def mock_llm(mock_output: PromptGeneratorOutput) -> BaseChatModel:
     return Mock(
         spec=BaseChatModel,
         model="gpt-4o",
         temperature=0,
-        invoke=Mock(return_value=AIMessage(content="my new prompt")),
+        with_structured_output=Mock(
+            return_value=RunnableLambda(lambda x: mock_output)  # noqa: ARG005
+        ),
     )
 
 
@@ -62,7 +71,9 @@ def test_create_prompt_generator_model_prompt_contains_text_placeholder(
     assert prompt_step.input_variables == ["history"]
 
 
-def test_create_prompt_generator_model_invokes_llm_with_history(mock_llm: BaseChatModel) -> None:
+def test_create_prompt_generator_model_invokes_llm_with_history(
+    mock_llm: BaseChatModel, mock_output: PromptGeneratorOutput
+) -> None:
     model = create_prompt_generator_model(mock_llm)
-    result = model.invoke({"history": "['prompt1', 'prompt2']"})
-    assert result.content == "my new prompt"
+    out = model.invoke({"history": "['prompt1', 'prompt2']"})
+    assert out == mock_output

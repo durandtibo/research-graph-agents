@@ -143,9 +143,11 @@ def find_errors(
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
             judge, expected to contain the columns identified by
-            ``topic_col``, ``haiku_col``, ``target_col``, and
-            ``prediction_col``.
+            ``topic_col``, ``haiku_col``, ``target_col``,
+            ``prediction_col``, and ``reasoning_col``.
         prediction_col: The column name containing the predicted labels.
+        reasoning_col: The column name containing the reasoning text
+            that justifies the predicted label.
         target_col: The column name containing the ground-truth labels.
         haiku_col: The column name containing the haiku text.
             Defaults to
@@ -156,7 +158,8 @@ def find_errors(
 
     Returns:
         A list of dicts, one per mispredicted example, each with the
-            keys ``topic``, ``haiku``, ``target``, and ``prediction``.
+            keys ``topic``, ``haiku``, ``target``, ``prediction``, and
+            ``reasoning``.
     """
     return (
         predictions.filter(pl.col(target_col) != pl.col(prediction_col))

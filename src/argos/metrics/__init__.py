@@ -1,7 +1,7 @@
 r"""Contain metrics to evaluate agent outputs.
 
 This sub-package provides functions and result containers for computing
-evaluation metrics on autoprompt such as classification.
+evaluation metrics such as binary classification.
 """
 
 from __future__ import annotations

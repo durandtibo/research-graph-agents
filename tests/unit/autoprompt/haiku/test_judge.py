@@ -10,7 +10,7 @@ from langgraph.graph.state import CompiledStateGraph
 
 from argos.autoprompt.haiku.config import ChatModelConfig
 from argos.autoprompt.haiku.judge import create_judge_graph
-from argos.models.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeOutput
 
 MODULE = "argos.autoprompt.haiku.judge"
 
@@ -21,8 +21,8 @@ def config() -> ChatModelConfig:
 
 
 @pytest.fixture
-def judge_result() -> HaikuJudgeResult:
-    return HaikuJudgeResult(
+def judge_result() -> HaikuJudgeOutput:
+    return HaikuJudgeOutput(
         overall_prediction=True,
         score_prediction=8,
         score_reasoning="score explanation",
@@ -34,7 +34,7 @@ def judge_result() -> HaikuJudgeResult:
 
 
 @pytest.fixture
-def mock_llm(judge_result: HaikuJudgeResult) -> BaseChatModel:
+def mock_llm(judge_result: HaikuJudgeOutput) -> BaseChatModel:
     return Mock(
         spec=BaseChatModel,
         model="gpt-4o",
@@ -113,7 +113,7 @@ def test_create_judge_graph_temperature_warning(caplog: pytest.LogCaptureFixture
 
 
 def test_create_judge_graph_invoke(
-    config: ChatModelConfig, mock_llm: BaseChatModel, judge_result: HaikuJudgeResult
+    config: ChatModelConfig, mock_llm: BaseChatModel, judge_result: HaikuJudgeOutput
 ) -> None:
     with patch(f"{MODULE}.init_chat_model", return_value=mock_llm):
         graph = create_judge_graph(config)

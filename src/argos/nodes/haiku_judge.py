@@ -6,7 +6,7 @@ __all__ = ["HaikuJudgeState", "make_haiku_judge_node"]
 
 from typing import TYPE_CHECKING
 
-from argos.models.haiku_judge import HaikuJudgeResult, create_haiku_judge_model
+from argos.models.haiku_judge import HaikuJudgeOutput, create_haiku_judge_model
 from argos.nodes.haiku_generator import HaikuState
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
 
@@ -27,7 +27,7 @@ class HaikuJudgeState(HaikuState):
             haiku judge LLM.
     """
 
-    evaluation: HaikuJudgeResult
+    evaluation: HaikuJudgeOutput
 
 
 def make_haiku_judge_node(
@@ -37,7 +37,7 @@ def make_haiku_judge_node(
 
     The returned node reads ``topic`` and ``haiku`` from the graph
     state, invokes the LLM with structured output to produce a
-    :class:`HaikuJudgeResult`, and returns it under the ``evaluation``
+    :class:`HaikuJudgeOutput`, and returns it under the ``evaluation``
     key.
 
     Args:

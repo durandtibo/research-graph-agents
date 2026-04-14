@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = [
     "HaikuJudgeInput",
     "HaikuJudgeInputValidator",
-    "HaikuJudgeResult",
+    "HaikuJudgeOutput",
     "create_haiku_judge_model",
     "validate_haiku_judge_input",
 ]
@@ -42,7 +42,7 @@ class HaikuJudgeInputValidator(BaseModel):
     )
 
 
-class HaikuJudgeResult(BaseModel):
+class HaikuJudgeOutput(BaseModel):
     r"""Define the structured result produced by the haiku judge LLM.
 
     ``structure_prediction``, ``topic_prediction``, ``score_prediction``,
@@ -157,7 +157,7 @@ def validate_haiku_judge_input(data: dict[str, Any]) -> HaikuJudgeInput:
 
 def create_haiku_judge_model(
     llm: BaseChatModel, system_prompt: str = HAIKU_JUDGE_SYSTEM_PROMPT
-) -> RunnableSequence[HaikuJudgeInput, HaikuJudgeResult]:
+) -> RunnableSequence[HaikuJudgeInput, HaikuJudgeOutput]:
     r"""Create a simple haiku judge model.
 
     Args:
@@ -171,7 +171,7 @@ def create_haiku_judge_model(
     Returns:
         A :class:`~langchain_core.runnables.RunnableSequence` that accepts a
             dict with ``topic`` and ``haiku`` keys and returns a
-            :class:`HaikuJudgeResult` with the structured evaluation.
+            :class:`HaikuJudgeOutput` with the structured evaluation.
     """
     return RunnableSequence(
         RunnableLambda(validate_haiku_judge_input),
@@ -181,5 +181,5 @@ def create_haiku_judge_model(
                 ("user", "Haiku: {haiku}\n\nTopic: {topic}"),
             ]
         ),
-        llm.with_structured_output(HaikuJudgeResult),
+        llm.with_structured_output(HaikuJudgeOutput),
     )

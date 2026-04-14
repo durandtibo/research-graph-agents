@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 import pytest
 from langchain_core.language_models import BaseChatModel
 
-from argos.models.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeOutput
 from argos.nodes.haiku_judge import (
     HaikuJudgeState,
     make_haiku_judge_node,
@@ -18,8 +18,8 @@ def mock_llm() -> BaseChatModel:
 
 
 @pytest.fixture
-def mock_judge_result() -> HaikuJudgeResult:
-    return HaikuJudgeResult(
+def mock_judge_result() -> HaikuJudgeOutput:
+    return HaikuJudgeOutput(
         overall_prediction=True,
         score_prediction=8,
         score_reasoning="score explanation",
@@ -51,11 +51,11 @@ def test_make_haiku_judge_node_returns_callable(mock_llm: BaseChatModel) -> None
 
 def test_make_haiku_judge_node_with_structured_output_called(mock_llm: BaseChatModel) -> None:
     make_haiku_judge_node(llm=mock_llm)
-    mock_llm.with_structured_output.assert_called_once_with(HaikuJudgeResult)
+    mock_llm.with_structured_output.assert_called_once_with(HaikuJudgeOutput)
 
 
 def test_make_haiku_judge_node_call(
-    mock_llm: BaseChatModel, mock_judge_result: HaikuJudgeResult
+    mock_llm: BaseChatModel, mock_judge_result: HaikuJudgeOutput
 ) -> None:
     chain_mock = Mock(invoke=Mock(return_value=mock_judge_result))
     with patch("argos.nodes.haiku_judge.create_haiku_judge_model", return_value=chain_mock):

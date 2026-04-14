@@ -11,7 +11,7 @@ from polars.testing import assert_frame_equal
 
 from argos.autoprompt.haiku import columns
 from argos.autoprompt.haiku.predictor import Predictor, generate_predictions
-from argos.models.haiku_judge import HaikuJudgeResult
+from argos.models.haiku_judge import HaikuJudgeOutput
 
 MODULE = "argos.autoprompt.haiku.predictor"
 
@@ -77,7 +77,7 @@ def mock_outputs() -> list[dict[str, Any]]:
                 "Cool drops kiss the thirsty ground,\n"
                 "Silence finds the leaf."
             ),
-            "evaluation": HaikuJudgeResult(
+            "evaluation": HaikuJudgeOutput(
                 structure_prediction=True,
                 topic_prediction=True,
                 score_prediction=10,
@@ -92,7 +92,7 @@ def mock_outputs() -> list[dict[str, Any]]:
             columns.HAIKU: (
                 "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
             ),
-            "evaluation": HaikuJudgeResult(
+            "evaluation": HaikuJudgeOutput(
                 structure_prediction=True,
                 topic_prediction=True,
                 score_prediction=9,
@@ -107,7 +107,7 @@ def mock_outputs() -> list[dict[str, Any]]:
             columns.HAIKU: (
                 "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
             ),
-            "evaluation": HaikuJudgeResult(
+            "evaluation": HaikuJudgeOutput(
                 structure_prediction=True,
                 topic_prediction=True,
                 score_prediction=8,
@@ -214,7 +214,7 @@ def test_predictor_predict_batch_size_1(
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
@@ -231,7 +231,7 @@ def test_predictor_predict_batch_size_1(
                 columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
@@ -248,7 +248,7 @@ def test_predictor_predict_batch_size_1(
                 columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,
@@ -278,7 +278,7 @@ def test_predictor_predict_batch_size_2(
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
@@ -293,7 +293,7 @@ def test_predictor_predict_batch_size_2(
                 columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
@@ -310,7 +310,7 @@ def test_predictor_predict_batch_size_2(
                 columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,
@@ -395,7 +395,7 @@ def test_generate_predictions_batch_size_1(
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
@@ -412,7 +412,7 @@ def test_generate_predictions_batch_size_1(
                 columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
@@ -429,7 +429,7 @@ def test_generate_predictions_batch_size_1(
                 columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,
@@ -458,7 +458,7 @@ def test_generate_predictions_batch_size_2(
                     "Cool drops kiss the thirsty ground,\n"
                     "Silence finds the leaf."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=10,
@@ -473,7 +473,7 @@ def test_generate_predictions_batch_size_2(
                 columns.HAIKU: (
                     "Soft fur, warm light gleam,\nSilent paws upon the floor,\nSunbeam, peace descends."
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=9,
@@ -490,7 +490,7 @@ def test_generate_predictions_batch_size_2(
                 columns.HAIKU: (
                     "Snow upon the peak\nClouds are resting on the stone\nQuiet, cold, and still"
                 ),
-                "evaluation": HaikuJudgeResult(
+                "evaluation": HaikuJudgeOutput(
                     structure_prediction=True,
                     topic_prediction=True,
                     score_prediction=8,

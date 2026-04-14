@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 
+from coola.utils.timing import timeblock
 from dotenv import load_dotenv
 
 from argos.autoprompt.haiku import columns
@@ -31,7 +32,8 @@ def main_chat_model(config: ChatModelConfig) -> None:
 
     inp = create_text_input()
     logger.info(f"input: {inp}")
-    out = llm.invoke(inp)
+    with timeblock():
+        out = llm.invoke(inp)
     logger.info(f"output ({type(out)})")
     logger.info(f"output.content:\n{out.content}")
 
@@ -45,7 +47,8 @@ def main_chat_model_with_template(config: ChatModelConfig) -> None:
 
     inp = {"text": create_text_input()}
     logger.info(f"input: {inp}")
-    out = model.invoke(inp)
+    with timeblock():
+        out = model.invoke(inp)
     logger.info(f"output ({type(out)})\n{out.content}")
 
 
@@ -63,7 +66,8 @@ def main_chat_model_with_structured_output(config: ChatModelConfig) -> None:
         ),
     }
     logger.info(f"input: {inp}")
-    out = model.invoke(inp)
+    with timeblock():
+        out = model.invoke(inp)
     logger.info(f"output ({type(out)})\n{out}")
 
 
@@ -80,7 +84,8 @@ def main_graph(config: ChatModelConfig) -> None:
         ),
     }
     logger.info(f"input: {inp}")
-    out = model.invoke(inp)
+    with timeblock():
+        out = model.invoke(inp)
     logger.info(f"output ({type(out)})\n{out}")
 
 

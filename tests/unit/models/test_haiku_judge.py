@@ -302,6 +302,48 @@ def test_haiku_judge_output_with_all_reasoning_fields() -> None:
     assert output.score_reasoning == "Exceptional imagery and structure."
 
 
+def test_haiku_judge_output_with_empty_structure_reasoning() -> None:
+    with pytest.raises(
+        ValidationError, match=r"structure_reasoning\n  String should have at least 1 character"
+    ):
+        HaikuJudgeOutput(
+            score_prediction=9,
+            score_reasoning="Exceptional imagery and structure.",
+            structure_prediction=True,
+            structure_reasoning="",
+            topic_prediction=True,
+            topic_reasoning="The haiku clearly evokes autumn.",
+        )
+
+
+def test_haiku_judge_output_with_empty_topic_reasoning() -> None:
+    with pytest.raises(
+        ValidationError, match=r"topic_reasoning\n  String should have at least 1 character"
+    ):
+        HaikuJudgeOutput(
+            score_prediction=9,
+            score_reasoning="Exceptional imagery and structure.",
+            structure_prediction=True,
+            structure_reasoning="All lines follow 5-7-5.",
+            topic_prediction=True,
+            topic_reasoning="",
+        )
+
+
+def test_haiku_judge_output_with_empty_score_reasoning() -> None:
+    with pytest.raises(
+        ValidationError, match=r"score_reasoning\n  String should have at least 1 character"
+    ):
+        HaikuJudgeOutput(
+            score_prediction=9,
+            score_reasoning="",
+            structure_prediction=True,
+            structure_reasoning="All lines follow 5-7-5.",
+            topic_prediction=True,
+            topic_reasoning="The haiku clearly evokes autumn.",
+        )
+
+
 ################################################
 #     Tests for validate_haiku_judge_input     #
 ################################################

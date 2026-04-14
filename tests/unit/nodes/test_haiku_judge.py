@@ -58,10 +58,10 @@ def test_make_haiku_judge_node_call(
     mock_llm: BaseChatModel, mock_judge_result: HaikuJudgeResult
 ) -> None:
     chain_mock = Mock(invoke=Mock(return_value=mock_judge_result))
-    with patch("langchain_core.prompts.ChatPromptTemplate.__or__", return_value=chain_mock):
+    with patch("argos.nodes.haiku_judge.create_haiku_judge_model", return_value=chain_mock):
         node = make_haiku_judge_node(mock_llm)
         out = node({"topic": "fog", "haiku": "grey mist hides the hills"})
         assert out == {"evaluation": mock_judge_result}
     chain_mock.invoke.assert_called_once_with(
-        {"topic": "fog", "haiku": "grey mist hides the hills"}
+        {"haiku": "grey mist hides the hills", "topic": "fog"}
     )

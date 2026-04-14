@@ -16,6 +16,7 @@ from argos.models.haiku_judge import (
     validate_haiku_judge_input,
 )
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
+from tests.unit.utils.test_prompt import EMPTY_PROMPTS
 
 
 @pytest.fixture
@@ -368,6 +369,14 @@ def test_create_haiku_judge_model_uses_custom_system_prompt(mock_llm: BaseChatMo
     model = create_haiku_judge_model(mock_llm, system_prompt=custom_prompt)
     system_message = model.steps[1].messages[0]
     assert system_message.prompt.template == custom_prompt
+
+
+@pytest.mark.parametrize("system_prompt", EMPTY_PROMPTS)
+def test_create_haiku_judge_model_uses_empty_system_prompt(
+    mock_llm: BaseChatModel, system_prompt: str
+) -> None:
+    with pytest.raises(ValueError, match="system_prompt must be a non-empty string"):
+        create_haiku_judge_model(mock_llm, system_prompt=system_prompt)
 
 
 def test_create_haiku_judge_model_prompt_contains_expected_input_variables(

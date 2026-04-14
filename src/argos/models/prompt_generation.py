@@ -1,4 +1,4 @@
-r"""Contain models to analyze text."""
+r"""Contain model factory functions for the prompt generator."""
 
 from __future__ import annotations
 
@@ -31,7 +31,15 @@ class PromptGeneratorInput(TypedDict):
 
 
 class PromptGeneratorOutput(BaseModel):
-    r"""Define the prompt generator output."""
+    r"""Define the structured output produced by the prompt generator LLM.
+
+    Attributes:
+        reasoning: A concise explanation of the changes made relative
+            to the historical prompts, explicitly addressing how those
+            changes mitigate the provided error analysis to improve
+            accuracy and F1 score.
+        prompt: The newly generated and optimized system prompt.
+    """
 
     reasoning: str = Field(
         description="A concise explanation of the changes made from the historical prompts. "
@@ -55,9 +63,9 @@ def create_prompt_generator_model(
 
     Returns:
         An :class:`~langchain_core.runnables.RunnableSequence` chain
-            that accepts a dict with a ``history`` key and returns an
-            :class:`~langchain_core.messages.AIMessage` containing the
-            analysis.
+            that accepts a dict with a ``history`` key and returns a
+            :class:`PromptGeneratorOutput` containing the generated
+            prompt and the reasoning behind it.
     """
     check_non_empty_prompt(prompt=system_prompt, name="system_prompt")
     prompt = ChatPromptTemplate.from_messages(

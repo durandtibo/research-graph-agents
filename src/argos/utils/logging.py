@@ -95,11 +95,11 @@ def log_markdown(msg: str, level: int = logging.INFO, title: str | None = None) 
 
 
 def log_dict_pretty(data: dict, level: int = logging.INFO, title: str | None = None) -> None:
-    r"""Log a message with markdown formatting if rich is available.
+    r"""Log a dictionary in a pretty format if rich is available.
 
-    If the ``rich`` package is installed, the message is rendered as
-    markdown and printed to the console via
-    :class:`~rich.console.Console`. Otherwise, the message is logged
+    If the ``rich`` package is installed, the dictionary is rendered
+    using :class:`~rich.pretty.Pretty` and printed to the console via
+    :class:`~rich.console.Console`. Otherwise, the dictionary is logged
     with the standard :mod:`logging` module at the specified level.
 
     Args:

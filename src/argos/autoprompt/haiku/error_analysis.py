@@ -35,8 +35,7 @@ def find_structure_errors(
     target_col: str = columns.STRUCTURE_TARGET,
 ) -> list[dict[str, str | bool]]:
     r"""Find haiku examples where the structure prediction does not match
-    the ground-truth label, log a markdown summary, and optionally save
-    the results.
+    the ground-truth label, and optionally save the results.
 
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku
@@ -91,8 +90,7 @@ def find_topic_errors(
     target_col: str = columns.TOPIC_TARGET,
 ) -> list[dict[str, str | bool]]:
     r"""Find haiku examples where the topic prediction does not match the
-    ground-truth label, log a markdown summary, and optionally save the
-    results.
+    ground-truth label, and optionally save the results.
 
     Args:
         predictions: A :class:`~polars.DataFrame` produced by the haiku

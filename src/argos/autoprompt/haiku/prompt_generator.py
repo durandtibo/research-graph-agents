@@ -37,7 +37,13 @@ class HistoryPromptGenerator(BasePromptGenerator):
     r"""Generate a new prompt based on the history of previous prompts.
 
     Args:
-        history: The history of previous prompts.
+        history: The history of previous prompts, as a list of dicts
+            where each entry captures the prompt and associated metrics
+            from one past iteration.
+        model: The :class:`~langchain_core.runnables.Runnable` used to
+            generate the next prompt from the history.
+        path: An optional path where the raw model output is saved as
+            a JSON file. If ``None``, no file is written.
     """
 
     def __init__(

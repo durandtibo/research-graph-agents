@@ -44,33 +44,11 @@ class HaikuJudgeInputValidator(BaseModel):
 
 
 class RawHaikuJudgeOutput(BaseModel):
-    r"""Define the raw structured output produced by the haiku judge LLM.
-
-    This class intentionally excludes ``overall_prediction``, which is a
-    derived field computed from the other attributes. Excluding it prevents
-    the LLM from attempting to populate it via structured output, which could
-    produce inconsistent outputs. Use :class:`HaikuJudgeResult` instead when
-    consuming the judge's output, as it extends this class with the derived
-    ``overall_prediction`` field.
-
-    Attributes:
-        structure_reasoning: A brief explanation justifying the
-            ``structure_prediction`` decision.
-        structure_prediction: ``True`` only if the haiku has exactly
-            three lines with syllable counts of 5, 7, and 5
-            respectively.
-        topic_reasoning: A brief explanation justifying the
-            ``topic_prediction`` decision.
-        topic_prediction: ``True`` if the haiku meaningfully addresses
-            the target topic, otherwise ``False``.
-        score_reasoning: A brief explanation justifying the
-            ``score_prediction`` decision.
-        score_prediction: Quality score from 1 to 10 based on imagery, emotional
-            resonance, and word choice. Constrained to the range
-            ``[1, 10]``.
-    """
+    r"""Evaluate the quality of a haiku by assessing its structure,
+    topic relevance, and overall quality score."""
 
     structure_reasoning: str = Field(
+        min_length=1,
         description=(
             "A non-empty, clear and concise explanation justifying the "
             "structure_prediction decision."
@@ -84,6 +62,7 @@ class RawHaikuJudgeOutput(BaseModel):
     )
 
     topic_reasoning: str = Field(
+        min_length=1,
         description=(
             "A non-empty, clear and concise explanation justifying the topic_prediction decision."
         ),
@@ -93,6 +72,7 @@ class RawHaikuJudgeOutput(BaseModel):
     )
 
     score_reasoning: str = Field(
+        min_length=1,
         description="A non-empty, clear and concise explanation justifying the score decision.",
     )
     score_prediction: int = Field(

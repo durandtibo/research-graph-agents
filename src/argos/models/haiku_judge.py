@@ -42,8 +42,67 @@ class HaikuJudgeInputValidator(BaseModel):
     )
 
 
-class HaikuJudgeOutput(BaseModel):
-    r"""Define the structured result produced by the haiku judge LLM.
+class RawHaikuJudgeOutput(BaseModel):
+    r"""Define the raw structured output produced by the haiku judge LLM.
+
+    This class intentionally excludes ``overall_prediction``, which is a
+    derived field computed from the other attributes. Excluding it prevents
+    the LLM from attempting to populate it via structured output, which could
+    produce inconsistent outputs. Use :class:`HaikuJudgeResult` instead when
+    consuming the judge's output, as it extends this class with the derived
+    ``overall_prediction`` field.
+
+    Attributes:
+        structure_reasoning: A brief explanation justifying the
+            ``structure_prediction`` decision.
+        structure_prediction: ``True`` only if the haiku has exactly
+            three lines with syllable counts of 5, 7, and 5
+            respectively.
+        topic_reasoning: A brief explanation justifying the
+            ``topic_prediction`` decision.
+        topic_prediction: ``True`` if the haiku meaningfully addresses
+            the target topic, otherwise ``False``.
+        score_reasoning: A brief explanation justifying the
+            ``score_prediction`` decision.
+        score_prediction: Quality score from 1 to 10 based on imagery, emotional
+            resonance, and word choice. Constrained to the range
+            ``[1, 10]``.
+    """
+
+    structure_reasoning: str = Field(
+        description="A brief and actionable explanation justifying the structure_prediction decision.",
+    )
+    structure_prediction: bool = Field(
+        description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
+    )
+
+    topic_reasoning: str = Field(
+        description="A brief and actionable explanation justifying the topic_prediction decision.",
+    )
+    topic_prediction: bool = Field(
+        description="True if the haiku meaningfully addresses the target topic, otherwise False."
+    )
+
+    score_reasoning: str = Field(
+        description="A brief and actionable explanation justifying the score decision.",
+    )
+    score_prediction: int = Field(
+        ge=1,
+        le=10,
+        description=(
+            "Quality score from 1-10 based on imagery, emotional resonance, and word choice."
+        ),
+    )
+
+    @field_validator("score_prediction", mode="before")
+    @classmethod
+    def coerce_score_to_int(cls, v: object) -> int:
+        r"""Coerce ``score_prediction`` to ``int``."""
+        return int(v)
+
+
+class HaikuJudgeOutput(RawHaikuJudgeOutput):
+    r"""Define the structured output produced by the haiku judge LLM.
 
     ``structure_prediction``, ``topic_prediction``, ``score_prediction``,
     and ``score_reasoning`` are populated by the LLM via structured
@@ -73,41 +132,10 @@ class HaikuJudgeOutput(BaseModel):
             validator.
     """
 
-    structure_reasoning: str = Field(
-        description="A brief and actionable explanation justifying the structure_prediction decision.",
-    )
-    structure_prediction: bool = Field(
-        description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
-    )
-
-    topic_reasoning: str = Field(
-        description="A brief and actionable explanation justifying the topic_prediction decision.",
-    )
-    topic_prediction: bool = Field(
-        description="True if the haiku meaningfully addresses the target topic, otherwise False."
-    )
-
-    score_reasoning: str = Field(
-        description="A brief and actionable explanation justifying the score decision.",
-    )
-    score_prediction: int = Field(
-        ge=1,
-        le=10,
-        description=(
-            "Quality score from 1-10 based on imagery, emotional resonance, and word choice."
-        ),
-    )
-
     overall_prediction: bool = Field(
         default=False,
         description="Derived automatically: True ONLY if structure_prediction AND topic_prediction AND score_prediction >= 7.",
     )
-
-    @field_validator("score_prediction", mode="before")
-    @classmethod
-    def coerce_score_to_int(cls, v: object) -> int:
-        r"""Coerce ``score_prediction`` to ``int``."""
-        return int(v)
 
     @model_validator(mode="after")
     def compute_overall_prediction(self) -> Self:
@@ -181,5 +209,6 @@ def create_haiku_judge_model(
                 ("user", "Haiku: {haiku}\n\nTopic: {topic}"),
             ]
         ),
-        llm.with_structured_output(HaikuJudgeOutput),
+        llm.with_structured_output(RawHaikuJudgeOutput),
+        RunnableLambda(lambda output: HaikuJudgeOutput.model_validate(output.model_dump())),
     )

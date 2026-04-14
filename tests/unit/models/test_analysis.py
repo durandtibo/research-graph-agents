@@ -8,6 +8,7 @@ from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableSequence
 
 from argos.models.analysis import ANALYZER_SYSTEM_PROMPT, create_analyzer_model
+from tests.unit.utils.test_prompt import EMPTY_PROMPTS
 
 
 @pytest.fixture
@@ -40,7 +41,7 @@ def test_create_analyzer_model_uses_custom_system_prompt(mock_llm: BaseChatModel
     assert system_message.prompt.template == custom_prompt
 
 
-@pytest.mark.parametrize("system_prompt", ["", " ", "\n\n"])
+@pytest.mark.parametrize("system_prompt", EMPTY_PROMPTS)
 def test_create_analyzer_model_uses_empty_system_prompt(
     mock_llm: BaseChatModel, system_prompt: str
 ) -> None:

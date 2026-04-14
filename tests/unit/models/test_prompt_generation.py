@@ -11,6 +11,7 @@ from argos.models.prompt_generation import (
     create_prompt_generator_model,
 )
 from argos.prompts.prompt_generation import PROMPT_GENERATOR_SYSTEM_PROMPT
+from tests.unit.utils.test_prompt import EMPTY_PROMPTS
 
 
 @pytest.fixture
@@ -55,7 +56,7 @@ def test_create_prompt_generator_model_uses_custom_system_prompt(mock_llm: BaseC
     assert system_message.prompt.template == custom_prompt
 
 
-@pytest.mark.parametrize("system_prompt", ["", " ", "\n\n"])
+@pytest.mark.parametrize("system_prompt", EMPTY_PROMPTS)
 def test_create_prompt_generator_model_uses_empty_system_prompt(
     mock_llm: BaseChatModel, system_prompt: str
 ) -> None:

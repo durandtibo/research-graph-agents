@@ -17,6 +17,7 @@ from langchain_core.runnables import RunnableLambda, RunnableSequence
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from argos.prompts.haiku_judge import HAIKU_JUDGE_SYSTEM_PROMPT
+from argos.utils.prompt import check_non_empty_prompt
 
 if TYPE_CHECKING:
     from langchain_core.language_models import BaseChatModel
@@ -70,21 +71,29 @@ class RawHaikuJudgeOutput(BaseModel):
     """
 
     structure_reasoning: str = Field(
-        description="A brief and actionable explanation justifying the structure_prediction decision.",
+        description=(
+            "A non-empty, clear and concise explanation justifying the "
+            "structure_prediction decision."
+        ),
     )
     structure_prediction: bool = Field(
-        description="True ONLY if the haiku has exactly 3 lines with syllable counts of 5, 7, and 5 respectively."
+        description=(
+            "True if the haiku follows the 5-7-5 syllable structure across exactly 3 lines, "
+            "False otherwise."
+        )
     )
 
     topic_reasoning: str = Field(
-        description="A brief and actionable explanation justifying the topic_prediction decision.",
+        description=(
+            "A non-empty, clear and concise explanation justifying the topic_prediction decision."
+        ),
     )
     topic_prediction: bool = Field(
         description="True if the haiku meaningfully addresses the target topic, otherwise False."
     )
 
     score_reasoning: str = Field(
-        description="A brief and actionable explanation justifying the score decision.",
+        description="A non-empty, clear and concise explanation justifying the score decision.",
     )
     score_prediction: int = Field(
         ge=1,
@@ -134,7 +143,10 @@ class HaikuJudgeOutput(RawHaikuJudgeOutput):
 
     overall_prediction: bool = Field(
         default=False,
-        description="Derived automatically: True ONLY if structure_prediction AND topic_prediction AND score_prediction >= 7.",
+        description=(
+            "Derived automatically: True ONLY if structure_prediction AND topic_prediction "
+            "AND score_prediction >= 7."
+        ),
     )
 
     @model_validator(mode="after")
@@ -201,6 +213,7 @@ def create_haiku_judge_model(
             dict with ``topic`` and ``haiku`` keys and returns a
             :class:`HaikuJudgeOutput` with the structured evaluation.
     """
+    check_non_empty_prompt(prompt=system_prompt, name="system_prompt")
     return RunnableSequence(
         RunnableLambda(validate_haiku_judge_input),
         ChatPromptTemplate.from_messages(

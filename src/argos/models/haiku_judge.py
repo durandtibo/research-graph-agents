@@ -31,14 +31,7 @@ class HaikuJudgeInput(TypedDict):
 
 
 class HaikuJudgeInputValidator(BaseModel):
-    r"""Define the input validator for the haiku judge.
-
-    Attributes:
-        haiku: The haiku text to evaluate, expected to consist of three
-            lines.
-        topic: The target topic that the haiku should meaningfully
-            address.
-    """
+    r"""Define the input validator to haiku judge."""
 
     haiku: str = Field(
         min_length=1,
@@ -51,29 +44,8 @@ class HaikuJudgeInputValidator(BaseModel):
 
 
 class RawHaikuJudgeOutput(BaseModel):
-    r"""Define the raw structured output produced by the haiku judge LLM.
-
-    This model is used as the target schema for structured output. After
-    the LLM fills these fields, the result is promoted to
-    :class:`HaikuJudgeOutput`, which adds the derived
-    ``overall_prediction`` field.
-
-    Attributes:
-        structure_reasoning: A non-empty explanation justifying the
-            ``structure_prediction`` decision.
-        structure_prediction: ``True`` if the haiku follows the 5-7-5
-            syllable structure across exactly 3 lines, ``False``
-            otherwise.
-        topic_reasoning: A non-empty explanation justifying the
-            ``topic_prediction`` decision.
-        topic_prediction: ``True`` if the haiku meaningfully addresses
-            the target topic, otherwise ``False``.
-        score_reasoning: A non-empty explanation justifying the
-            ``score_prediction`` decision.
-        score_prediction: Quality score from 1 to 10 based on imagery,
-            emotional resonance, and word choice. Constrained to the
-            range ``[1, 10]``.
-    """
+    r"""Evaluate the quality of a haiku by assessing its structure,
+    topic relevance, and overall quality score."""
 
     structure_reasoning: str = Field(
         min_length=1,

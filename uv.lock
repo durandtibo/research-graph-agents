@@ -247,7 +247,7 @@ provides-extras = ["colorlog", "rich"]
 [package.metadata.requires-dev]
 dev = [
     { name = "black", specifier = ">=26.3" },
-    { name = "coverage", extras = ["toml"], specifier = ">=7.11,<8.0" },
+    { name = "coverage", extras = ["toml"], specifier = ">=7.13.5,<8.0" },
     { name = "docformatter", extras = ["tomli"], marker = "python_full_version < '3.14'", specifier = ">=1.7,<2.0" },
     { name = "feu", extras = ["all"], specifier = ">=0.6.2,<1.0" },
     { name = "invoke", specifier = ">=3.0,<4.0" },

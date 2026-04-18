@@ -40,9 +40,16 @@ class ErrorAnalyzer(BaseErrorAnalyzer):
     r"""Implement a simple error analyzer.
 
     Args:
-        error_finder: An error finder.
-        model: The model to generate the analysis of the errors.
-        path: An optional path where the analysis will be saved.
+        error_finder: An :class:`~argos.autoprompt.haiku.error_finder.BaseErrorFinder`
+            that inspects a predictions DataFrame and returns a
+            formatted error report string.
+        model: The :class:`~langchain_core.runnables.Runnable` used to
+            generate a textual analysis of the errors. It accepts an
+            :class:`~argos.models.analysis.AnalyzerInput` dict and
+            returns either an :class:`~langchain_core.messages.AIMessage`
+            or a dict with an ``"analysis"`` key.
+        path: An optional path where the analysis text is saved as a
+            plain-text file. If ``None``, no file is written.
     """
 
     def __init__(

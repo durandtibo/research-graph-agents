@@ -31,7 +31,8 @@ class PromptGeneratorInput(TypedDict):
 
 
 class PromptGeneratorOutput(BaseModel):
-    r"""Define the structured output produced by the prompt generator LLM.
+    r"""Define the structured output produced by the prompt generator
+    LLM.
 
     Attributes:
         reasoning: A concise explanation of the changes made relative

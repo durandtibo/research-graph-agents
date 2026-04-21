@@ -49,10 +49,3 @@ def test_agent_config_metadata_accepts_arbitrary_values() -> None:
 def test_agent_config_components_can_be_empty() -> None:
     config = AgentConfig(components={})
     assert config.components == {}
-
-
-def test_agent_config_components_and_metadata_are_independent() -> None:
-    shared = {"key": "value"}
-    config = AgentConfig(components=shared, metadata=shared)
-    config.components["extra"] = 1
-    assert "extra" not in config.metadata

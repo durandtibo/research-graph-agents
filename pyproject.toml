@@ -58,7 +58,7 @@ dependencies = [
 
 [project.optional-dependencies]
 colorlog = ["colorlog >= 6.10,<7.0"]
-rich = ["rich >= 14.3,<15.0"]
+rich = ["rich>=15.0.0,<16.0"]
 
 [dependency-groups]
 dev = [

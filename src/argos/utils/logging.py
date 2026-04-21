@@ -6,6 +6,7 @@ from __future__ import annotations
 __all__ = ["configure_logging", "log_dict_pretty", "log_markdown"]
 
 import logging
+from typing import Any
 
 from argos.utils.imports import is_colorlog_available, is_rich_available
 
@@ -94,7 +95,9 @@ def log_markdown(msg: str, level: int = logging.INFO, title: str | None = None) 
         logger.log(level, msg)
 
 
-def log_dict_pretty(data: dict, level: int = logging.INFO, title: str | None = None) -> None:
+def log_dict_pretty(
+    data: dict[Any, Any], level: int = logging.INFO, title: str | None = None
+) -> None:
     r"""Log a dictionary in a pretty format if rich is available.
 
     If the ``rich`` package is installed, the dictionary is rendered

@@ -48,7 +48,7 @@ class InMemoryHistory(BaseHistory):
         data: The initial data to store in the history.
     """
 
-    def __init__(self, data: list | None = None) -> None:
+    def __init__(self, data: list[Any] | None = None) -> None:
         self._data = data or []
 
     def append(self, data: dict[Any, Any]) -> None:

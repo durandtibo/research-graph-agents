@@ -3,7 +3,7 @@ r"""Unit tests for Agent."""
 from unittest.mock import Mock
 
 import pytest
-from langchain_core.runnables import Runnable
+from langchain_core.runnables import Runnable, RunnableConfig
 
 from argos.meta_agent.agent import Agent
 
@@ -27,14 +27,22 @@ def test_agent_predict_calls_batch(mock_model: Runnable) -> None:
     inputs = [{"query": "hello"}, {"query": "world"}]
     agent = Agent(model=mock_model)
     assert agent.predict(inputs) == [{"answer": "hi"}, {"answer": "cat"}]
-    mock_model.batch.assert_called_once_with(inputs)
+    mock_model.batch.assert_called_once_with(inputs=inputs, config=None)
 
 
 def test_agent_predict_with_empty_inputs(mock_model: Runnable) -> None:
     mock_model.batch.return_value = []
     agent = Agent(model=mock_model)
     assert agent.predict([]) == []
-    mock_model.batch.assert_called_once_with([])
+    mock_model.batch.assert_called_once_with(inputs=[], config=None)
+
+
+def test_agent_predict_calls_batch_with_config(mock_model: Runnable) -> None:
+    inputs = [{"query": "hello"}, {"query": "world"}]
+    config = RunnableConfig(max_concurrency=2)
+    agent = Agent(model=mock_model)
+    assert agent.predict(inputs, config=config) == [{"answer": "hi"}, {"answer": "cat"}]
+    mock_model.batch.assert_called_once_with(inputs=inputs, config=config)
 
 
 def test_predict_propagates_exception(mock_model: Runnable) -> None:

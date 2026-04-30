@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, TypeVar
 from argos.meta_agent.agent.base import BaseAgent
 
 if TYPE_CHECKING:
-    from langchain_core.runnables import Runnable
+    from langchain_core.runnables import Runnable, RunnableConfig
 
 InputT = TypeVar("InputT")
 OutputT = TypeVar("OutputT")
@@ -26,5 +26,5 @@ class Agent(BaseAgent[InputT, OutputT]):
     def __init__(self, model: Runnable[InputT, OutputT]) -> None:
         self._model = model
 
-    def predict(self, inputs: list[InputT]) -> list[OutputT]:
-        return self._model.batch(inputs)
+    def predict(self, inputs: list[InputT], config: RunnableConfig | None = None) -> list[OutputT]:
+        return self._model.batch(inputs=inputs, config=config)

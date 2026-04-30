@@ -7,7 +7,7 @@ from langchain_core.runnables import RunnableConfig
 
 from argos.meta_agent.agent import Agent, BaseAgent
 from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
-from argos.meta_agent.interface import (
+from argos.meta_agent.prediction import (
     PredictionRecord,
     PredictionResult,
 )

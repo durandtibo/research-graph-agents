@@ -2,7 +2,7 @@ r"""Unit tests for PredictionResult.from_predictions."""
 
 import pytest
 
-from argos.meta_agent.interface import PredictionRecord, PredictionResult
+from argos.meta_agent.prediction import PredictionRecord, PredictionResult
 
 ######################################
 #     Tests for PredictionResult     #

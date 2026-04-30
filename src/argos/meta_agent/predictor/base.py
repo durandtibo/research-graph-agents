@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Generic, TypeVar
 
 if TYPE_CHECKING:
     from argos.meta_agent.agent import BaseAgent
-    from argos.meta_agent.interface import Benchmark, PredictionResult
+    from argos.meta_agent.prediction import Benchmark, PredictionResult
 
 InputT = TypeVar("InputT")
 PredictionT = TypeVar("PredictionT")

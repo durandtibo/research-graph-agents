@@ -28,10 +28,14 @@ class PredictionResult(Generic[T]):
     r"""Define the prediction result class."""
 
     records: list[PredictionRecord[T]]
+    metadata: dict[str, Any] | None = None
 
     @classmethod
     def from_predictions(
-        cls, example_ids: Sequence[str], predictions: Sequence[T]
+        cls,
+        example_ids: Sequence[str],
+        predictions: Sequence[T],
+        metadata: dict[str, Any] | None = None,
     ) -> PredictionResult[T]:
         r"""Create a prediction result from a list of example IDs and
         predictions.
@@ -42,6 +46,7 @@ class PredictionResult(Generic[T]):
         Args:
             example_ids: A list of example IDs
             predictions: A list of predictions
+            metadata: A dictionary of metadata.
 
         Returns:
             The prediction result.
@@ -49,24 +54,30 @@ class PredictionResult(Generic[T]):
         if len(example_ids) != len(predictions):
             msg = "example_ids and predictions must have the same length"
             raise ValueError(msg)
-        return PredictionResult(
-            [
-                PredictionRecord(example_id=example_id, prediction=prediction)
-                for example_id, prediction in zip(example_ids, predictions)
-            ]
-        )
+        records = [
+            PredictionRecord(example_id=example_id, prediction=prediction)
+            for example_id, prediction in zip(example_ids, predictions)
+        ]
+        return PredictionResult(records=records, metadata=metadata)
 
     @classmethod
-    def from_dict(cls, data: dict[str, T]) -> PredictionResult[T]:
+    def from_dict(
+        cls, data: dict[str, T], metadata: dict[str, Any] | None = None
+    ) -> PredictionResult[T]:
         r"""Create a prediction result from a dictionary.
 
         Args:
             data: A dictionary containing example IDs and predictions.
+            metadata: A dictionary of metadata.
 
         Returns:
             The prediction result.
         """
-        return cls.from_predictions(example_ids=data.keys(), predictions=data.values())
+        return cls.from_predictions(
+            example_ids=data.keys(),
+            predictions=data.values(),
+            metadata=metadata,
+        )
 
     def to_dict(self) -> dict[str, T]:
         r"""Return a dictionary containing example IDs and predictions.

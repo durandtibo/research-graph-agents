@@ -77,3 +77,23 @@ class PredictionResult(Generic[PredictionT]):
                 for example_id, prediction in zip(example_ids, predictions)
             ]
         )
+
+    @classmethod
+    def from_dict(cls, data: dict[str, PredictionT]) -> PredictionResult[PredictionT]:
+        r"""Create a prediction result from a dictionary.
+
+        Args:
+            data: A dictionary containing example IDs and predictions.
+
+        Returns:
+            The prediction result.
+        """
+        return cls.from_predictions(example_ids=data.keys(), predictions=data.values())
+
+    def to_dict(self) -> dict[str, PredictionT]:
+        r"""Return a dictionary containing example IDs and predictions.
+
+        Returns:
+            A dictionary containing example IDs and predictions.
+        """
+        return {record.example_id: record.prediction for record in self.records}

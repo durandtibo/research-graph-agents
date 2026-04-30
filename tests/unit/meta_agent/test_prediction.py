@@ -22,9 +22,29 @@ def test_prediction_result_from_predictions_returns_prediction_result() -> None:
     )
 
 
+def test_prediction_result_from_predictions_returns_prediction_result_with_metadata() -> None:
+    result = PredictionResult.from_predictions(
+        example_ids=["id1", "id2"], predictions=["pred1", "pred2"], metadata={"tag": "meow"}
+    )
+    assert result == PredictionResult(
+        records=[
+            PredictionRecord(example_id="id1", prediction="pred1"),
+            PredictionRecord(example_id="id2", prediction="pred2"),
+        ],
+        metadata={"tag": "meow"},
+    )
+
+
 def test_prediction_result_from_predictions_with_empty_inputs() -> None:
     result = PredictionResult.from_predictions(example_ids=[], predictions=[])
     assert result == PredictionResult(records=[])
+
+
+def test_prediction_result_from_predictions_with_empty_inputs_with_metadata() -> None:
+    result = PredictionResult.from_predictions(
+        example_ids=[], predictions=[], metadata={"tag": "meow"}
+    )
+    assert result == PredictionResult(records=[], metadata={"tag": "meow"})
 
 
 def test_prediction_result_from_predictions_with_single_pair() -> None:
@@ -95,9 +115,25 @@ def test_prediction_result_from_dict_with_dict() -> None:
     )
 
 
+def test_prediction_result_from_dict_with_metadata() -> None:
+    result = PredictionResult.from_dict({"id1": "pred1", "id2": "pred2"}, metadata={"tag": "meow"})
+    assert result == PredictionResult(
+        records=[
+            PredictionRecord(example_id="id1", prediction="pred1"),
+            PredictionRecord(example_id="id2", prediction="pred2"),
+        ],
+        metadata={"tag": "meow"},
+    )
+
+
 def test_prediction_result_from_dict_empty() -> None:
     result = PredictionResult.from_dict({})
     assert result == PredictionResult(records=[])
+
+
+def test_prediction_result_from_dict_empty_with_metadata() -> None:
+    result = PredictionResult.from_dict({}, metadata={"tag": "meow"})
+    assert result == PredictionResult(records=[], metadata={"tag": "meow"})
 
 
 def test_prediction_result_to_dict() -> None:

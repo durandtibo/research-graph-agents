@@ -35,6 +35,27 @@ class Benchmark(Generic[InputT, TargetT]):
     examples: dict[str, BenchmarkExample[InputT, TargetT]]
     metadata: dict[str, Any] | None = None
 
+    @classmethod
+    def from_examples(
+        cls,
+        examples: Sequence[BenchmarkExample[InputT, TargetT]],
+        metadata: dict[str, Any] | None = None,
+    ) -> Benchmark[InputT, TargetT]:
+        r"""Create a benchmark from a list of examples.
+
+        Args:
+            examples: A list of examples. The example IDs must be unique.
+            metadata: The benchmark metadata.
+
+        Returns:
+            The benchmark instance.
+        """
+        data = {example.id: example for example in examples}
+        if len(data) != len(examples):
+            msg = "Some example IDs are duplicated"
+            raise ValueError(msg)
+        return cls(examples=data, metadata=metadata)
+
 
 @dataclass
 class PredictionRecord(Generic[PredictionT]):

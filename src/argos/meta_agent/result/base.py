@@ -5,10 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseResult"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    import polars as pl
+from typing import Any
 
 
 class BaseResult(ABC):
@@ -23,15 +20,17 @@ class BaseResult(ABC):
     """
 
     @abstractmethod
-    def to_dataframe(self) -> pl.DataFrame:
-        r"""Return the result as a Polars DataFrame.
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        r"""Return ``True`` if the two objects are equal, otherwise
+        ``False``.
 
-        Each metric is represented as a column. Useful for downstream
-        tabular processing, aggregation, or export.
+        Args:
+            other: The value to compare with.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
 
         Returns:
-            A Polars DataFrame with one row per result entry and one
-                column per metric.
+            ``True`` if the two objects are equal, otherwise ``False``
         """
 
     @abstractmethod

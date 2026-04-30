@@ -1,11 +1,14 @@
 r"""Unit tests for Agent."""
 
+from __future__ import annotations
+
 from unittest.mock import Mock
 
 import pytest
 from langchain_core.runnables import Runnable, RunnableConfig
 
 from argos.meta_agent.agent import Agent
+from tests.unit.helpers.runnable import ConfigCaptureRunnable, DoubleRunnable
 
 
 @pytest.fixture
@@ -45,8 +48,21 @@ def test_agent_predict_calls_batch_with_config(mock_model: Runnable) -> None:
     mock_model.batch.assert_called_once_with(inputs=inputs, config=config)
 
 
-def test_predict_propagates_exception(mock_model: Runnable) -> None:
+def test_agent_predict_propagates_exception(mock_model: Runnable) -> None:
     mock_model.batch.side_effect = RuntimeError("model failure")
     agent = Agent(model=mock_model)
     with pytest.raises(RuntimeError, match="model failure"):
         agent.predict([{"query": "hello"}])
+
+
+def test_agent_predict_returns_model_output() -> None:
+    agent = Agent(DoubleRunnable())
+    assert agent.predict([1, 2, 3]) == [2, 4, 6]
+
+
+def test_agent_predict_passes_config() -> None:
+    runnable = ConfigCaptureRunnable()
+    agent = Agent(runnable)
+    config = RunnableConfig(tags=["test"])
+    assert agent.predict(["x"], config=config) == ["x"]
+    assert runnable.last_config == config

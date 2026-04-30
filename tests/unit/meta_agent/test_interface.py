@@ -73,3 +73,53 @@ def test_prediction_result_from_predictions_with_dict_predictions() -> None:
             PredictionRecord(example_id="id2", prediction={"answer": "no"}),
         ]
     )
+
+
+def test_prediction_result_from_dict() -> None:
+    result = PredictionResult.from_dict({"id1": "pred1", "id2": "pred2"})
+    assert result == PredictionResult(
+        records=[
+            PredictionRecord(example_id="id1", prediction="pred1"),
+            PredictionRecord(example_id="id2", prediction="pred2"),
+        ]
+    )
+
+
+def test_prediction_result_from_dict_with_dict() -> None:
+    result = PredictionResult.from_dict({"id1": {"answer": "yes"}, "id2": {"answer": "no"}})
+    assert result == PredictionResult(
+        records=[
+            PredictionRecord(example_id="id1", prediction={"answer": "yes"}),
+            PredictionRecord(example_id="id2", prediction={"answer": "no"}),
+        ]
+    )
+
+
+def test_prediction_result_from_dict_empty() -> None:
+    result = PredictionResult.from_dict({})
+    assert result == PredictionResult(records=[])
+
+
+def test_prediction_result_to_dict() -> None:
+    result = PredictionResult(
+        records=[
+            PredictionRecord(example_id="id1", prediction="pred1"),
+            PredictionRecord(example_id="id2", prediction="pred2"),
+        ]
+    )
+    assert result.to_dict() == {"id1": "pred1", "id2": "pred2"}
+
+
+def test_prediction_result_to_dict_with_dict() -> None:
+    result = PredictionResult(
+        records=[
+            PredictionRecord(example_id="id1", prediction={"answer": "yes"}),
+            PredictionRecord(example_id="id2", prediction={"answer": "no"}),
+        ]
+    )
+    assert result.to_dict() == {"id1": {"answer": "yes"}, "id2": {"answer": "no"}}
+
+
+def test_prediction_result_to_dict_empty() -> None:
+    result = PredictionResult(records=[])
+    assert result.to_dict() == {}

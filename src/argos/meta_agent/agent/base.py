@@ -5,13 +5,12 @@ from __future__ import annotations
 __all__ = ["BaseAgent"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Generic
+
+from argos.meta_agent.typing import InputT, OutputT
 
 if TYPE_CHECKING:
     from langchain_core.runnables import RunnableConfig
-
-InputT = TypeVar("InputT")
-OutputT = TypeVar("OutputT")
 
 
 class BaseAgent(ABC, Generic[InputT, OutputT]):

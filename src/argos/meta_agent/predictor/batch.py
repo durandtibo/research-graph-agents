@@ -65,7 +65,9 @@ class BatchPredictor(BasePredictor[InputT, TargetT, PredictionT]):
         with timeblock(message="LLM inference time: {time}"):
             for index, batch in enumerate(batches):
                 logger.info(f"--- Processing Batch {index + 1} ---")
-                predictions.extend(agent.predict(batch, config=self._config))
+                predictions.extend(
+                    agent.predict(inputs=[example.input for example in batch], config=self._config)
+                )
 
         return PredictionResult.from_predictions(
             example_ids=list(benchmark.examples.keys()),

@@ -5,9 +5,28 @@ from unittest.mock import Mock
 import pytest
 from langchain_core.runnables import RunnableConfig
 
-from argos.meta_agent.agent import BaseAgent
-from argos.meta_agent.interface import Benchmark, PredictionRecord, PredictionResult
+from argos.meta_agent.agent import Agent, BaseAgent
+from argos.meta_agent.interface import (
+    Benchmark,
+    BenchmarkExample,
+    PredictionRecord,
+    PredictionResult,
+)
 from argos.meta_agent.predictor import BatchPredictor
+from tests.unit.helpers.runnable import DoubleRunnable
+
+
+@pytest.fixture
+def benchmark() -> Benchmark:
+    return Benchmark(
+        {
+            "id1": BenchmarkExample(id="id1", input=1, target=None),
+            "id2": BenchmarkExample(id="id2", input=2, target=None),
+            "id3": BenchmarkExample(id="id3", input=3, target=None),
+            "id4": BenchmarkExample(id="id4", input=4, target=None),
+            "id5": BenchmarkExample(id="id5", input=5, target=None),
+        }
+    )
 
 
 @pytest.fixture
@@ -17,31 +36,6 @@ def mock_agent() -> BaseAgent:
         predict=Mock(
             side_effect=[[{"answer": "a1"}, {"answer": "a2"}], [{"answer": "a3"}, {"answer": "a4"}]]
         ),
-    )
-
-
-@pytest.fixture
-def mock_benchmark() -> Benchmark:
-    return Mock(
-        spec=Benchmark,
-        examples={
-            "id1": {"query": "q1"},
-            "id2": {"query": "q2"},
-            "id3": {"query": "q3"},
-            "id4": {"query": "q4"},
-        },
-    )
-
-
-@pytest.fixture
-def results() -> PredictionResult:
-    return PredictionResult(
-        [
-            PredictionRecord(example_id="id1", prediction={"answer": "a1"}),
-            PredictionRecord(example_id="id2", prediction={"answer": "a2"}),
-            PredictionRecord(example_id="id3", prediction={"answer": "a3"}),
-            PredictionRecord(example_id="id4", prediction={"answer": "a4"}),
-        ]
     )
 
 
@@ -83,55 +77,31 @@ def test_batch_predictor_str() -> None:
     assert str(BatchPredictor()).startswith("BatchPredictor(")
 
 
-def test_batch_predictor_predict_returns_prediction_result_batch_size_1(
-    mock_agent: BaseAgent, mock_benchmark: Benchmark, results: PredictionResult
-) -> None:
-    mock_agent.predict.side_effect = [
-        [{"answer": "a1"}],
-        [{"answer": "a2"}],
-        [{"answer": "a3"}],
-        [{"answer": "a4"}],
-    ]
-    predictor = BatchPredictor(batch_size=1)
-    result = predictor.predict(mock_agent, mock_benchmark)
-    assert result == results
-    assert mock_agent.predict.call_count == 4
+@pytest.mark.parametrize("batch_size", [1, 2, 4, 10])
+def test_batch_predictor_predict_batch_size(batch_size: int, benchmark: Benchmark) -> None:
+    predictor = BatchPredictor(batch_size=batch_size)
+    result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=benchmark)
+    assert result == PredictionResult(
+        [
+            PredictionRecord(example_id="id1", prediction=2),
+            PredictionRecord(example_id="id2", prediction=4),
+            PredictionRecord(example_id="id3", prediction=6),
+            PredictionRecord(example_id="id4", prediction=8),
+            PredictionRecord(example_id="id5", prediction=10),
+        ]
+    )
 
 
-def test_batch_predictor_predict_returns_prediction_result_batch_size_2(
-    mock_agent: BaseAgent, mock_benchmark: Benchmark, results: PredictionResult
-) -> None:
-    predictor = BatchPredictor(batch_size=2)
-    result = predictor.predict(mock_agent, mock_benchmark)
-    assert result == results
-    assert mock_agent.predict.call_count == 2
-
-
-def test_batch_predictor_predict_returns_prediction_result_batch_size_10(
-    mock_agent: BaseAgent, mock_benchmark: Benchmark, results: PredictionResult
-) -> None:
-    mock_agent.predict.side_effect = [
-        [{"answer": "a1"}, {"answer": "a2"}, {"answer": "a3"}, {"answer": "a4"}]
-    ]
-    predictor = BatchPredictor(batch_size=10)
-    result = predictor.predict(mock_agent, mock_benchmark)
-    assert result == results
-    assert mock_agent.predict.call_count == 1
-
-
-def test_batch_predictor_predict_passes_config_to_agent(
-    mock_agent: BaseAgent, mock_benchmark: Benchmark
-) -> None:
+def test_batch_predictor_predict_passes_config_to_agent(benchmark: Benchmark) -> None:
+    agent = Mock(spec=BaseAgent, predict=Mock(side_effect=[[2, 4], [6, 8], [10]]))
     config = RunnableConfig(max_concurrency=4)
     predictor = BatchPredictor(batch_size=2, config=config)
-    predictor.predict(mock_agent, mock_benchmark)
-    for call in mock_agent.predict.call_args_list:
+    predictor.predict(agent, benchmark)
+    for call in agent.predict.call_args_list:
         assert call.kwargs["config"] is config
 
 
-def test_batch_predictor_predict_with_empty_benchmark(mock_agent: BaseAgent) -> None:
-    benchmark = Benchmark(examples={})
+def test_batch_predictor_predict_with_empty_benchmark() -> None:
     predictor = BatchPredictor(batch_size=2)
-    result = predictor.predict(mock_agent, benchmark)
+    result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=Benchmark(examples={}))
     assert result == PredictionResult([])
-    mock_agent.predict.assert_not_called()

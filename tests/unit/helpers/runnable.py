@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["ConfigCaptureRunnable", "DoubleRunnable", "IdentityRunnable"]
+__all__ = ["ConfigCaptureRunnable", "DoubleRunnable", "IdentityRunnable", "RaisingErrorRunnable"]
 
 from typing import Any, Generic, TypeVar
 
@@ -73,3 +73,25 @@ class ConfigCaptureRunnable(IdentityRunnable[InputT], Generic[InputT]):
     ) -> list[InputT]:
         self.last_config = config
         return list(inputs)
+
+
+class RaisingErrorRunnable(Runnable[InputT, OutputT]):
+    """Always raises, to verify Agent does not swallow exceptions."""
+
+    def invoke(
+        self,
+        input: InputT,  # noqa: A002, ARG002
+        config: RunnableConfig | None = None,  # noqa: ARG002
+        **kwargs: Any,  # noqa: ARG002
+    ) -> OutputT:
+        msg = "model failure"
+        raise RuntimeError(msg)
+
+    def batch(
+        self,
+        inputs: list[InputT],  # noqa: ARG002
+        config: RunnableConfig | None = None,  # noqa: ARG002
+        **kwargs: Any,  # noqa: ARG002
+    ) -> list[OutputT]:
+        msg = "model failure"
+        raise RuntimeError(msg)

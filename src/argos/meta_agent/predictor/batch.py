@@ -5,14 +5,15 @@ from __future__ import annotations
 __all__ = ["BatchPredictor"]
 
 import logging
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any
 
 from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 from coola.utils.timing import timeblock
 from langchain_core.runnables import RunnableConfig
 
-from argos.meta_agent.interface import PredictionResult
+from argos.meta_agent.prediction import PredictionResult
 from argos.meta_agent.predictor.base import BasePredictor
+from argos.meta_agent.typing import InputT, OutputT, TargetT
 from argos.utils.batching import batchify
 
 if TYPE_CHECKING:
@@ -22,12 +23,8 @@ if TYPE_CHECKING:
 
 logger: logging.Logger = logging.getLogger(__name__)
 
-InputT = TypeVar("InputT")
-PredictionT = TypeVar("PredictionT")
-TargetT = TypeVar("TargetT")
 
-
-class BatchPredictor(BasePredictor[InputT, TargetT, PredictionT]):
+class BatchPredictor(BasePredictor[InputT, TargetT, OutputT]):
     r"""Define a predictor that computes predictions by batches."""
 
     def __init__(
@@ -48,9 +45,9 @@ class BatchPredictor(BasePredictor[InputT, TargetT, PredictionT]):
 
     def predict(
         self,
-        agent: BaseAgent[InputT, PredictionT],
+        agent: BaseAgent[InputT, OutputT],
         benchmark: Benchmark[InputT, TargetT],
-    ) -> PredictionResult[PredictionT]:
+    ) -> PredictionResult[OutputT]:
         batches = batchify(list(benchmark.examples.values()), size=self._batch_size)
         predictions = []
         with timeblock(message="LLM inference time: {time}"):

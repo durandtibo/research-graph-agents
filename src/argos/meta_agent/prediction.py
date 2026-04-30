@@ -10,30 +10,29 @@ from typing import TYPE_CHECKING, Any, Generic, TypeVar
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-InputT = TypeVar("InputT")
-TargetT = TypeVar("TargetT")
-PredictionT = TypeVar("PredictionT")
+
+T = TypeVar("T")
 
 
 @dataclass
-class PredictionRecord(Generic[PredictionT]):
+class PredictionRecord(Generic[T]):
     r"""Define the prediction record class."""
 
     example_id: str
-    prediction: PredictionT
+    prediction: T
     metadata: dict[str, Any] | None = None
 
 
 @dataclass
-class PredictionResult(Generic[PredictionT]):
+class PredictionResult(Generic[T]):
     r"""Define the prediction result class."""
 
-    records: list[PredictionRecord[PredictionT]]
+    records: list[PredictionRecord[T]]
 
     @classmethod
     def from_predictions(
-        cls, example_ids: Sequence[str], predictions: Sequence[PredictionT]
-    ) -> PredictionResult[PredictionT]:
+        cls, example_ids: Sequence[str], predictions: Sequence[T]
+    ) -> PredictionResult[T]:
         r"""Create a prediction result from a list of example IDs and
         predictions.
 
@@ -58,7 +57,7 @@ class PredictionResult(Generic[PredictionT]):
         )
 
     @classmethod
-    def from_dict(cls, data: dict[str, PredictionT]) -> PredictionResult[PredictionT]:
+    def from_dict(cls, data: dict[str, T]) -> PredictionResult[T]:
         r"""Create a prediction result from a dictionary.
 
         Args:
@@ -69,7 +68,7 @@ class PredictionResult(Generic[PredictionT]):
         """
         return cls.from_predictions(example_ids=data.keys(), predictions=data.values())
 
-    def to_dict(self) -> dict[str, PredictionT]:
+    def to_dict(self) -> dict[str, T]:
         r"""Return a dictionary containing example IDs and predictions.
 
         Returns:

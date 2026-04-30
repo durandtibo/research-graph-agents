@@ -5,10 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseResult"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    import polars as pl
+from typing import Any
 
 
 class BaseResult(ABC):
@@ -21,18 +18,6 @@ class BaseResult(ABC):
     All ``to_*`` methods are non-destructive and return a new object
     or data structure without modifying the result instance.
     """
-
-    @abstractmethod
-    def to_dataframe(self) -> pl.DataFrame:
-        r"""Return the result as a Polars DataFrame.
-
-        Each metric is represented as a column. Useful for downstream
-        tabular processing, aggregation, or export.
-
-        Returns:
-            A Polars DataFrame with one row per result entry and one
-                column per metric.
-        """
 
     @abstractmethod
     def to_dict(self) -> dict[str, Any]:

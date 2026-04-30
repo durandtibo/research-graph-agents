@@ -17,7 +17,7 @@ from argos.utils.batching import batchify
 
 if TYPE_CHECKING:
     from argos.meta_agent.agent import BaseAgent
-    from argos.meta_agent.interface import Benchmark
+    from argos.meta_agent.benchmark import Benchmark
 
 
 logger: logging.Logger = logging.getLogger(__name__)
@@ -51,15 +51,6 @@ class BatchPredictor(BasePredictor[InputT, TargetT, PredictionT]):
         agent: BaseAgent[InputT, PredictionT],
         benchmark: Benchmark[InputT, TargetT],
     ) -> PredictionResult[PredictionT]:
-        r"""Make the prediction result for the input benchmark.
-
-        Args:
-            agent: The agent to make prediction for.
-            benchmark: The benchmark to make prediction for.
-
-        Returns:
-            The prediction result.
-        """
         batches = batchify(list(benchmark.examples.values()), size=self._batch_size)
         predictions = []
         with timeblock(message="LLM inference time: {time}"):

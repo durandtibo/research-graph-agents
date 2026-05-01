@@ -5,7 +5,6 @@ from __future__ import annotations
 
 __all__ = ["Result"]
 
-import copy
 from typing import TYPE_CHECKING
 
 from coola.equality import objects_are_equal
@@ -46,10 +45,10 @@ class Result(BaseResult):
         return self.to_raw_dict()
 
     def to_flat_dict(self, separator: str = ".") -> FlatDict:
-        return to_flat_dict(self._metrics, separator=separator)
+        return to_flat_dict(self.to_dict(), separator=separator)
 
     def to_raw_dict(self) -> FlatDict:
-        return copy.copy(self._metrics)
+        return self._metrics
 
     def to_markdown(self) -> str:
         if not self._metrics:

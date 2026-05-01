@@ -7,7 +7,7 @@ __all__ = ["Agent"]
 
 from typing import TYPE_CHECKING, TypeVar
 
-from argos.meta_agent.agent.base import BaseAgent
+from argos.meta_agent.agents.base import BaseAgent
 
 if TYPE_CHECKING:
     from langchain_core.runnables import Runnable, RunnableConfig

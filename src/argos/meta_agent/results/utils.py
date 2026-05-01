@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 
 if TYPE_CHECKING:
-    from argos.meta_agent.result import BaseResult
+    from argos.meta_agent.results import BaseResult
 
 
 def results_to_dataframe(results: list[BaseResult]) -> pl.DataFrame:

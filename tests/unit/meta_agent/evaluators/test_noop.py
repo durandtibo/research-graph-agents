@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
-from argos.meta_agent.evaluator import NoOpEvaluator
+from argos.meta_agent.evaluators import NoOpEvaluator
 from argos.meta_agent.prediction import PredictionRecord, PredictionResult
 
 

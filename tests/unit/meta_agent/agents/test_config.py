@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from argos.meta_agent.agent import AgentConfig
+from argos.meta_agent.agents import AgentConfig
 
 #################################
 #     Tests for AgentConfig     #

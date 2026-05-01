@@ -6,7 +6,7 @@ __all__ = ["NoOpEvaluator"]
 
 from typing import TYPE_CHECKING, Any
 
-from argos.meta_agent.evaluator.base import BaseEvaluator
+from argos.meta_agent.evaluators.base import BaseEvaluator
 from argos.meta_agent.typing import InputT, OutputT, TargetT
 
 if TYPE_CHECKING:

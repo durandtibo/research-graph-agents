@@ -13,7 +13,7 @@ from coola.utils.format import (
     str_mapping,
 )
 
-from argos.meta_agent.result.base import BaseResult
+from argos.meta_agent.results.base import BaseResult
 
 if TYPE_CHECKING:
     from collections.abc import Mapping

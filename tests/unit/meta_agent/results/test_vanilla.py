@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from argos.meta_agent.result import Result
+from argos.meta_agent.results import Result
 
 ############################
 #     Tests for Result     #

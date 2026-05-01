@@ -3,7 +3,7 @@ r"""Unit tests for MetaAgentState."""
 import pytest
 
 from argos.meta_agent import MetaAgentState
-from argos.meta_agent.agent import AgentConfig
+from argos.meta_agent.agents import AgentConfig
 
 ####################################
 #     Tests for MetaAgentState     #

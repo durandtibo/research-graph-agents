@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Generic
 from argos.meta_agent.typing import InputT, OutputT, TargetT
 
 if TYPE_CHECKING:
-    from argos.meta_agent.agent import BaseAgent
+    from argos.meta_agent.agents import BaseAgent
     from argos.meta_agent.prediction import Benchmark, PredictionResult
 
 

@@ -9,8 +9,8 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 if TYPE_CHECKING:
-    from argos.meta_agent.agent.base import BaseAgent
-    from argos.meta_agent.agent.config import AgentConfig
+    from argos.meta_agent.agents.base import BaseAgent
+    from argos.meta_agent.agents.config import AgentConfig
 
 
 InputT = TypeVar("InputT")

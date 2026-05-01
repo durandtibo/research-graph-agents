@@ -7,7 +7,7 @@ from unittest.mock import Mock
 import pytest
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from argos.meta_agent.agent import Agent
+from argos.meta_agent.agents import Agent
 from tests.unit.helpers.runnable import (
     ConfigCaptureRunnable,
     DoubleRunnable,

@@ -3,8 +3,8 @@ from __future__ import annotations
 import polars as pl
 from polars.testing import assert_frame_equal
 
-from argos.meta_agent.result import Result
-from argos.meta_agent.result.utils import results_to_dataframe
+from argos.meta_agent.results import Result
+from argos.meta_agent.results.utils import results_to_dataframe
 
 ##########################################
 #     Tests for results_to_dataframe     #

@@ -7,7 +7,7 @@ __all__ = ["MetaAgentState"]
 from typing import TYPE_CHECKING, Any, TypedDict
 
 if TYPE_CHECKING:
-    from argos.meta_agent.agent.config import AgentConfig
+    from argos.meta_agent.agents.config import AgentConfig
 
 
 class MetaAgentState(TypedDict):

@@ -12,12 +12,12 @@ from coola.utils.timing import timeblock
 from langchain_core.runnables import RunnableConfig
 
 from argos.meta_agent.prediction import PredictionResult
-from argos.meta_agent.predictor.base import BasePredictor
+from argos.meta_agent.predictors.base import BasePredictor
 from argos.meta_agent.typing import InputT, OutputT, TargetT
 from argos.utils.batching import batchify
 
 if TYPE_CHECKING:
-    from argos.meta_agent.agent import BaseAgent
+    from argos.meta_agent.agents import BaseAgent
     from argos.meta_agent.benchmark import Benchmark
 
 

@@ -16,7 +16,7 @@ class BinaryClassificationResults:
     r"""Store classification metrics.
 
     Attributes:
-        n_samples: The total number of samples in the DataFrame.
+        n_samples: The total number of samples.
         accuracy: The proportion of correct predictions.
         true_positive: True positives - correctly predicted positive cases.
         true_negative: True negatives - correctly predicted negative cases.

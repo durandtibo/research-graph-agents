@@ -11,7 +11,7 @@ from coola.equality import objects_are_equal
 from coola.nested import to_flat_dict
 from coola.utils.format import repr_mapping_line, str_mapping_line
 
-from argos.meta_agent.result.base import BaseResult
+from argos.meta_agent.results.base import BaseResult
 
 if TYPE_CHECKING:
     from argos.meta_agent.typing import FlatDict

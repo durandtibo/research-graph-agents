@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from coola.equality import objects_are_equal
 
-from argos.meta_agent.result import Result, ResultDict
+from argos.meta_agent.results import Result, ResultDict
 
 ################################
 #     Tests for ResultDict     #

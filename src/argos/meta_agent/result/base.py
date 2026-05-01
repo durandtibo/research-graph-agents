@@ -7,6 +7,8 @@ __all__ = ["BaseResult"]
 from abc import ABC, abstractmethod
 from typing import Any
 
+from coola.equality.tester import EqualNanEqualityTester, get_default_registry
+
 
 class BaseResult(ABC):
     r"""Abstract base class for storing and formatting metrics results.
@@ -83,3 +85,6 @@ class BaseResult(ABC):
         Returns:
             A string containing the Markdown representation of the result.
         """
+
+
+get_default_registry().register_many({BaseResult: EqualNanEqualityTester()}, exist_ok=True)

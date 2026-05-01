@@ -1,0 +1,62 @@
+r"""Implement a result that is a container for a dict of results."""
+
+from __future__ import annotations
+
+__all__ = ["ResultDict"]
+
+from typing import TYPE_CHECKING, Any
+
+from coola.equality import objects_are_equal
+from coola.nested import to_flat_dict
+from coola.utils.format import (
+    str_indent,
+    str_mapping,
+)
+
+from argos.meta_agent.result.base import BaseResult
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+
+class ResultDict(BaseResult):
+    r"""Implement a result that is a container for a dict of results.
+
+    Args:
+        results: A dict of results.
+    """
+
+    def __init__(self, results: Mapping[str, BaseResult]) -> None:
+        self._results = dict(results)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__qualname__}(count={len(self._results):,})"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping(self._results))
+        if args:
+            args = f"\n  {args}\n"
+        return f"{self.__class__.__qualname__}({args})"
+
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        if type(other) is not type(self):
+            return False
+        return objects_are_equal(self._results, other._results, equal_nan=equal_nan)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {key: value.to_dict() for key, value in self._results.items()}
+
+    def to_flat_dict(self, separator: str = ".") -> dict[str, Any]:
+        return to_flat_dict(self.to_dict(), separator=separator)
+
+    def to_raw_dict(self) -> dict[str, Any]:
+        return self._results
+
+    def to_markdown(self) -> str:
+        if not self._results:
+            return "_No metrics available._"
+        metrics = [
+            f"- **{key}**:\n  {str_indent(value.to_markdown())}"
+            for key, value in self._results.items()
+        ]
+        return "\n".join(metrics)

@@ -75,7 +75,7 @@ def test_result_to_dict_empty() -> None:
 
 def test_result_to_dict_is_same_object_as_to_raw_dict() -> None:
     result = Result({"loss": 0.5, "accuracy": 0.9})
-    assert result.to_dict() is not result.to_raw_dict()
+    assert result.to_dict() is result.to_raw_dict()
     assert result.to_dict() == result.to_raw_dict()
 
 
@@ -102,7 +102,7 @@ def test_result_to_raw_dict_empty() -> None:
 def test_result_to_raw_dict_returns_original_object() -> None:
     metrics = {"loss": 0.5}
     out = Result(metrics).to_raw_dict()
-    assert out is not metrics
+    assert out is metrics
     assert out == metrics
 
 

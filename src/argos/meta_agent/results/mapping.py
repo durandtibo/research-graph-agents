@@ -47,7 +47,8 @@ class ResultDict(BaseResult):
         return {key: value.to_dict() for key, value in self._results.items()}
 
     def to_flat_dict(self, separator: str = ".") -> dict[str, Any]:
-        r"""Return the result as a flat dictionary of native Python types.
+        r"""Return the result as a flat dictionary of native Python
+        types.
 
         Args:
             separator: The separator used to join nested keys when

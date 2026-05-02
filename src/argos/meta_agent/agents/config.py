@@ -10,7 +10,14 @@ from typing import Any
 
 @dataclass
 class AgentConfig:
-    r"""Define a generic agent configuration."""
+    r"""Define a generic agent configuration.
 
-    components: dict[str, Any]  # modular building blocks
-    metadata: dict[str, Any] = field(default_factory=dict)  # versioning, lineage, etc.
+    Attributes:
+        components: A dictionary of modular building blocks that define
+            the agent (e.g. model, prompt, retriever).
+        metadata: A dictionary for auxiliary information such as
+            versioning and lineage. Defaults to an empty dict.
+    """
+
+    components: dict[str, Any]
+    metadata: dict[str, Any] = field(default_factory=dict)

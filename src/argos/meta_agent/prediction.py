@@ -1,4 +1,4 @@
-r"""Contain the implementation of a benchmark example."""
+r"""Contain the implementation of prediction records and results."""
 
 from __future__ import annotations
 
@@ -16,7 +16,15 @@ T = TypeVar("T")
 
 @dataclass
 class PredictionRecord(Generic[T]):
-    r"""Define the prediction record class."""
+    r"""Store a single prediction paired with its example identifier.
+
+    Attributes:
+        example_id: The identifier of the benchmark example this
+            prediction corresponds to.
+        prediction: The prediction produced by the agent.
+        metadata: Optional dictionary of auxiliary information.
+            Defaults to ``None``.
+    """
 
     example_id: str
     prediction: T
@@ -25,7 +33,14 @@ class PredictionRecord(Generic[T]):
 
 @dataclass
 class PredictionResult(Generic[T]):
-    r"""Define the prediction result class."""
+    r"""Store the full set of predictions for a benchmark.
+
+    Attributes:
+        records: A list of :class:`PredictionRecord` instances, one
+            per benchmark example.
+        metadata: Optional dictionary of auxiliary information.
+            Defaults to ``None``.
+    """
 
     records: list[PredictionRecord[T]]
     metadata: dict[str, Any] | None = None

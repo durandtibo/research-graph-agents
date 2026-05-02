@@ -26,4 +26,7 @@ class BaseAgentFactory(ABC, Generic[InputT, OutputT]):
 
         Args:
             config: The configuration of the agent that is optimized by the meta-agent.
+
+        Returns:
+            A new agent instance built from the given configuration.
         """

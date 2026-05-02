@@ -24,14 +24,28 @@ if TYPE_CHECKING:
 
 
 class HaikuJudgeInput(TypedDict):
-    r"""Define the input to haiku judge."""
+    r"""Define the input to the haiku judge.
+
+    Attributes:
+        haiku: The haiku text to evaluate, expected to consist of
+            three lines separated by newlines.
+        topic: The target topic that the haiku should meaningfully
+            address.
+    """
 
     haiku: str
     topic: str
 
 
 class HaikuJudgeInputValidator(BaseModel):
-    r"""Define the input validator to haiku judge."""
+    r"""Validate the input to the haiku judge.
+
+    Attributes:
+        haiku: The haiku text to evaluate, expected to consist of
+            three lines. Must be non-empty.
+        topic: The target topic that the haiku should meaningfully
+            address. Must be non-empty.
+    """
 
     haiku: str = Field(
         min_length=1,
@@ -44,8 +58,12 @@ class HaikuJudgeInputValidator(BaseModel):
 
 
 class RawHaikuJudgeOutput(BaseModel):
-    r"""Evaluate the quality of a haiku by assessing its structure,
-    topic relevance, and overall quality score."""
+    r"""Define the raw structured output produced by the haiku judge LLM.
+
+    This model captures the LLM's predictions and reasoning for
+    structure, topic relevance, and overall quality, without the
+    derived ``overall_prediction`` field.
+    """
 
     structure_reasoning: str = Field(
         min_length=1,

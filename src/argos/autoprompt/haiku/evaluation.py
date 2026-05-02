@@ -31,7 +31,7 @@ def evaluate_judge_classification_metrics(
 ) -> dict[str, BinaryClassificationResults]:
     r"""Evaluate the metrics of the haiku judge.
 
-    Computes binary classification metrics for three prediction autoprompt:
+    Computes binary classification metrics for three prediction criteria:
     overall pass/fail, structure adherence, and topic relevance.
 
     Args:

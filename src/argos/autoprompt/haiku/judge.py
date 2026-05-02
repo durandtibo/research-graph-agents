@@ -27,7 +27,7 @@ def create_judge_graph(config: ChatModelConfig) -> CompiledStateGraph:
 
     Args:
         config: The
-            :class:`~argos.autoprompt.haiku.config.LlmConfig`
+            :class:`~argos.autoprompt.haiku.config.ChatModelConfig`
             that specifies the judge model (provider, temperature,
             system prompt, and retry settings).
 

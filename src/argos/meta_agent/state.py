@@ -11,7 +11,18 @@ if TYPE_CHECKING:
 
 
 class MetaAgentState(TypedDict):
-    r"""Define the meta-agent state."""
+    r"""Define the meta-agent state.
+
+    Attributes:
+        config: The current agent configuration being optimized.
+        metrics: A dictionary of evaluation metrics produced at the
+            current iteration.
+        diagnostic: A dictionary of diagnostic information (e.g.
+            error analysis) produced at the current iteration.
+        history: A list of dicts recording the configuration and
+            metrics from all previous iterations.
+        iteration: The current iteration index (zero-based).
+    """
 
     config: AgentConfig
     metrics: dict[Any, Any]

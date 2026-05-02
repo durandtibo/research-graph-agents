@@ -1,4 +1,4 @@
-r"""Define the base class to implement a predictor."""
+r"""Implement a predictor that processes examples in batches."""
 
 from __future__ import annotations
 

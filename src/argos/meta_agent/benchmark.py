@@ -15,7 +15,15 @@ if TYPE_CHECKING:
 
 @dataclass
 class BenchmarkExample(Generic[InputT, TargetT]):
-    r"""Define the benchmark example class."""
+    r"""Define a single labeled example used for benchmarking.
+
+    Attributes:
+        id: A unique identifier for the example.
+        input: The input passed to the agent.
+        target: The expected ground-truth output.
+        metadata: Optional dictionary of auxiliary information.
+            Defaults to ``None``.
+    """
 
     id: str
     input: InputT
@@ -25,9 +33,15 @@ class BenchmarkExample(Generic[InputT, TargetT]):
 
 @dataclass
 class Benchmark(Generic[InputT, TargetT]):
-    r"""Define the benchmark class.
+    r"""Define a collection of labeled examples used for benchmarking.
 
     The examples are indexed by their IDs.
+
+    Attributes:
+        examples: A mapping from example ID to
+            :class:`BenchmarkExample` instance.
+        metadata: Optional dictionary of auxiliary information about
+            the benchmark. Defaults to ``None``.
     """
 
     examples: dict[str, BenchmarkExample[InputT, TargetT]]

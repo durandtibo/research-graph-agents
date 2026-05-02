@@ -24,7 +24,7 @@ class PromptGeneratorInput(TypedDict):
     r"""Define the prompt generator input.
 
     Attributes:
-        history: The history of previous prompt.
+        history: The history of previous prompts.
     """
 
     history: str

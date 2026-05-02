@@ -25,7 +25,15 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BatchPredictor(BasePredictor[InputT, TargetT, OutputT]):
-    r"""Define a predictor that computes predictions by batches."""
+    r"""Define a predictor that computes predictions by batches.
+
+    Args:
+        batch_size: Number of examples to process concurrently per
+            batch. Defaults to ``1``.
+        config: Optional :class:`~langchain_core.runnables.RunnableConfig`
+            controlling concurrency. If ``None``, defaults to
+            ``RunnableConfig(max_concurrency=batch_size)``.
+    """
 
     def __init__(
         self,

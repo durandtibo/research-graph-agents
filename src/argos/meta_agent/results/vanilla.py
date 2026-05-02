@@ -1,4 +1,5 @@
-r"""Implement a simple result implementation for flat dictionary metrics."""
+r"""Implement a simple result implementation for flat dictionary
+metrics."""
 
 from __future__ import annotations
 
@@ -44,7 +45,8 @@ class Result(BaseResult):
         return self.to_raw_dict()
 
     def to_flat_dict(self, separator: str = ".") -> FlatDict:
-        r"""Return the result as a flat dictionary of native Python types.
+        r"""Return the result as a flat dictionary of native Python
+        types.
 
         Args:
             separator: The separator used to join nested keys when

@@ -52,7 +52,8 @@ class PredictionResult(Generic[T]):
         predictions: Sequence[T],
         metadata: dict[str, Any] | None = None,
     ) -> PredictionResult[T]:
-        r"""Create a prediction result from a list of example IDs and predictions.
+        r"""Create a prediction result from a list of example IDs and
+        predictions.
 
         ``example_ids`` and ``predictions`` must be aligned, i.e. the
         n-th example ID must match the n-th prediction.

@@ -47,6 +47,16 @@ class ResultDict(BaseResult):
         return {key: value.to_dict() for key, value in self._results.items()}
 
     def to_flat_dict(self, separator: str = ".") -> dict[str, Any]:
+        r"""Return the result as a flat dictionary of native Python types.
+
+        Args:
+            separator: The separator used to join nested keys when
+                flattening. Defaults to ``"."``.
+
+        Returns:
+            A flat dictionary mapping metric names to scalar native
+                Python values, with no nested dicts or lists.
+        """
         return to_flat_dict(self.to_dict(), separator=separator)
 
     def to_raw_dict(self) -> dict[str, Any]:

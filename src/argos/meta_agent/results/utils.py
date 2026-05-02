@@ -30,5 +30,17 @@ def results_to_dataframe(results: list[BaseResult]) -> pl.DataFrame:
     Returns:
         A Polars DataFrame with one row per result and one column per
             metric.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.results import Result
+        >>> from argos.meta_agent.results.utils import results_to_dataframe
+        >>> df = results_to_dataframe(
+        ...     [Result({"loss": 0.5, "accuracy": 0.9}), Result({"loss": 0.3, "accuracy": 0.95})]
+        ... )
+        >>> df.shape
+        (2, 2)
+
+        ```
     """
     return pl.DataFrame([r.to_flat_dict() for r in results])

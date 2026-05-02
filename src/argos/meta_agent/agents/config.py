@@ -17,6 +17,17 @@ class AgentConfig:
             the agent (e.g. model, prompt, retriever).
         metadata: A dictionary for auxiliary information such as
             versioning and lineage. Defaults to an empty dict.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.agents import AgentConfig
+        >>> config = AgentConfig(
+        ...     components={"model": "gpt-4o", "prompt": "You are a helpful assistant."}
+        ... )
+        >>> config.components
+        {'model': 'gpt-4o', 'prompt': 'You are a helpful assistant.'}
+
+        ```
     """
 
     components: dict[str, Any]

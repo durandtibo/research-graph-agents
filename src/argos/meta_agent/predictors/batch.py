@@ -33,6 +33,26 @@ class BatchPredictor(BasePredictor[InputT, TargetT, OutputT]):
         config: Optional :class:`~langchain_core.runnables.RunnableConfig`
             controlling concurrency. If ``None``, defaults to
             ``RunnableConfig(max_concurrency=batch_size)``.
+
+    Example:
+        ```pycon
+        >>> from langchain_core.runnables import RunnableLambda
+        >>> from argos.meta_agent.agents import Agent
+        >>> from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
+        >>> from argos.meta_agent.predictors import BatchPredictor
+        >>> agent = Agent(RunnableLambda(str.upper))
+        >>> benchmark = Benchmark.from_examples(
+        ...     [
+        ...         BenchmarkExample(id="q1", input="hello", target="HELLO"),
+        ...         BenchmarkExample(id="q2", input="world", target="WORLD"),
+        ...     ]
+        ... )
+        >>> predictor = BatchPredictor(batch_size=2)
+        >>> result = predictor.predict(agent, benchmark)
+        >>> result.to_dict()
+        {'q1': 'HELLO', 'q2': 'WORLD'}
+
+        ```
     """
 
     def __init__(

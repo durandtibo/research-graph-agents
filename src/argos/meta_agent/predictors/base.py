@@ -15,7 +15,12 @@ if TYPE_CHECKING:
 
 
 class BasePredictor(ABC, Generic[InputT, TargetT, OutputT]):
-    r"""Define the base class to implement a predictor."""
+    r"""Define the base class to implement a predictor.
+
+    Subclasses must implement :meth:`predict` to run an agent over all
+    examples in a benchmark and return the collected
+    :class:`~argos.meta_agent.prediction.PredictionResult`.
+    """
 
     @abstractmethod
     def predict(

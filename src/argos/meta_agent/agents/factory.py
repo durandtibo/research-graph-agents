@@ -18,7 +18,12 @@ OutputT = TypeVar("OutputT")
 
 
 class BaseAgentFactory(ABC, Generic[InputT, OutputT]):
-    r"""Define the base class to implement an agent factory."""
+    r"""Define the base class to implement an agent factory.
+
+    Subclasses must implement :meth:`create` to instantiate a
+    :class:`~argos.meta_agent.agents.BaseAgent` from an
+    :class:`~argos.meta_agent.agents.AgentConfig`.
+    """
 
     @abstractmethod
     def create(self, config: AgentConfig) -> BaseAgent[InputT, OutputT]:

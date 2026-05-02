@@ -19,6 +19,17 @@ class NoOpEvaluator(BaseEvaluator[InputT, TargetT, OutputT]):
 
     This evaluator should be used if no metrics are desired. It always
     returns an empty dictionary.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.benchmark import Benchmark
+        >>> from argos.meta_agent.evaluators import NoOpEvaluator
+        >>> from argos.meta_agent.prediction import PredictionResult
+        >>> evaluator = NoOpEvaluator()
+        >>> evaluator.evaluate(PredictionResult(records=[]), Benchmark({}))
+        {}
+
+        ```
     """
 
     def __repr__(self) -> str:

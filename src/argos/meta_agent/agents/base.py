@@ -14,7 +14,11 @@ if TYPE_CHECKING:
 
 
 class BaseAgent(ABC, Generic[InputT, OutputT]):
-    r"""Define the base class for all agents."""
+    r"""Define the base class for all agents.
+
+    Subclasses must implement :meth:`predict` to process a batch of
+    inputs and return the corresponding outputs.
+    """
 
     @abstractmethod
     def predict(self, inputs: list[InputT], config: RunnableConfig | None = None) -> list[OutputT]:

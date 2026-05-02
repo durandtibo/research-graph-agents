@@ -21,6 +21,16 @@ class Agent(BaseAgent[InputT, OutputT]):
 
     Args:
         model: An instance of a runnable object used as model for the agent.
+
+    Example:
+        ```pycon
+        >>> from langchain_core.runnables import RunnableLambda
+        >>> from argos.meta_agent.agents import Agent
+        >>> agent = Agent(RunnableLambda(str.upper))
+        >>> agent.predict(["hello", "world"])
+        ['HELLO', 'WORLD']
+
+        ```
     """
 
     def __init__(self, model: Runnable[InputT, OutputT]) -> None:

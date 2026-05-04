@@ -142,12 +142,12 @@ def test_dataset_repr() -> None:
 
 
 def test_dataset_equality() -> None:
-    assert Dataset(
+    assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) == Dataset(
         examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
-    ) == Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")})
+    )
 
 
 def test_dataset_inequality_different_examples() -> None:
-    assert Dataset(
-        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
-    ) != Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="5")})
+    assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) != Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="5")}
+    )

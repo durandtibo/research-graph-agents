@@ -39,6 +39,20 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
     metadata: dict[str, Any] | None = None
 
     @abstractmethod
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        r"""Return ``True`` if the two objects are equal, otherwise
+        ``False``.
+
+        Args:
+            other: The value to compare with.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
+
+        Returns:
+            ``True`` if the two objects are equal, otherwise ``False``
+        """
+
+    @abstractmethod
     def to_dict(self) -> dict[str, Any]:
         r"""Serialise the example to a plain dictionary.
 

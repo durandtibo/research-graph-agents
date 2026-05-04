@@ -90,7 +90,7 @@ def test_dataframe_to_examples_custom_class() -> None:
                 "metadata": [None, None],
             }
         ),
-        example_cls=CustomExample,
+        example_type=CustomExample,
     )
     assert examples == [
         CustomExample(id="q1", input="What is 2+2?", target="4"),

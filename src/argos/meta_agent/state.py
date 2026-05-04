@@ -22,6 +22,22 @@ class MetaAgentState(TypedDict):
         history: A list of dicts recording the configuration and
             metrics from all previous iterations.
         iteration: The current iteration index (zero-based).
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.agents import AgentConfig
+        >>> from argos.meta_agent.state import MetaAgentState
+        >>> state: MetaAgentState = {
+        ...     "config": AgentConfig(components={}),
+        ...     "metrics": {},
+        ...     "diagnostic": {},
+        ...     "history": [],
+        ...     "iteration": 0,
+        ... }
+        >>> state["iteration"]
+        0
+
+        ```
     """
 
     config: AgentConfig

@@ -23,7 +23,22 @@ class ResultDict(BaseResult):
     r"""Implement a result that is a container for a dict of results.
 
     Args:
-        results: A dict of results.
+        results: A mapping from string keys to :class:`BaseResult`
+            instances. Each key typically identifies a dataset split or
+            evaluation phase (e.g. ``"train"``, ``"val"``).
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.results import Result, ResultDict
+        >>> result = ResultDict(
+        ...     {"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})}
+        ... )
+        >>> result.to_dict()
+        {'train': {'loss': 0.5}, 'val': {'loss': 0.3}}
+        >>> result.to_flat_dict()
+        {'train.loss': 0.5, 'val.loss': 0.3}
+
+        ```
     """
 
     def __init__(self, results: Mapping[str, BaseResult]) -> None:

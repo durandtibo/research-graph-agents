@@ -23,6 +23,19 @@ class BenchmarkExample(Generic[InputT, TargetT]):
         target: The expected ground-truth output.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.benchmark import BenchmarkExample
+        >>> example = BenchmarkExample(id="q1", input="What is 2+2?", target="4")
+        >>> example.id
+        'q1'
+        >>> example.input
+        'What is 2+2?'
+        >>> example.target
+        '4'
+
+        ```
     """
 
     id: str
@@ -42,6 +55,20 @@ class Benchmark(Generic[InputT, TargetT]):
             :class:`BenchmarkExample` instance.
         metadata: Optional dictionary of auxiliary information about
             the benchmark. Defaults to ``None``.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
+        >>> benchmark = Benchmark(
+        ...     examples={
+        ...         "q1": BenchmarkExample(id="q1", input="What is 2+2?", target="4"),
+        ...         "q2": BenchmarkExample(id="q2", input="What is 3+3?", target="6"),
+        ...     }
+        ... )
+        >>> len(benchmark.examples)
+        2
+
+        ```
     """
 
     examples: dict[str, BenchmarkExample[InputT, TargetT]]
@@ -61,6 +88,23 @@ class Benchmark(Generic[InputT, TargetT]):
 
         Returns:
             The benchmark instance.
+
+        Raises:
+            ValueError: If any example IDs are duplicated.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
+            >>> benchmark = Benchmark.from_examples(
+            ...     [
+            ...         BenchmarkExample(id="q1", input="What is 2+2?", target="4"),
+            ...         BenchmarkExample(id="q2", input="What is 3+3?", target="6"),
+            ...     ]
+            ... )
+            >>> len(benchmark.examples)
+            2
+
+            ```
         """
         data = {example.id: example for example in examples}
         if len(data) != len(examples):

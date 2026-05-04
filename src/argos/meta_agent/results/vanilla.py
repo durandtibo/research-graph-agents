@@ -22,7 +22,20 @@ class Result(BaseResult):
     metrics.
 
     Args:
-        metrics: A flat dict of metrics.
+        metrics: A flat dict of metrics whose keys are strings and
+            values are JSON-compatible scalar types (``int``, ``float``,
+            ``str``, ``bool``, or ``None``).
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.results import Result
+        >>> result = Result({"loss": 0.5, "accuracy": 0.9})
+        >>> result.to_dict()
+        {'loss': 0.5, 'accuracy': 0.9}
+        >>> result.to_markdown()
+        '- **loss**: 0.5\n- **accuracy**: 0.9'
+
+        ```
     """
 
     def __init__(self, metrics: FlatDict) -> None:

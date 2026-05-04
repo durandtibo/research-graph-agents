@@ -24,6 +24,17 @@ class PredictionRecord(Generic[T]):
         prediction: The prediction produced by the agent.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.prediction import PredictionRecord
+        >>> record = PredictionRecord(example_id="q1", prediction="4")
+        >>> record.example_id
+        'q1'
+        >>> record.prediction
+        '4'
+
+        ```
     """
 
     example_id: str
@@ -40,6 +51,20 @@ class PredictionResult(Generic[T]):
             per benchmark example.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.prediction import PredictionRecord, PredictionResult
+        >>> result = PredictionResult(
+        ...     records=[
+        ...         PredictionRecord(example_id="q1", prediction="4"),
+        ...         PredictionRecord(example_id="q2", prediction="6"),
+        ...     ]
+        ... )
+        >>> result.to_dict()
+        {'q1': '4', 'q2': '6'}
+
+        ```
     """
 
     records: list[PredictionRecord[T]]
@@ -66,6 +91,22 @@ class PredictionResult(Generic[T]):
 
         Returns:
             The prediction result.
+
+        Raises:
+            ValueError: If ``example_ids`` and ``predictions`` have
+                different lengths.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.prediction import PredictionResult
+            >>> result = PredictionResult.from_predictions(
+            ...     example_ids=["q1", "q2"],
+            ...     predictions=["4", "6"],
+            ... )
+            >>> result.to_dict()
+            {'q1': '4', 'q2': '6'}
+
+            ```
         """
         if len(example_ids) != len(predictions):
             msg = "example_ids and predictions must have the same length"
@@ -83,11 +124,20 @@ class PredictionResult(Generic[T]):
         r"""Create a prediction result from a dictionary.
 
         Args:
-            data: A dictionary containing example IDs and predictions.
+            data: A dictionary mapping example IDs to predictions.
             metadata: A dictionary of metadata.
 
         Returns:
             The prediction result.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.prediction import PredictionResult
+            >>> result = PredictionResult.from_dict({"q1": "4", "q2": "6"})
+            >>> result.to_dict()
+            {'q1': '4', 'q2': '6'}
+
+            ```
         """
         return cls.from_predictions(
             example_ids=data.keys(),
@@ -96,9 +146,23 @@ class PredictionResult(Generic[T]):
         )
 
     def to_dict(self) -> dict[str, T]:
-        r"""Return a dictionary containing example IDs and predictions.
+        r"""Return a dictionary mapping example IDs to predictions.
 
         Returns:
-            A dictionary containing example IDs and predictions.
+            A dictionary mapping each example ID to its prediction.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.prediction import PredictionRecord, PredictionResult
+            >>> result = PredictionResult(
+            ...     records=[
+            ...         PredictionRecord(example_id="q1", prediction="4"),
+            ...         PredictionRecord(example_id="q2", prediction="6"),
+            ...     ]
+            ... )
+            >>> result.to_dict()
+            {'q1': '4', 'q2': '6'}
+
+            ```
         """
         return {record.example_id: record.prediction for record in self.records}

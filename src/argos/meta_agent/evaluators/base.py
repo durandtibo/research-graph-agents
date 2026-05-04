@@ -14,7 +14,12 @@ if TYPE_CHECKING:
 
 
 class BaseEvaluator(ABC, Generic[InputT, TargetT, OutputT]):
-    r"""Define the base class to implement an evaluator."""
+    r"""Define the base class to implement an evaluator.
+
+    Subclasses must implement :meth:`evaluate` to compare agent
+    predictions against benchmark targets and return a dictionary of
+    metrics.
+    """
 
     @abstractmethod
     def evaluate(

@@ -10,6 +10,8 @@ from typing import TYPE_CHECKING, Any, Generic
 from argos.meta_agent.typing import InputT, TargetT
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import polars as pl
 
     from argos.meta_agent.examples import BaseExample
@@ -22,15 +24,8 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
     Subclasses must define all attributes and implement all methods.
     """
 
-    @property
-    @abstractmethod
-    def examples(self) -> dict[str, BaseExample[InputT, TargetT]]:
-        """The expected ground-truth output."""
-
-    @property
-    @abstractmethod
-    def metadata(self) -> dict[str, Any] | None:
-        """Optional dictionary of auxiliary information."""
+    examples: dict[str, BaseExample[InputT, TargetT]]
+    metadata: dict[str, Any] | None = None
 
     @abstractmethod
     def to_dataframe(self) -> pl.DataFrame:
@@ -39,14 +34,36 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
         Note: the metadata are not included in the returned DataFrame.
         """
 
-    @abstractmethod
     @classmethod
-    def from_dataframe(
-        cls, frame: pl.DataFrame, metadata: dict[str, Any] | None = None
+    def from_examples(
+        cls,
+        examples: Sequence[BaseExample[InputT, TargetT]],
+        metadata: dict[str, Any] | None = None,
     ) -> BaseDataset[InputT, TargetT]:
-        r"""Return a dataset example from the provided dataframe.
+        r"""Create a dataset from a list of examples.
 
         Args:
-            frame: Pandas DataFrame representing the dataset examples.
-            metadata: Optional dictionary of auxiliary information.
+            examples: A list of examples. The example IDs must be unique.
+            metadata: The dataset metadata.
+
+        Returns:
+            The dataset instance.
+
+        Raises:
+            ValueError: If any example IDs are duplicated.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.datasets import Dataset
+            >>> from argos.meta_agent.examples import Example
+            >>> dataset = Dataset.from_examples(
+            ...     [
+            ...         Example(id="q1", input="What is 2+2?", target="4"),
+            ...         Example(id="q2", input="What is 3+3?", target="6"),
+            ...     ]
+            ... )
+            >>> len(dataset.examples)
+            2
+
+            ```
         """

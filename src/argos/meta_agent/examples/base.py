@@ -4,8 +4,8 @@ from __future__ import annotations
 
 __all__ = ["BaseExample"]
 
-from abc import ABC
-from typing import Any, Generic
+from abc import ABC, abstractmethod
+from typing import Any, Generic, Self
 
 from argos.meta_agent.typing import InputT, TargetT
 
@@ -22,6 +22,7 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
     target: TargetT
     metadata: dict[str, Any] | None = None
 
+    @abstractmethod
     def to_dict(self) -> dict[str, Any]:
         """Serialise the example to a plain dictionary.
 
@@ -29,9 +30,16 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
             A dictionary with keys ``id``, ``input``, ``target``, and
             ``metadata``.
         """
-        return {
-            "id": self.id,
-            "input": self.input,
-            "target": self.target,
-            "metadata": self.metadata,
-        }
+
+    @classmethod
+    @abstractmethod
+    def from_dict(cls, data: dict[str, Any]) -> Self:
+        """Construct an instance from a plain dictionary.
+
+        Args:
+            data: Must contain ``id``, ``input``, and ``target`` keys.
+                ``metadata`` is optional.
+
+        Returns:
+            A new instance of the calling subclass.
+        """

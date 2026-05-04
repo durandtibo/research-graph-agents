@@ -57,7 +57,5 @@ def test_noop_evaluator_evaluate_empty() -> None:
 def test_noop_evaluator_returns_empty_dict_regardless_of_predictions(
     benchmark: Benchmark,
 ) -> None:
-    predictions = PredictionResult(
-        [PredictionRecord(example_id="id1", prediction="unexpected")]
-    )
+    predictions = PredictionResult([PredictionRecord(example_id="id1", prediction="unexpected")])
     assert NoOpEvaluator().evaluate(predictions=predictions, benchmark=benchmark) == {}

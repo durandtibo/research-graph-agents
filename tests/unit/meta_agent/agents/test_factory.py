@@ -8,14 +8,16 @@ from argos.meta_agent.agents import Agent, AgentConfig, BaseAgent, BaseAgentFact
 
 
 class UpperCaseAgentFactory(BaseAgentFactory):
-    """Concrete factory that always returns an Agent wrapping str.upper."""
+    """Concrete factory that always returns an Agent wrapping
+    str.upper."""
 
-    def create(self, config: AgentConfig) -> BaseAgent:
+    def create(self, config: AgentConfig) -> BaseAgent:  # noqa: ARG002
         return Agent(RunnableLambda(str.upper))
 
 
 class EchoAgentFactory(BaseAgentFactory):
-    """Concrete factory that uses a component from config to select a transform."""
+    """Concrete factory that uses a component from config to select a
+    transform."""
 
     def create(self, config: AgentConfig) -> BaseAgent:
         transform = config.components.get("transform", str)

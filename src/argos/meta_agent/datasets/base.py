@@ -33,16 +33,16 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.datasets import BaseDataset, Dataset
+        >>> from argos.meta_agent.datasets import Dataset
         >>> from argos.meta_agent.examples import Example
-        >>> dataset = Dataset.from_examples(
-        ...     [
-        ...         Example(id="q1", input="What is 2+2?", target="4"),
-        ...         Example(id="q2", input="What is 3+3?", target="6"),
-        ...     ]
+        >>> dataset = Dataset(
+        ...     {
+        ...         "q1": Example(id="q1", input="What is 2+2?", target="4"),
+        ...         "q2": Example(id="q2", input="What is 3+3?", target="6"),
+        ...     }
         ... )
-        >>> isinstance(dataset, BaseDataset)
-        True
+        >>> len(dataset.examples)
+        2
 
         ```
     """
@@ -86,8 +86,16 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
             ...         Example(id="q2", input="What is 3+3?", target="6"),
             ...     ]
             ... )
-            >>> isinstance(dataset.to_dataframe(), pl.DataFrame)
-            True
+            >>> dataset.to_dataframe()
+            shape: (2, 4)
+            ┌─────┬──────────────┬────────┬──────────┐
+            │ id  ┆ input        ┆ target ┆ metadata │
+            │ --- ┆ ---          ┆ ---    ┆ ---      │
+            │ str ┆ str          ┆ str    ┆ null     │
+            ╞═════╪══════════════╪════════╪══════════╡
+            │ q1  ┆ What is 2+2? ┆ 4      ┆ null     │
+            │ q2  ┆ What is 3+3? ┆ 6      ┆ null     │
+            └─────┴──────────────┴────────┴──────────┘
 
             ```
         """

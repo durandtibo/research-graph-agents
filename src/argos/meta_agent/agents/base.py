@@ -41,5 +41,18 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
             config: A config to use when invoking the `Runnable`.
 
         Returns:
-            The predictions of the agent.
+            The predictions of the agent. The returned list has the
+                same length as ``inputs``, and each element
+                corresponds to the prediction for the input at the
+                same index.
+
+        Example:
+            ```pycon
+            >>> from langchain_core.runnables import RunnableLambda
+            >>> from argos.meta_agent.agents import Agent
+            >>> agent = Agent(RunnableLambda(str.upper))
+            >>> agent.predict(["hello", "world"])
+            ['HELLO', 'WORLD']
+
+            ```
         """

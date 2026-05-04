@@ -1,5 +1,4 @@
-r"""Contain some agent factory classes that are used to create agents
-based on the configuration optimized by the meta-agent."""
+r"""Define the base class to implement an agent factory."""
 
 from __future__ import annotations
 

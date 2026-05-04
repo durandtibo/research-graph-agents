@@ -15,21 +15,19 @@ if TYPE_CHECKING:
 def examples_to_dataframe(examples: list[BaseExample]) -> pl.DataFrame:
     r"""Convert a list of examples into a Polars DataFrame.
 
-    Each result is represented as a single row, where columns correspond
-    to the metric names returned by ``to_flat_dict``. This is the
-    recommended way to build a DataFrame from multiple examples, as a
-    single result does not carry enough structure to justify a DataFrame
-    on its own.
+    Each example is represented as a single row, where columns correspond
+    to the fields returned by ``to_dict``. This is the recommended way to
+    build a DataFrame from multiple examples, as a single example does not
+    carry enough structure to justify a DataFrame on its own.
 
     Args:
-        examples: A list of result objects to convert. All examples should
-            have consistent keys in their ``to_flat_dict`` output to
-            ensure a well-formed DataFrame. An empty list returns an
-            empty DataFrame.
+        examples: A list of examples to convert. All examples should have
+            consistent keys in their ``to_dict`` output to ensure a
+            well-formed DataFrame. An empty list returns an empty DataFrame.
 
     Returns:
-        A Polars DataFrame with one row per result and one column per
-            metric.
+        A Polars DataFrame with one row per example and one column per
+            field.
 
     Example:
         ```pycon

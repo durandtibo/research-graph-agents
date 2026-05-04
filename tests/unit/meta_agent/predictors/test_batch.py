@@ -43,31 +43,6 @@ def mock_agent() -> BaseAgent:
 ####################################
 
 
-def test_batch_predictor_default_batch_size() -> None:
-    predictor = BatchPredictor()
-    assert predictor._batch_size == 1
-
-
-def test_batch_predictor_custom_batch_size() -> None:
-    predictor = BatchPredictor(batch_size=4)
-    assert predictor._batch_size == 4
-
-
-def test_batch_predictor_default_config_uses_batch_size_as_max_concurrency() -> None:
-    predictor = BatchPredictor(batch_size=4)
-    assert predictor._config["max_concurrency"] == 4
-
-
-def test_batch_predictor_custom_config_is_stored() -> None:
-    config = RunnableConfig(max_concurrency=8)
-    predictor = BatchPredictor(batch_size=2, config=config)
-    assert predictor._config == config
-
-
-def test_batch_predictor_none_config_generates_default() -> None:
-    assert BatchPredictor()._config is not None
-
-
 def test_batch_predictor_repr() -> None:
     assert repr(BatchPredictor()) == (
         "BatchPredictor(\n  (batch_size): 1\n  (config): {'max_concurrency': 1}\n)"
@@ -77,6 +52,14 @@ def test_batch_predictor_repr() -> None:
 def test_batch_predictor_repr_custom_batch_size() -> None:
     assert repr(BatchPredictor(batch_size=4)) == (
         "BatchPredictor(\n  (batch_size): 4\n  (config): {'max_concurrency': 4}\n)"
+    )
+
+
+def test_batch_predictor_custom_config_repr() -> None:
+    config = RunnableConfig(max_concurrency=8)
+    predictor = BatchPredictor(batch_size=2, config=config)
+    assert repr(predictor) == (
+        "BatchPredictor(\n  (batch_size): 2\n  (config): {'max_concurrency': 8}\n)"
     )
 
 
@@ -120,3 +103,22 @@ def test_batch_predictor_predict_with_empty_benchmark() -> None:
     predictor = BatchPredictor(batch_size=2)
     result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=Benchmark(examples={}))
     assert result == PredictionResult([])
+
+
+def test_batch_predictor_predict_preserves_example_id_order() -> None:
+    benchmark = Benchmark.from_examples(
+        [
+            BenchmarkExample(id="z1", input=3, target=None),
+            BenchmarkExample(id="a1", input=1, target=None),
+            BenchmarkExample(id="m1", input=2, target=None),
+        ]
+    )
+    predictor = BatchPredictor(batch_size=10)
+    result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=benchmark)
+    assert result == PredictionResult(
+        [
+            PredictionRecord(example_id="z1", prediction=6),
+            PredictionRecord(example_id="a1", prediction=2),
+            PredictionRecord(example_id="m1", prediction=4),
+        ]
+    )

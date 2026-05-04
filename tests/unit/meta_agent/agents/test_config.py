@@ -66,11 +66,20 @@ def test_agent_config_equality() -> None:
     assert AgentConfig(components={"llm": "gpt-4"}) == AgentConfig(components={"llm": "gpt-4"})
 
 
-def test_agent_config_inequality_different_components() -> None:
-    assert AgentConfig(components={"llm": "gpt-4"}) != AgentConfig(components={"llm": "claude"})
-
-
-def test_agent_config_inequality_different_metadata() -> None:
-    assert AgentConfig(components={}, metadata={"version": "1.0"}) != AgentConfig(
-        components={}, metadata={"version": "2.0"}
-    )
+@pytest.mark.parametrize(
+    ("cfg1", "cfg2"),
+    [
+        pytest.param(
+            AgentConfig(components={"llm": "gpt-4"}),
+            AgentConfig(components={"llm": "claude"}),
+            id="different_components",
+        ),
+        pytest.param(
+            AgentConfig(components={}, metadata={"version": "1.0"}),
+            AgentConfig(components={}, metadata={"version": "2.0"}),
+            id="different_metadata",
+        ),
+    ],
+)
+def test_agent_config_inequality(cfg1: AgentConfig, cfg2: AgentConfig) -> None:
+    assert cfg1 != cfg2

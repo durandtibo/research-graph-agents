@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class Dataset(BaseDataset[InputT, TargetT]):
-    r"""Define a collection of labeled examples used for dataseting.
+    r"""Define a collection of labeled examples used for datasets.
 
     The examples are indexed by their IDs.
 

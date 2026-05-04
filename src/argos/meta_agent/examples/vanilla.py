@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["Example"]
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Self
 
 from argos.meta_agent.examples.base import BaseExample
 from argos.meta_agent.typing import InputT, TargetT
@@ -41,17 +41,16 @@ class Example(BaseExample[InputT, TargetT]):
     target: TargetT
     metadata: dict[str, Any] | None = None
 
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "input": self.input,
+            "target": self.target,
+            "metadata": self.metadata,
+        }
+
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> Example[InputT, TargetT]:
-        """Construct an instance from a plain dictionary.
-
-        Args:
-            data: Must contain ``id``, ``input``, and ``target`` keys.
-                ``metadata`` is optional.
-
-        Returns:
-            A new instance of the calling subclass.
-        """
+    def from_dict(cls, data: dict[str, Any]) -> Self:
         return cls(
             id=data["id"],
             input=data["input"],

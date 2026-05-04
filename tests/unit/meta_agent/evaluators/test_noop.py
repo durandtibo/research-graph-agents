@@ -1,35 +1,35 @@
 from __future__ import annotations
 
+import polars as pl
 import pytest
 
-from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
 from argos.meta_agent.evaluators import NoOpEvaluator
-from argos.meta_agent.prediction import PredictionRecord, PredictionResult
+from argos.meta_agent.results import Result
 
 
 @pytest.fixture
-def benchmark() -> Benchmark:
-    return Benchmark(
+def dataframe() -> pl.DataFrame:
+    return pl.DataFrame(
         {
-            "id1": BenchmarkExample(id="id1", input=1, target=None),
-            "id2": BenchmarkExample(id="id2", input=2, target=None),
-            "id3": BenchmarkExample(id="id3", input=3, target=None),
-            "id4": BenchmarkExample(id="id4", input=4, target=None),
-            "id5": BenchmarkExample(id="id5", input=5, target=None),
-        }
-    )
-
-
-@pytest.fixture
-def predictions() -> PredictionResult:
-    return PredictionResult(
-        [
-            PredictionRecord(example_id="id1", prediction=2),
-            PredictionRecord(example_id="id2", prediction=4),
-            PredictionRecord(example_id="id3", prediction=6),
-            PredictionRecord(example_id="id4", prediction=8),
-            PredictionRecord(example_id="id5", prediction=10),
-        ]
+            "id": ["id1", "id2", "id3", "id4", "id5"],
+            "input": ["input1", "input2", "input3", "input4", "input5"],
+            "target": ["target1", "target2", "target3", "target4", "target5"],
+            "metadata": [
+                {"tag": "tag1"},
+                {"tag": "tag2"},
+                {"tag": "tag3"},
+                {"tag": "tag4"},
+                {"tag": "tag5"},
+            ],
+        },
+        schema=pl.Schema(
+            {
+                "id": pl.String,
+                "input": pl.String,
+                "target": pl.String,
+                "metadata": pl.Struct({"tag": pl.String}),
+            },
+        ),
     )
 
 
@@ -46,16 +46,9 @@ def test_noop_evaluator_str() -> None:
     assert str(NoOpEvaluator()) == "NoOpEvaluator()"
 
 
-def test_noop_evaluator_evaluate(benchmark: Benchmark, predictions: PredictionResult) -> None:
-    assert NoOpEvaluator().evaluate(predictions=predictions, benchmark=benchmark) == {}
+def test_noop_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
+    assert NoOpEvaluator().evaluate(dataframe).equal(Result({}))
 
 
 def test_noop_evaluator_evaluate_empty() -> None:
-    assert NoOpEvaluator().evaluate(PredictionResult([]), Benchmark({})) == {}
-
-
-def test_noop_evaluator_returns_empty_dict_regardless_of_predictions(
-    benchmark: Benchmark,
-) -> None:
-    predictions = PredictionResult([PredictionRecord(example_id="id1", prediction="unexpected")])
-    assert NoOpEvaluator().evaluate(predictions=predictions, benchmark=benchmark) == {}
+    assert NoOpEvaluator().evaluate(pl.DataFrame({})).equal(Result({}))

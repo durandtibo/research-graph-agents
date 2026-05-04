@@ -2,14 +2,57 @@ r"""Contain utilities for examples."""
 
 from __future__ import annotations
 
-__all__ = ["examples_to_dataframe"]
+__all__ = ["dataframe_to_examples", "examples_to_dataframe"]
 
-from typing import TYPE_CHECKING
+from typing import TypeVar
 
 import polars as pl
 
-if TYPE_CHECKING:
-    from argos.meta_agent.examples import BaseExample
+from argos.meta_agent.examples import BaseExample
+from argos.meta_agent.examples.vanilla import Example
+
+ExampleT = TypeVar("ExampleT", bound=BaseExample)
+
+
+def dataframe_to_examples(
+    frame: pl.DataFrame, example_cls: type[ExampleT] = Example
+) -> list[ExampleT]:
+    r"""Convert a Polars DataFrame into a list of examples.
+
+    Each row in the DataFrame is converted into a single example using
+    the ``from_dict`` class method of ``example_cls``. This is the
+    inverse of :func:`examples_to_dataframe`.
+
+    Args:
+        frame: A Polars DataFrame where each row represents a single
+            example. Column names must match the fields expected by
+            ``example_cls.from_dict``.
+        example_cls: The example class to instantiate for each row.
+            Defaults to :class:`Example`.
+
+    Returns:
+        A list of examples, one per row, in the same order as the
+            DataFrame.
+
+    Example:
+        ```pycon
+        >>> import polars as pl
+        >>> from argos.meta_agent.examples import Example, dataframe_to_examples
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "id": ["q1", "q2"],
+        ...         "input": ["What is 2+2?", "What is 4+2?"],
+        ...         "target": ["4", "6"],
+        ...         "metadata": [None, None],
+        ...     }
+        ... )
+        >>> examples = dataframe_to_examples(frame)
+        >>> examples[0]
+        Example(id='q1', input='What is 2+2?', target='4', metadata=None)
+
+        ```
+    """
+    return [example_cls.from_dict(row) for row in frame.iter_rows(named=True)]
 
 
 def examples_to_dataframe(examples: list[BaseExample]) -> pl.DataFrame:

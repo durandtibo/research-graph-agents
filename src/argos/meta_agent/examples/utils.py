@@ -15,19 +15,19 @@ ExampleT = TypeVar("ExampleT", bound=BaseExample)
 
 
 def dataframe_to_examples(
-    frame: pl.DataFrame, example_cls: type[ExampleT] = Example
+    frame: pl.DataFrame, example_type: type[ExampleT] = Example
 ) -> list[ExampleT]:
     r"""Convert a Polars DataFrame into a list of examples.
 
     Each row in the DataFrame is converted into a single example using
-    the ``from_dict`` class method of ``example_cls``. This is the
+    the ``from_dict`` class method of ``example_type``. This is the
     inverse of :func:`examples_to_dataframe`.
 
     Args:
         frame: A Polars DataFrame where each row represents a single
             example. Column names must match the fields expected by
-            ``example_cls.from_dict``.
-        example_cls: The example class to instantiate for each row.
+            ``example_type.from_dict``.
+        example_type: The example class to instantiate for each row.
             Defaults to :class:`Example`.
 
     Returns:
@@ -52,7 +52,7 @@ def dataframe_to_examples(
 
         ```
     """
-    return [example_cls.from_dict(row) for row in frame.iter_rows(named=True)]
+    return [example_type.from_dict(row) for row in frame.iter_rows(named=True)]
 
 
 def examples_to_dataframe(examples: list[BaseExample]) -> pl.DataFrame:

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-
 from argos.meta_agent.predictions import BasePrediction, Prediction
 
 ################################
 #     Tests for Prediction     #
 ################################
+
+
+def test_prediction_is_instance_of_base_prediction() -> None:
+    assert isinstance(Prediction(example_id="q1", prediction="4"), BasePrediction)
 
 
 def test_prediction_example_id() -> None:
@@ -134,10 +137,6 @@ def test_prediction_roundtrip() -> None:
 def test_prediction_roundtrip_without_metadata() -> None:
     prediction = Prediction(example_id="q1", prediction="4")
     assert Prediction.from_dict(prediction.to_dict()) == prediction
-
-
-def test_prediction_is_instance_of_base_prediction() -> None:
-    assert isinstance(Prediction(example_id="q1", prediction="4"), BasePrediction)
 
 
 def test_prediction_equality() -> None:

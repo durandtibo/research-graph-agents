@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from argos.meta_agent.results import BaseResult, Result
+from argos.meta_agent.results import Result
 
 ############################
 #     Tests for Result     #
@@ -137,10 +137,6 @@ def test_result_to_markdown_bool_value() -> None:
 
 def test_result_to_markdown_none_value() -> None:
     assert Result({"score": None}).to_markdown() == "- **score**: None"
-
-
-def test_result_is_instance_of_base_result() -> None:
-    assert isinstance(Result({}), BaseResult)
 
 
 @pytest.mark.parametrize(

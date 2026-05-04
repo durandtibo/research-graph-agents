@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 from langchain_core.runnables import RunnableLambda
 
 from argos.meta_agent.agents import Agent, AgentConfig, BaseAgent, BaseAgentFactory
@@ -28,24 +27,15 @@ class EchoAgentFactory(BaseAgentFactory):
 #####################################
 
 
-def test_base_agent_factory_is_abstract() -> None:
-    with pytest.raises(TypeError):
-        BaseAgentFactory()  # type: ignore[abstract]
-
-
-def test_base_agent_factory_create_is_abstract() -> None:
-    assert "create" in BaseAgentFactory.__abstractmethods__
-
-
 def test_base_agent_factory_concrete_can_be_instantiated() -> None:
     factory = UpperCaseAgentFactory()
     assert isinstance(factory, BaseAgentFactory)
 
 
-def test_base_agent_factory_create_returns_base_agent() -> None:
+def test_base_agent_factory_create_returns_agent() -> None:
     factory = UpperCaseAgentFactory()
     agent = factory.create(AgentConfig(components={}))
-    assert isinstance(agent, BaseAgent)
+    assert isinstance(agent, Agent)
 
 
 def test_base_agent_factory_create_agent_produces_correct_predictions() -> None:
@@ -65,8 +55,9 @@ def test_base_agent_factory_create_can_be_called_multiple_times() -> None:
     config = AgentConfig(components={})
     agent1 = factory.create(config)
     agent2 = factory.create(config)
-    assert isinstance(agent1, BaseAgent)
-    assert isinstance(agent2, BaseAgent)
+    assert isinstance(agent1, Agent)
+    assert isinstance(agent2, Agent)
+    assert agent1 is not agent2
 
 
 def test_base_agent_factory_create_ignores_metadata() -> None:

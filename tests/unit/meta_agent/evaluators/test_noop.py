@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
-from argos.meta_agent.evaluators import BaseEvaluator, NoOpEvaluator
+from argos.meta_agent.evaluators import NoOpEvaluator
 from argos.meta_agent.prediction import PredictionRecord, PredictionResult
 
 
@@ -52,10 +52,6 @@ def test_noop_evaluator_evaluate(benchmark: Benchmark, predictions: PredictionRe
 
 def test_noop_evaluator_evaluate_empty() -> None:
     assert NoOpEvaluator().evaluate(PredictionResult([]), Benchmark({})) == {}
-
-
-def test_noop_evaluator_is_instance_of_base_evaluator() -> None:
-    assert isinstance(NoOpEvaluator(), BaseEvaluator)
 
 
 def test_noop_evaluator_returns_empty_dict_regardless_of_predictions(

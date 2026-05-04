@@ -1,9 +1,11 @@
+r"""Contain a simple implementation of a dataset."""
+
 from __future__ import annotations
 
 __all__ = ["Dataset"]
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Self
 
 import polars as pl
 
@@ -55,7 +57,7 @@ class Dataset(BaseDataset[InputT, TargetT]):
         cls,
         examples: Sequence[BaseExample[InputT, TargetT]],
         metadata: dict[str, Any] | None = None,
-    ) -> Dataset[InputT, TargetT]:
+    ) -> Self:
         data = {example.id: example for example in examples}
         if len(data) != len(examples):
             msg = "Some example IDs are duplicated"

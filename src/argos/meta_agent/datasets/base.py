@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseDataset"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Generic
+from typing import TYPE_CHECKING, Any, Generic, Self
 
 from argos.meta_agent.typing import InputT, TargetT
 
@@ -39,7 +39,7 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
         cls,
         examples: Sequence[BaseExample[InputT, TargetT]],
         metadata: dict[str, Any] | None = None,
-    ) -> BaseDataset[InputT, TargetT]:
+    ) -> Self:
         r"""Create a dataset from a list of examples.
 
         Args:

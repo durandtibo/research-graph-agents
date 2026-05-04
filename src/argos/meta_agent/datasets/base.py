@@ -7,6 +7,8 @@ __all__ = ["BaseDataset"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Generic, Self
 
+from coola.equality.tester import EqualNanEqualityTester, get_default_registry
+
 from argos.meta_agent.examples import Example
 from argos.meta_agent.typing import InputT, TargetT
 
@@ -47,6 +49,20 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
 
     examples: dict[str, BaseExample[InputT, TargetT]]
     metadata: dict[str, Any] | None = None
+
+    @abstractmethod
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        r"""Return ``True`` if the two objects are equal, otherwise
+        ``False``.
+
+        Args:
+            other: The value to compare with.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
+
+        Returns:
+            ``True`` if the two objects are equal, otherwise ``False``
+        """
 
     @abstractmethod
     def to_dataframe(self) -> pl.DataFrame:
@@ -132,3 +148,6 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
 
             ```
         """
+
+
+get_default_registry().register_many({BaseDataset: EqualNanEqualityTester()}, exist_ok=True)

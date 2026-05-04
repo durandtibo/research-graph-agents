@@ -36,6 +36,7 @@ class BaseAgentFactory(ABC, Generic[InputT, OutputT]):
         >>> class UpperCaseAgentFactory(BaseAgentFactory):
         ...     def create(self, config: AgentConfig) -> BaseAgent:
         ...         return Agent(RunnableLambda(str.upper))
+        ...
         >>> factory = UpperCaseAgentFactory()
         >>> agent = factory.create(AgentConfig(components={}))
         >>> agent.predict(["hello", "world"])
@@ -68,6 +69,7 @@ class BaseAgentFactory(ABC, Generic[InputT, OutputT]):
             >>> class UpperCaseAgentFactory(BaseAgentFactory):
             ...     def create(self, config: AgentConfig) -> BaseAgent:
             ...         return Agent(RunnableLambda(str.upper))
+            ...
             >>> factory = UpperCaseAgentFactory()
             >>> agent = factory.create(AgentConfig(components={}))
             >>> agent.predict(["hello"])

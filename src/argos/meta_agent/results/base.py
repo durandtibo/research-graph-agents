@@ -95,9 +95,7 @@ class BaseResult(ABC):
         Example:
             ```pycon
             >>> from argos.meta_agent.results import Result, ResultDict
-            >>> result = ResultDict(
-            ...     {"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})}
-            ... )
+            >>> result = ResultDict({"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})})
             >>> result.to_flat_dict()
             {'train.loss': 0.5, 'val.loss': 0.3}
 

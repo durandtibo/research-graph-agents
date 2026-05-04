@@ -241,3 +241,19 @@ def test_prediction_result_to_dict_various_prediction_types(prediction: object) 
         predictions=[prediction],
     )
     assert result.to_dict() == {"id1": prediction}
+
+
+def test_prediction_record_repr() -> None:
+    record = PredictionRecord(example_id="q1", prediction="4")
+    assert repr(record) == "PredictionRecord(example_id='q1', prediction='4', metadata=None)"
+
+
+def test_prediction_record_repr_with_metadata() -> None:
+    record = PredictionRecord(example_id="q1", prediction="4", metadata={"source": "llm"})
+    assert repr(record) == (
+        "PredictionRecord(example_id='q1', prediction='4', metadata={'source': 'llm'})"
+    )
+
+
+def test_prediction_result_repr_empty() -> None:
+    assert repr(PredictionResult(records=[])) == "PredictionResult(records=[], metadata=None)"

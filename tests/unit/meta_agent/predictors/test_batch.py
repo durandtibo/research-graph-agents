@@ -69,11 +69,15 @@ def test_batch_predictor_none_config_generates_default() -> None:
 
 
 def test_batch_predictor_repr() -> None:
-    assert repr(BatchPredictor()).startswith("BatchPredictor(")
+    assert repr(BatchPredictor()) == (
+        "BatchPredictor(\n  (batch_size): 1\n  (config): {'max_concurrency': 1}\n)"
+    )
 
 
 def test_batch_predictor_str() -> None:
-    assert str(BatchPredictor()).startswith("BatchPredictor(")
+    assert str(BatchPredictor()) == (
+        "BatchPredictor(\n  (batch_size): 1\n  (config): {'max_concurrency': 1}\n)"
+    )
 
 
 @pytest.mark.parametrize("batch_size", [1, 2, 4, 10])

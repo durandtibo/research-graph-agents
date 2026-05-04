@@ -130,3 +130,7 @@ def test_dataset_examples_are_indexed_by_id() -> None:
     ex = Example(id="id1", input="input1", target="target1")
     dataset = Dataset.from_examples([ex])
     assert dataset.examples["id1"] == ex
+
+
+def test_dataset_repr_empty() -> None:
+    assert repr(Dataset(examples={})) == "Dataset(examples={}, metadata=None)"

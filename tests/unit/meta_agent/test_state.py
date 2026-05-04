@@ -29,7 +29,7 @@ def test_state_contains_expected_keys(state: MetaAgentState) -> None:
     assert state["iteration"] == 0
 
 
-def test_state_with_empty_metrics() -> None:
+def test_state_with_empty_fields() -> None:
     state = MetaAgentState(
         config=AgentConfig(components={"llm": "gpt-4"}),
         metrics={},
@@ -38,27 +38,7 @@ def test_state_with_empty_metrics() -> None:
         iteration=0,
     )
     assert state["metrics"] == {}
-
-
-def test_state_with_empty_diagnostic() -> None:
-    state = MetaAgentState(
-        config=AgentConfig(components={"llm": "gpt-4"}),
-        metrics={},
-        diagnostic={},
-        history=[],
-        iteration=0,
-    )
     assert state["diagnostic"] == {}
-
-
-def test_state_with_empty_history() -> None:
-    state = MetaAgentState(
-        config=AgentConfig(components={"llm": "gpt-4"}),
-        metrics={},
-        diagnostic={},
-        history=[],
-        iteration=0,
-    )
     assert state["history"] == []
 
 

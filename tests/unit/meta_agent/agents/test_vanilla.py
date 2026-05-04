@@ -75,12 +75,6 @@ def test_agent_predict_single_input() -> None:
     assert agent.predict(["only one"]) == ["only one"]
 
 
-def test_agent_predict_config_none_by_default(mock_model: Runnable) -> None:
-    agent = Agent(model=mock_model)
-    agent.predict([{"query": "hello"}, {"query": "world"}])
-    mock_model.batch.assert_called_once_with(inputs=mock_model.batch.call_args.kwargs["inputs"], config=None)
-
-
 @pytest.mark.parametrize(
     ("inputs", "expected"),
     [

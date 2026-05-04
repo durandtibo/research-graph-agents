@@ -1,8 +1,44 @@
-r"""Unit tests for PredictionResult.from_predictions."""
+r"""Unit tests for PredictionRecord and PredictionResult."""
 
 import pytest
 
 from argos.meta_agent.prediction import PredictionRecord, PredictionResult
+
+#####################################
+#     Tests for PredictionRecord     #
+#####################################
+
+
+def test_prediction_record_example_id() -> None:
+    assert PredictionRecord(example_id="q1", prediction="4").example_id == "q1"
+
+
+def test_prediction_record_prediction() -> None:
+    assert PredictionRecord(example_id="q1", prediction="4").prediction == "4"
+
+
+def test_prediction_record_metadata_defaults_to_none() -> None:
+    assert PredictionRecord(example_id="q1", prediction="4").metadata is None
+
+
+def test_prediction_record_metadata_custom() -> None:
+    record = PredictionRecord(example_id="q1", prediction="4", metadata={"source": "llm"})
+    assert record.metadata == {"source": "llm"}
+
+
+@pytest.mark.parametrize(
+    "prediction",
+    [
+        pytest.param(42, id="int"),
+        pytest.param(3.14, id="float"),
+        pytest.param({"answer": "yes"}, id="dict"),
+        pytest.param(True, id="bool"),
+    ],
+)
+def test_prediction_record_supports_various_prediction_types(prediction: object) -> None:
+    record = PredictionRecord(example_id="q1", prediction=prediction)
+    assert record.prediction == prediction
+
 
 ######################################
 #     Tests for PredictionResult     #

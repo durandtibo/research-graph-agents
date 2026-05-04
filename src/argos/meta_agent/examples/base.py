@@ -7,6 +7,8 @@ __all__ = ["BaseExample"]
 from abc import ABC, abstractmethod
 from typing import Any, Generic, Self
 
+from coola.equality.tester import EqualNanEqualityTester, get_default_registry
+
 from argos.meta_agent.typing import InputT, TargetT
 
 
@@ -93,3 +95,6 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
 
             ```
         """
+
+
+get_default_registry().register_many({BaseExample: EqualNanEqualityTester()}, exist_ok=True)

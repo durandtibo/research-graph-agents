@@ -13,14 +13,14 @@ from argos.meta_agent.typing import InputT, TargetT
 
 @dataclass
 class Example(BaseExample[InputT, TargetT]):
-    r"""Abstract base class for a single labeled example in a dataset.
+    r"""Define a concrete labeled example for use in datasets.
 
     Attributes:
         id: A unique identifier for the example.
         input: The input passed to the agent.
         target: The expected ground-truth output.
         metadata: Optional dictionary of auxiliary information.
-            Defaults to an empty dict.
+            Defaults to ``None``.
 
     Example:
         ```pycon

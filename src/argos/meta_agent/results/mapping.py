@@ -70,6 +70,17 @@ class ResultDict(BaseResult):
         Returns:
             A flat dictionary mapping metric names to scalar native
                 Python values, with no nested dicts or lists.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result, ResultDict
+            >>> result = ResultDict(
+            ...     {"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})}
+            ... )
+            >>> result.to_flat_dict()
+            {'train.loss': 0.5, 'val.loss': 0.3}
+
+            ```
         """
         return to_flat_dict(self.to_dict(), separator=separator)
 

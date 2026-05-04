@@ -5,12 +5,13 @@ from __future__ import annotations
 from unittest.mock import Mock
 
 import pytest
-from langchain_core.runnables import Runnable, RunnableConfig
+from langchain_core.runnables import Runnable, RunnableConfig, RunnableLambda
 
 from argos.meta_agent.agents import Agent
 from tests.unit.helpers.runnable import (
     ConfigCaptureRunnable,
     DoubleRunnable,
+    IdentityRunnable,
     RaisingErrorRunnable,
 )
 
@@ -67,3 +68,27 @@ def test_agent_predict_propagates_exception() -> None:
     agent = Agent(model=RaisingErrorRunnable())
     with pytest.raises(RuntimeError, match="model failure"):
         agent.predict([{"query": "hello"}])
+
+
+def test_agent_predict_single_input() -> None:
+    agent = Agent(IdentityRunnable())
+    assert agent.predict(["only one"]) == ["only one"]
+
+
+def test_agent_predict_config_none_by_default(mock_model: Runnable) -> None:
+    agent = Agent(model=mock_model)
+    agent.predict([{"query": "hello"}, {"query": "world"}])
+    mock_model.batch.assert_called_once_with(inputs=mock_model.batch.call_args.kwargs["inputs"], config=None)
+
+
+@pytest.mark.parametrize(
+    ("inputs", "expected"),
+    [
+        pytest.param(["hello"], ["HELLO"], id="single"),
+        pytest.param(["hello", "world"], ["HELLO", "WORLD"], id="two"),
+        pytest.param(["a", "b", "c"], ["A", "B", "C"], id="three"),
+    ],
+)
+def test_agent_predict_various_inputs(inputs: list[str], expected: list[str]) -> None:
+    agent = Agent(RunnableLambda(str.upper))
+    assert agent.predict(inputs) == expected

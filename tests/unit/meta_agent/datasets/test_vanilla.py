@@ -112,3 +112,21 @@ def test_dataset_from_examples_with_duplicated_example_ids() -> None:
                 Example(id="id2", input="input3", target="target3", metadata={"tag": "tag3"}),
             ]
         )
+
+
+def test_dataset_metadata_defaults_to_none() -> None:
+    dataset = Dataset(examples={})
+    assert dataset.metadata is None
+
+
+def test_dataset_from_examples_metadata_defaults_to_none() -> None:
+    dataset = Dataset.from_examples(
+        [Example(id="id1", input="input1", target="target1")]
+    )
+    assert dataset.metadata is None
+
+
+def test_dataset_examples_are_indexed_by_id() -> None:
+    ex = Example(id="id1", input="input1", target="target1")
+    dataset = Dataset.from_examples([ex])
+    assert dataset.examples["id1"] == ex

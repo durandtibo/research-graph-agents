@@ -141,3 +141,37 @@ def test_result_dict_to_markdown_multiple() -> None:
     assert result.to_markdown() == (
         "- **train**:\n  - **loss**: 0.5\n- **val**:\n  - **loss**: 0.3"
     )
+
+
+def test_result_dict_nested_to_dict() -> None:
+    result = ResultDict(
+        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
+    )
+    assert result.to_dict() == {"outer": {"inner": {"loss": 0.5}}}
+
+
+def test_result_dict_nested_to_flat_dict() -> None:
+    result = ResultDict(
+        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
+    )
+    assert result.to_flat_dict() == {"outer.inner.loss": 0.5}
+
+
+def test_result_dict_nested_to_markdown() -> None:
+    result = ResultDict(
+        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
+    )
+    assert result.to_markdown() == "- **outer**:\n  - **inner**:\n    - **loss**: 0.5"
+
+
+def test_result_dict_equal_nested() -> None:
+    result1 = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
+    result2 = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
+    assert result1.equal(result2)
+
+
+def test_result_dict_to_raw_dict_returns_result_instances() -> None:
+    inner = Result({"loss": 0.5})
+    raw = ResultDict({"train": inner}).to_raw_dict()
+    assert objects_are_equal(raw, {"train": inner})
+    assert raw["train"] is inner

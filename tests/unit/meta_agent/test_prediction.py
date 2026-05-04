@@ -195,3 +195,49 @@ def test_prediction_result_to_dict_with_dict() -> None:
 def test_prediction_result_to_dict_empty() -> None:
     result = PredictionResult(records=[])
     assert result.to_dict() == {}
+
+
+def test_prediction_result_metadata_defaults_to_none() -> None:
+    result = PredictionResult(records=[])
+    assert result.metadata is None
+
+
+def test_prediction_result_records_field() -> None:
+    records = [PredictionRecord(example_id="id1", prediction="pred1")]
+    result = PredictionResult(records=records)
+    assert result.records == records
+
+
+def test_prediction_result_from_predictions_metadata_defaults_to_none() -> None:
+    result = PredictionResult.from_predictions(example_ids=["id1"], predictions=["pred1"])
+    assert result.metadata is None
+
+
+def test_prediction_result_from_dict_metadata_defaults_to_none() -> None:
+    result = PredictionResult.from_dict({"id1": "pred1"})
+    assert result.metadata is None
+
+
+def test_prediction_result_to_dict_preserves_order() -> None:
+    result = PredictionResult.from_predictions(
+        example_ids=["a", "b", "c"],
+        predictions=["x", "y", "z"],
+    )
+    assert list(result.to_dict().keys()) == ["a", "b", "c"]
+    assert list(result.to_dict().values()) == ["x", "y", "z"]
+
+
+@pytest.mark.parametrize(
+    "prediction",
+    [
+        pytest.param("text", id="str"),
+        pytest.param(0, id="zero"),
+        pytest.param(None, id="none"),
+    ],
+)
+def test_prediction_result_to_dict_various_prediction_types(prediction: object) -> None:
+    result = PredictionResult.from_predictions(
+        example_ids=["id1"],
+        predictions=[prediction],
+    )
+    assert result.to_dict() == {"id1": prediction}

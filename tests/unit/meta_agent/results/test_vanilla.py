@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from argos.meta_agent.results import Result
 
 ############################
@@ -127,3 +129,25 @@ def test_result_to_markdown_integer_value() -> None:
 
 def test_result_to_markdown_string_value() -> None:
     assert Result({"model": "resnet50"}).to_markdown() == "- **model**: resnet50"
+
+
+def test_result_to_markdown_bool_value() -> None:
+    assert Result({"converged": True}).to_markdown() == "- **converged**: True"
+
+
+def test_result_to_markdown_none_value() -> None:
+    assert Result({"score": None}).to_markdown() == "- **score**: None"
+
+
+@pytest.mark.parametrize(
+    ("metrics", "expected"),
+    [
+        pytest.param({"a": 1}, {"a": 1}, id="int"),
+        pytest.param({"a": 1.5}, {"a": 1.5}, id="float"),
+        pytest.param({"a": "text"}, {"a": "text"}, id="str"),
+        pytest.param({"a": True}, {"a": True}, id="bool"),
+        pytest.param({"a": None}, {"a": None}, id="none"),
+    ],
+)
+def test_result_to_dict_value_types(metrics: dict, expected: dict) -> None:
+    assert Result(metrics).to_dict() == expected

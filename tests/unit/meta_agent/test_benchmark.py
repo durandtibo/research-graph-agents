@@ -114,3 +114,43 @@ def test_benchmark_from_examples_with_duplicated_example_ids() -> None:
                 BenchmarkExample(id="id2", input=5, target=0),
             ]
         )
+
+
+def test_benchmark_metadata_defaults_to_none() -> None:
+    benchmark = Benchmark(examples={})
+    assert benchmark.metadata is None
+
+
+def test_benchmark_from_examples_metadata_defaults_to_none() -> None:
+    benchmark = Benchmark.from_examples([BenchmarkExample(id="id1", input=1, target=1)])
+    assert benchmark.metadata is None
+
+
+def test_benchmark_example_equality() -> None:
+    ex1 = BenchmarkExample(id="q1", input="x", target="y")
+    ex2 = BenchmarkExample(id="q1", input="x", target="y")
+    assert ex1 == ex2
+
+
+def test_benchmark_example_inequality_different_id() -> None:
+    ex1 = BenchmarkExample(id="q1", input="x", target="y")
+    ex2 = BenchmarkExample(id="q2", input="x", target="y")
+    assert ex1 != ex2
+
+
+def test_benchmark_example_inequality_different_input() -> None:
+    ex1 = BenchmarkExample(id="q1", input="x", target="y")
+    ex2 = BenchmarkExample(id="q1", input="z", target="y")
+    assert ex1 != ex2
+
+
+def test_benchmark_single_example() -> None:
+    benchmark = Benchmark.from_examples([BenchmarkExample(id="id1", input="a", target="b")])
+    assert len(benchmark.examples) == 1
+    assert "id1" in benchmark.examples
+
+
+def test_benchmark_examples_are_indexed_by_id() -> None:
+    ex = BenchmarkExample(id="id1", input=1, target=2)
+    benchmark = Benchmark.from_examples([ex])
+    assert benchmark.examples["id1"] == ex

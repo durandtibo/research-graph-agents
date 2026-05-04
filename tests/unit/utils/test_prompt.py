@@ -20,3 +20,13 @@ def test_check_non_empty_prompt_non_empty(prompt: str) -> None:
 def test_check_non_empty_prompt_empty(prompt: str) -> None:
     with pytest.raises(ValueError, match="prompt must be a non-empty string"):
         check_non_empty_prompt(prompt)
+
+
+@pytest.mark.parametrize("prompt", EMPTY_PROMPTS)
+def test_check_non_empty_prompt_custom_name_in_error_message(prompt: str) -> None:
+    with pytest.raises(ValueError, match="system_prompt must be a non-empty string"):
+        check_non_empty_prompt(prompt, name="system_prompt")
+
+
+def test_check_non_empty_prompt_custom_name_non_empty_does_not_raise() -> None:
+    check_non_empty_prompt("hello", name="system_prompt")

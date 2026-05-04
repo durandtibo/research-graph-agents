@@ -1,8 +1,48 @@
-r"""Unit tests for PredictionResult.from_predictions."""
+r"""Unit tests for Benchmark and BenchmarkExample."""
 
 import pytest
 
 from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
+
+#####################################
+#     Tests for BenchmarkExample     #
+#####################################
+
+
+def test_benchmark_example_id() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").id == "q1"
+
+
+def test_benchmark_example_input() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").input == "What is 2+2?"
+
+
+def test_benchmark_example_target() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").target == "4"
+
+
+def test_benchmark_example_metadata_defaults_to_none() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").metadata is None
+
+
+def test_benchmark_example_metadata_custom() -> None:
+    example = BenchmarkExample(id="q1", input="What is 2+2?", target="4", metadata={"src": "math"})
+    assert example.metadata == {"src": "math"}
+
+
+@pytest.mark.parametrize(
+    ("inp", "target"),
+    [
+        pytest.param(1, 1, id="int"),
+        pytest.param(1.5, 2.5, id="float"),
+        pytest.param({"key": "val"}, {"out": "val"}, id="dict"),
+    ],
+)
+def test_benchmark_example_supports_non_string_types(inp: object, target: object) -> None:
+    example = BenchmarkExample(id="q1", input=inp, target=target)
+    assert example.input == inp
+    assert example.target == target
+
 
 ###############################
 #     Tests for Benchmark     #

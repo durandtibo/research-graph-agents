@@ -9,16 +9,25 @@ from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
 #####################################
 
 
-def test_benchmark_example_default_attributes() -> None:
-    example = BenchmarkExample(id="q1", input="What is 2+2?", target="4")
-    assert example == BenchmarkExample(id="q1", input="What is 2+2?", target="4", metadata=None)
+def test_benchmark_example_id() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").id == "q1"
 
 
-def test_benchmark_example_custom_metadata() -> None:
+def test_benchmark_example_input() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").input == "What is 2+2?"
+
+
+def test_benchmark_example_target() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").target == "4"
+
+
+def test_benchmark_example_metadata_defaults_to_none() -> None:
+    assert BenchmarkExample(id="q1", input="What is 2+2?", target="4").metadata is None
+
+
+def test_benchmark_example_metadata_custom() -> None:
     example = BenchmarkExample(id="q1", input="What is 2+2?", target="4", metadata={"src": "math"})
-    assert example == BenchmarkExample(
-        id="q1", input="What is 2+2?", target="4", metadata={"src": "math"}
-    )
+    assert example.metadata == {"src": "math"}
 
 
 @pytest.mark.parametrize(
@@ -123,34 +132,15 @@ def test_benchmark_example_equality() -> None:
     assert ex1 == ex2
 
 
-@pytest.mark.parametrize(
-    ("ex1", "ex2"),
-    [
-        pytest.param(
-            BenchmarkExample(id="q1", input="x", target="y"),
-            BenchmarkExample(id="q2", input="x", target="y"),
-            id="different_id",
-        ),
-        pytest.param(
-            BenchmarkExample(id="q1", input="x", target="y"),
-            BenchmarkExample(id="q1", input="z", target="y"),
-            id="different_input",
-        ),
-        pytest.param(
-            BenchmarkExample(id="q1", input="x", target="y"),
-            BenchmarkExample(id="q1", input="x", target="z"),
-            id="different_target",
-        ),
-        pytest.param(
-            BenchmarkExample(id="q1", input="x", target="y", metadata={"a": 1}),
-            BenchmarkExample(id="q1", input="x", target="y", metadata={"a": 2}),
-            id="different_metadata",
-        ),
-    ],
-)
-def test_benchmark_example_inequality(
-    ex1: BenchmarkExample, ex2: BenchmarkExample
-) -> None:
+def test_benchmark_example_inequality_different_id() -> None:
+    ex1 = BenchmarkExample(id="q1", input="x", target="y")
+    ex2 = BenchmarkExample(id="q2", input="x", target="y")
+    assert ex1 != ex2
+
+
+def test_benchmark_example_inequality_different_input() -> None:
+    ex1 = BenchmarkExample(id="q1", input="x", target="y")
+    ex2 = BenchmarkExample(id="q1", input="z", target="y")
     assert ex1 != ex2
 
 
@@ -189,3 +179,15 @@ def test_benchmark_repr() -> None:
     assert repr(
         Benchmark(examples={"id1": BenchmarkExample(id="id1", input=1, target=2)})
     ) == "Benchmark(examples={'id1': BenchmarkExample(id='id1', input=1, target=2, metadata=None)}, metadata=None)"
+
+
+def test_benchmark_example_inequality_different_target() -> None:
+    ex1 = BenchmarkExample(id="q1", input="x", target="y")
+    ex2 = BenchmarkExample(id="q1", input="x", target="z")
+    assert ex1 != ex2
+
+
+def test_benchmark_example_inequality_different_metadata() -> None:
+    ex1 = BenchmarkExample(id="q1", input="x", target="y", metadata={"a": 1})
+    ex2 = BenchmarkExample(id="q1", input="x", target="y", metadata={"a": 2})
+    assert ex1 != ex2

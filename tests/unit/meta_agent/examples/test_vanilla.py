@@ -9,16 +9,26 @@ from argos.meta_agent.examples import BaseExample, Example
 #############################
 
 
-def test_example_default_attributes() -> None:
-    example = Example(id="q1", input="What is 2+2?", target="4")
-    assert example == Example(id="q1", input="What is 2+2?", target="4", metadata=None)
+def test_example_id() -> None:
+    assert Example(id="q1", input="What is 2+2?", target="4").id == "q1"
 
 
-def test_example_custom_metadata() -> None:
-    example = Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
-    assert example == Example(
+def test_example_input() -> None:
+    assert Example(id="q1", input="What is 2+2?", target="4").input == "What is 2+2?"
+
+
+def test_example_target() -> None:
+    assert Example(id="q1", input="What is 2+2?", target="4").target == "4"
+
+
+def test_example_metadata_default() -> None:
+    assert Example(id="q1", input="What is 2+2?", target="4").metadata is None
+
+
+def test_example_metadata() -> None:
+    assert Example(
         id="q1", input="What is 2+2?", target="4", metadata={"source": "math"}
-    )
+    ).metadata == {"source": "math"}
 
 
 def test_example_to_dict() -> None:
@@ -85,22 +95,15 @@ def test_example_equality() -> None:
     assert ex1 == ex2
 
 
-@pytest.mark.parametrize(
-    ("ex1", "ex2"),
-    [
-        pytest.param(
-            Example(id="q1", input="What is 2+2?", target="4"),
-            Example(id="q2", input="What is 2+2?", target="4"),
-            id="different_id",
-        ),
-        pytest.param(
-            Example(id="q1", input="What is 2+2?", target="4"),
-            Example(id="q1", input="What is 3+3?", target="4"),
-            id="different_input",
-        ),
-    ],
-)
-def test_example_inequality(ex1: Example, ex2: Example) -> None:
+def test_example_inequality_different_id() -> None:
+    ex1 = Example(id="q1", input="What is 2+2?", target="4")
+    ex2 = Example(id="q2", input="What is 2+2?", target="4")
+    assert ex1 != ex2
+
+
+def test_example_inequality_different_input() -> None:
+    ex1 = Example(id="q1", input="What is 2+2?", target="4")
+    ex2 = Example(id="q1", input="What is 3+3?", target="4")
     assert ex1 != ex2
 
 

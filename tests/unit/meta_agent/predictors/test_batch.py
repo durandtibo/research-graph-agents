@@ -115,5 +115,10 @@ def test_batch_predictor_predict_preserves_example_id_order() -> None:
     )
     predictor = BatchPredictor(batch_size=10)
     result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=benchmark)
-    assert list(result.to_dict().keys()) == ["z1", "a1", "m1"]
-    assert list(result.to_dict().values()) == [6, 2, 4]
+    assert result == PredictionResult(
+        [
+            PredictionRecord(example_id="z1", prediction=6),
+            PredictionRecord(example_id="a1", prediction=2),
+            PredictionRecord(example_id="m1", prediction=4),
+        ]
+    )

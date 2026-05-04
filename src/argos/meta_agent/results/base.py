@@ -44,6 +44,17 @@ class BaseResult(ABC):
 
         Returns:
             ``True`` if the two objects are equal, otherwise ``False``
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result
+            >>> result = Result({"accuracy": 0.9})
+            >>> result.equal(Result({"accuracy": 0.9}))
+            True
+            >>> result.equal(Result({"accuracy": 0.8}))
+            False
+
+            ```
         """
 
     @abstractmethod
@@ -57,6 +68,15 @@ class BaseResult(ABC):
 
         Returns:
             A dictionary mapping metric names to their converted values.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result
+            >>> result = Result({"accuracy": 0.9, "loss": 0.5})
+            >>> result.to_dict()
+            {'accuracy': 0.9, 'loss': 0.5}
+
+            ```
         """
 
     @abstractmethod
@@ -71,6 +91,17 @@ class BaseResult(ABC):
         Returns:
             A flat dictionary mapping metric names to scalar native
                 Python values, with no nested dicts or lists.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result, ResultDict
+            >>> result = ResultDict(
+            ...     {"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})}
+            ... )
+            >>> result.to_flat_dict()
+            {'train.loss': 0.5, 'val.loss': 0.3}
+
+            ```
         """
 
     @abstractmethod
@@ -84,6 +115,15 @@ class BaseResult(ABC):
 
         Returns:
             A dictionary mapping metric names to their raw values.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result
+            >>> result = Result({"accuracy": 0.9, "loss": 0.5})
+            >>> result.to_raw_dict()
+            {'accuracy': 0.9, 'loss': 0.5}
+
+            ```
         """
 
     @abstractmethod
@@ -95,6 +135,16 @@ class BaseResult(ABC):
 
         Returns:
             A string containing the Markdown representation of the result.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result
+            >>> result = Result({"accuracy": 0.9, "loss": 0.5})
+            >>> print(result.to_markdown())
+            - **accuracy**: 0.9
+            - **loss**: 0.5
+
+            ```
         """
 
 

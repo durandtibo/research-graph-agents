@@ -4,12 +4,15 @@ from __future__ import annotations
 
 __all__ = ["dataframe_to_examples", "examples_to_dataframe"]
 
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import polars as pl
 
 from argos.meta_agent.examples import BaseExample
 from argos.meta_agent.examples.vanilla import Example
+
+if TYPE_CHECKING:
+    from argos.meta_agent.typing import InputT, TargetT
 
 ExampleT = TypeVar("ExampleT", bound=BaseExample)
 
@@ -55,7 +58,7 @@ def dataframe_to_examples(
     return [example_type.from_dict(row) for row in frame.iter_rows(named=True)]
 
 
-def examples_to_dataframe(examples: list[BaseExample]) -> pl.DataFrame:
+def examples_to_dataframe(examples: list[BaseExample[InputT, TargetT]]) -> pl.DataFrame:
     r"""Convert a list of examples into a Polars DataFrame.
 
     Each example is represented as a single row, where columns correspond

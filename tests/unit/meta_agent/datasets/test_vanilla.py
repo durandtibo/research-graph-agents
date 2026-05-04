@@ -80,6 +80,14 @@ def test_dataset_to_dataframe_empty() -> None:
     )
 
 
+def test_dataset_from_dataframe(dataset: Dataset, dataframe: pl.DataFrame) -> None:
+    assert dataset == Dataset.from_dataframe(dataframe)
+
+
+def test_dataset_from_dataframe_empty() -> None:
+    assert Dataset.from_dataframe(pl.DataFrame({})) == Dataset({})
+
+
 def test_dataset_from_examples(dataset: Dataset, examples: list[BaseExample]) -> None:
     assert dataset == Dataset.from_examples(examples)
 

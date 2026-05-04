@@ -7,6 +7,7 @@ __all__ = ["BaseDataset"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Generic, Self
 
+from argos.meta_agent.examples import Example
 from argos.meta_agent.typing import InputT, TargetT
 
 if TYPE_CHECKING:
@@ -76,6 +77,29 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
         """
 
     @classmethod
+    @abstractmethod
+    def from_dataframe(
+        cls,
+        frame: pl.DataFrame,
+        metadata: dict[str, Any] | None = None,
+        example_type: type[BaseExample[InputT, TargetT]] = Example,
+    ) -> Self:
+        r"""Create a dataset from a list of examples.
+
+        Args:
+            frame: A Polars DataFrame where each row represents a single
+                example. Column names must match the fields expected by
+                ``example_type.from_dict``.
+            metadata: The dataset metadata.
+            example_type: The example class to instantiate for each row.
+                Defaults to :class:`Example`.
+
+        Returns:
+            The dataset instance.
+        """
+
+    @classmethod
+    @abstractmethod
     def from_examples(
         cls,
         examples: Sequence[BaseExample[InputT, TargetT]],

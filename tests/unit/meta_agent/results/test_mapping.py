@@ -144,23 +144,17 @@ def test_result_dict_to_markdown_multiple() -> None:
 
 
 def test_result_dict_nested_to_dict() -> None:
-    result = ResultDict(
-        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
-    )
+    result = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
     assert result.to_dict() == {"outer": {"inner": {"loss": 0.5}}}
 
 
 def test_result_dict_nested_to_flat_dict() -> None:
-    result = ResultDict(
-        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
-    )
+    result = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
     assert result.to_flat_dict() == {"outer.inner.loss": 0.5}
 
 
 def test_result_dict_nested_to_markdown() -> None:
-    result = ResultDict(
-        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
-    )
+    result = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
     assert result.to_markdown() == "- **outer**:\n  - **inner**:\n    - **loss**: 0.5"
 
 

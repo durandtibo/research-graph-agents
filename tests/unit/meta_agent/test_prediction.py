@@ -257,3 +257,35 @@ def test_prediction_record_repr_with_metadata() -> None:
 
 def test_prediction_result_repr_empty() -> None:
     assert repr(PredictionResult(records=[])) == "PredictionResult(records=[], metadata=None)"
+
+
+def test_prediction_result_repr() -> None:
+    result = PredictionResult(records=[PredictionRecord(example_id="id1", prediction="pred1")])
+    assert (
+        repr(result)
+        == "PredictionResult(records=[PredictionRecord(example_id='id1', prediction='pred1', metadata=None)], metadata=None)"
+    )
+
+
+def test_prediction_record_equality() -> None:
+    assert PredictionRecord(example_id="q1", prediction="4") == PredictionRecord(
+        example_id="q1", prediction="4"
+    )
+
+
+def test_prediction_record_inequality_different_example_id() -> None:
+    assert PredictionRecord(example_id="q1", prediction="4") != PredictionRecord(
+        example_id="q2", prediction="4"
+    )
+
+
+def test_prediction_record_inequality_different_prediction() -> None:
+    assert PredictionRecord(example_id="q1", prediction="4") != PredictionRecord(
+        example_id="q1", prediction="5"
+    )
+
+
+def test_prediction_record_inequality_different_metadata() -> None:
+    assert PredictionRecord(
+        example_id="q1", prediction="4", metadata={"a": 1}
+    ) != PredictionRecord(example_id="q1", prediction="4", metadata={"a": 2})

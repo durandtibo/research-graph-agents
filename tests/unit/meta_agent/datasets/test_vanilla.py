@@ -132,3 +132,22 @@ def test_dataset_examples_are_indexed_by_id() -> None:
 
 def test_dataset_repr_empty() -> None:
     assert repr(Dataset(examples={})) == "Dataset(examples={}, metadata=None)"
+
+
+def test_dataset_repr() -> None:
+    ex = Example(id="q1", input="What is 2+2?", target="4")
+    assert repr(Dataset(examples={"q1": ex})) == (
+        "Dataset(examples={'q1': Example(id='q1', input='What is 2+2?', target='4', metadata=None)}, metadata=None)"
+    )
+
+
+def test_dataset_equality() -> None:
+    assert Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    ) == Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")})
+
+
+def test_dataset_inequality_different_examples() -> None:
+    assert Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    ) != Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="5")})

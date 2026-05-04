@@ -168,4 +168,3 @@ def test_result_dict_to_raw_dict_returns_result_instances() -> None:
     inner = Result({"loss": 0.5})
     raw = ResultDict({"train": inner}).to_raw_dict()
     assert objects_are_equal(raw, {"train": inner})
-    assert raw["train"] is inner

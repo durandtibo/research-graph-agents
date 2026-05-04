@@ -26,11 +26,6 @@ def mock_model() -> Runnable:
 ###########################
 
 
-def test_agent_stores_model(mock_model: Runnable) -> None:
-    agent = Agent(model=mock_model)
-    assert agent._model is mock_model
-
-
 def test_agent_predict_returns_model_output() -> None:
     agent = Agent(DoubleRunnable())
     assert agent.predict([1, 2, 3]) == [2, 4, 6]

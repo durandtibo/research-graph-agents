@@ -9,21 +9,16 @@ from argos.meta_agent.prediction import PredictionRecord, PredictionResult
 #####################################
 
 
-def test_prediction_record_example_id() -> None:
-    assert PredictionRecord(example_id="q1", prediction="4").example_id == "q1"
+def test_prediction_record_default_attributes() -> None:
+    record = PredictionRecord(example_id="q1", prediction="4")
+    assert record == PredictionRecord(example_id="q1", prediction="4", metadata=None)
 
 
-def test_prediction_record_prediction() -> None:
-    assert PredictionRecord(example_id="q1", prediction="4").prediction == "4"
-
-
-def test_prediction_record_metadata_defaults_to_none() -> None:
-    assert PredictionRecord(example_id="q1", prediction="4").metadata is None
-
-
-def test_prediction_record_metadata_custom() -> None:
+def test_prediction_record_custom_metadata() -> None:
     record = PredictionRecord(example_id="q1", prediction="4", metadata={"source": "llm"})
-    assert record.metadata == {"source": "llm"}
+    assert record == PredictionRecord(
+        example_id="q1", prediction="4", metadata={"source": "llm"}
+    )
 
 
 @pytest.mark.parametrize(
@@ -273,19 +268,27 @@ def test_prediction_record_equality() -> None:
     )
 
 
-def test_prediction_record_inequality_different_example_id() -> None:
-    assert PredictionRecord(example_id="q1", prediction="4") != PredictionRecord(
-        example_id="q2", prediction="4"
-    )
-
-
-def test_prediction_record_inequality_different_prediction() -> None:
-    assert PredictionRecord(example_id="q1", prediction="4") != PredictionRecord(
-        example_id="q1", prediction="5"
-    )
-
-
-def test_prediction_record_inequality_different_metadata() -> None:
-    assert PredictionRecord(
-        example_id="q1", prediction="4", metadata={"a": 1}
-    ) != PredictionRecord(example_id="q1", prediction="4", metadata={"a": 2})
+@pytest.mark.parametrize(
+    ("rec1", "rec2"),
+    [
+        pytest.param(
+            PredictionRecord(example_id="q1", prediction="4"),
+            PredictionRecord(example_id="q2", prediction="4"),
+            id="different_example_id",
+        ),
+        pytest.param(
+            PredictionRecord(example_id="q1", prediction="4"),
+            PredictionRecord(example_id="q1", prediction="5"),
+            id="different_prediction",
+        ),
+        pytest.param(
+            PredictionRecord(example_id="q1", prediction="4", metadata={"a": 1}),
+            PredictionRecord(example_id="q1", prediction="4", metadata={"a": 2}),
+            id="different_metadata",
+        ),
+    ],
+)
+def test_prediction_record_inequality(
+    rec1: PredictionRecord, rec2: PredictionRecord
+) -> None:
+    assert rec1 != rec2

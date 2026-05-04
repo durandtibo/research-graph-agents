@@ -1,0 +1,60 @@
+r"""Contain a simple implementation of a dataset example."""
+
+from __future__ import annotations
+
+__all__ = ["Example"]
+
+from dataclasses import dataclass
+from typing import Any
+
+from argos.meta_agent.examples.base import BaseExample
+from argos.meta_agent.typing import InputT, TargetT
+
+
+@dataclass
+class Example(BaseExample[InputT, TargetT]):
+    r"""Abstract base class for a single labeled example in a dataset.
+
+    Attributes:
+        id: A unique identifier for the example.
+        input: The input passed to the agent.
+        target: The expected ground-truth output.
+        metadata: Optional dictionary of auxiliary information.
+            Defaults to an empty dict.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.examples import Example
+        >>> example = Example(id="q1", input="What is 2+2?", target="4")
+        >>> example.id
+        'q1'
+        >>> example.input
+        'What is 2+2?'
+        >>> example.target
+        '4'
+
+        ```
+    """
+
+    id: str
+    input: InputT
+    target: TargetT
+    metadata: dict[str, Any] | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Example[InputT, TargetT]:
+        """Construct an instance from a plain dictionary.
+
+        Args:
+            data: Must contain ``id``, ``input``, and ``target`` keys.
+                ``metadata`` is optional.
+
+        Returns:
+            A new instance of the calling subclass.
+        """
+        return cls(
+            id=data["id"],
+            input=data["input"],
+            target=data["target"],
+            metadata=data.get("metadata"),
+        )

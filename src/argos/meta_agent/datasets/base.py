@@ -18,10 +18,30 @@ if TYPE_CHECKING:
 
 
 class BaseDataset(ABC, Generic[InputT, TargetT]):
-    r"""Abstract base class defining the interface for a single labeled
-    example.
+    r"""Abstract base class defining the interface for a dataset.
 
     Subclasses must define all attributes and implement all methods.
+
+    Attributes:
+        examples: A mapping from example ID to
+            :class:`~argos.meta_agent.examples.BaseExample` instance.
+        metadata: Optional dictionary of auxiliary information about
+            the dataset. Defaults to ``None``.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.datasets import BaseDataset, Dataset
+        >>> from argos.meta_agent.examples import Example
+        >>> dataset = Dataset.from_examples(
+        ...     [
+        ...         Example(id="q1", input="What is 2+2?", target="4"),
+        ...         Example(id="q2", input="What is 3+3?", target="6"),
+        ...     ]
+        ... )
+        >>> isinstance(dataset, BaseDataset)
+        True
+
+        ```
     """
 
     examples: dict[str, BaseExample[InputT, TargetT]]
@@ -29,9 +49,30 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
 
     @abstractmethod
     def to_dataframe(self) -> pl.DataFrame:
-        r"""Return a Pandas DataFrame representing the dataset examples.
+        r"""Return a Polars DataFrame representing the dataset examples.
 
-        Note: the metadata are not included in the returned DataFrame.
+        The dataset-level ``metadata`` attribute is not included in the
+        returned DataFrame. Each row corresponds to one example, with
+        columns derived from the example's ``to_dict`` representation.
+
+        Returns:
+            A Polars DataFrame with one row per example.
+
+        Example:
+            ```pycon
+            >>> import polars as pl
+            >>> from argos.meta_agent.datasets import Dataset
+            >>> from argos.meta_agent.examples import Example
+            >>> dataset = Dataset.from_examples(
+            ...     [
+            ...         Example(id="q1", input="What is 2+2?", target="4"),
+            ...         Example(id="q2", input="What is 3+3?", target="6"),
+            ...     ]
+            ... )
+            >>> isinstance(dataset.to_dataframe(), pl.DataFrame)
+            True
+
+            ```
         """
 
     @classmethod

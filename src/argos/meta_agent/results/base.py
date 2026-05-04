@@ -19,6 +19,17 @@ class BaseResult(ABC):
 
     All ``to_*`` methods are non-destructive and return a new object
     or data structure without modifying the result instance.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.results import BaseResult, Result
+        >>> result = Result({"accuracy": 0.9, "loss": 0.5})
+        >>> isinstance(result, BaseResult)
+        True
+        >>> result.to_dict()
+        {'accuracy': 0.9, 'loss': 0.5}
+
+        ```
     """
 
     @abstractmethod

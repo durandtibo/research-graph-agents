@@ -23,6 +23,25 @@ class BaseAgentFactory(ABC, Generic[InputT, OutputT]):
     Subclasses must implement :meth:`create` to instantiate a
     :class:`~argos.meta_agent.agents.BaseAgent` from an
     :class:`~argos.meta_agent.agents.AgentConfig`.
+
+    Example:
+        ```pycon
+        >>> from langchain_core.runnables import RunnableLambda
+        >>> from argos.meta_agent.agents import (
+        ...     Agent,
+        ...     AgentConfig,
+        ...     BaseAgent,
+        ...     BaseAgentFactory,
+        ... )
+        >>> class UpperCaseAgentFactory(BaseAgentFactory):
+        ...     def create(self, config: AgentConfig) -> BaseAgent:
+        ...         return Agent(RunnableLambda(str.upper))
+        >>> factory = UpperCaseAgentFactory()
+        >>> agent = factory.create(AgentConfig(components={}))
+        >>> agent.predict(["hello", "world"])
+        ['HELLO', 'WORLD']
+
+        ```
     """
 
     @abstractmethod
@@ -30,8 +49,29 @@ class BaseAgentFactory(ABC, Generic[InputT, OutputT]):
         r"""Instantiate an agent from its configuration.
 
         Args:
-            config: The configuration of the agent that is optimized by the meta-agent.
+            config: The configuration of the agent that is
+                optimized by the meta-agent.
 
         Returns:
-            A new agent instance built from the given configuration.
+            A new agent instance built from the given
+                configuration.
+
+        Example:
+            ```pycon
+            >>> from langchain_core.runnables import RunnableLambda
+            >>> from argos.meta_agent.agents import (
+            ...     Agent,
+            ...     AgentConfig,
+            ...     BaseAgent,
+            ...     BaseAgentFactory,
+            ... )
+            >>> class UpperCaseAgentFactory(BaseAgentFactory):
+            ...     def create(self, config: AgentConfig) -> BaseAgent:
+            ...         return Agent(RunnableLambda(str.upper))
+            >>> factory = UpperCaseAgentFactory()
+            >>> agent = factory.create(AgentConfig(components={}))
+            >>> agent.predict(["hello"])
+            ['HELLO']
+
+            ```
         """

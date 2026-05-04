@@ -74,9 +74,21 @@ def test_batch_predictor_repr() -> None:
     )
 
 
+def test_batch_predictor_repr_custom_batch_size() -> None:
+    assert repr(BatchPredictor(batch_size=4)) == (
+        "BatchPredictor(\n  (batch_size): 4\n  (config): {'max_concurrency': 4}\n)"
+    )
+
+
 def test_batch_predictor_str() -> None:
     assert str(BatchPredictor()) == (
         "BatchPredictor(\n  (batch_size): 1\n  (config): {'max_concurrency': 1}\n)"
+    )
+
+
+def test_batch_predictor_str_custom_batch_size() -> None:
+    assert str(BatchPredictor(batch_size=4)) == (
+        "BatchPredictor(\n  (batch_size): 4\n  (config): {'max_concurrency': 4}\n)"
     )
 
 

@@ -68,3 +68,9 @@ def test_agent_config_equality() -> None:
 
 def test_agent_config_inequality_different_components() -> None:
     assert AgentConfig(components={"llm": "gpt-4"}) != AgentConfig(components={"llm": "claude"})
+
+
+def test_agent_config_inequality_different_metadata() -> None:
+    assert AgentConfig(components={}, metadata={"version": "1.0"}) != AgentConfig(
+        components={}, metadata={"version": "2.0"}
+    )

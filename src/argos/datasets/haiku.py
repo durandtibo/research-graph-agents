@@ -36,7 +36,7 @@ def generate_haiku_dataset() -> pl.DataFrame:
         >>> from argos.datasets import generate_haiku_dataset
         >>> df = generate_haiku_dataset()
         >>> df.columns
-        ['topic', 'haiku', 'structure_target', 'topic_target', 'target']
+        ['topic', 'haiku', 'structure_target', 'topic_target', 'overall_target']
 
         ```
     """

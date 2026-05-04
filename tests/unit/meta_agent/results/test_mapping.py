@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from coola.equality import objects_are_equal
 
-from argos.meta_agent.results import Result, ResultDict
+from argos.meta_agent.results import BaseResult, Result, ResultDict
 
 ################################
 #     Tests for ResultDict     #
@@ -141,3 +141,43 @@ def test_result_dict_to_markdown_multiple() -> None:
     assert result.to_markdown() == (
         "- **train**:\n  - **loss**: 0.5\n- **val**:\n  - **loss**: 0.3"
     )
+
+
+def test_result_dict_is_instance_of_base_result() -> None:
+    assert isinstance(ResultDict({}), BaseResult)
+
+
+def test_result_dict_nested_to_dict() -> None:
+    result = ResultDict(
+        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
+    )
+    assert result.to_dict() == {"outer": {"inner": {"loss": 0.5}}}
+
+
+def test_result_dict_nested_to_flat_dict() -> None:
+    result = ResultDict(
+        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
+    )
+    assert result.to_flat_dict() == {"outer.inner.loss": 0.5}
+
+
+def test_result_dict_nested_to_markdown() -> None:
+    result = ResultDict(
+        {"outer": ResultDict({"inner": Result({"loss": 0.5})})}
+    )
+    assert "outer" in result.to_markdown()
+    assert "inner" in result.to_markdown()
+    assert "loss" in result.to_markdown()
+
+
+def test_result_dict_equal_nested() -> None:
+    result1 = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
+    result2 = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
+    assert result1.equal(result2)
+
+
+def test_result_dict_to_raw_dict_returns_result_instances() -> None:
+    inner = Result({"loss": 0.5})
+    result = ResultDict({"train": inner})
+    raw = result.to_raw_dict()
+    assert raw["train"] is inner

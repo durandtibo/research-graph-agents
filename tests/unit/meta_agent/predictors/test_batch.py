@@ -11,7 +11,7 @@ from argos.meta_agent.prediction import (
     PredictionRecord,
     PredictionResult,
 )
-from argos.meta_agent.predictors import BatchPredictor
+from argos.meta_agent.predictors import BasePredictor, BatchPredictor
 from tests.unit.helpers.runnable import DoubleRunnable
 
 
@@ -72,8 +72,28 @@ def test_batch_predictor_repr() -> None:
     assert repr(BatchPredictor()).startswith("BatchPredictor(")
 
 
+def test_batch_predictor_repr_contains_batch_size() -> None:
+    assert "batch_size" in repr(BatchPredictor(batch_size=4))
+
+
+def test_batch_predictor_repr_contains_config() -> None:
+    assert "config" in repr(BatchPredictor())
+
+
 def test_batch_predictor_str() -> None:
     assert str(BatchPredictor()).startswith("BatchPredictor(")
+
+
+def test_batch_predictor_str_contains_batch_size() -> None:
+    assert "batch_size" in str(BatchPredictor(batch_size=4))
+
+
+def test_batch_predictor_str_contains_config() -> None:
+    assert "config" in str(BatchPredictor())
+
+
+def test_batch_predictor_is_instance_of_base_predictor() -> None:
+    assert isinstance(BatchPredictor(), BasePredictor)
 
 
 @pytest.mark.parametrize("batch_size", [1, 2, 4, 10])

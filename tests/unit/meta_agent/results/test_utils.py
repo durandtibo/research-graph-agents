@@ -3,7 +3,7 @@ from __future__ import annotations
 import polars as pl
 from polars.testing import assert_frame_equal
 
-from argos.meta_agent.results import Result
+from argos.meta_agent.results import Result, ResultDict
 from argos.meta_agent.results.utils import results_to_dataframe
 
 ##########################################
@@ -59,5 +59,21 @@ def test_results_to_dataframe_multiple_types() -> None:
         pl.DataFrame(
             {"model": ["resnet50", "resnet30"], "loss": [0.5, 0.3], "rank": [1, 2]},
             schema={"model": pl.String, "loss": pl.Float64, "rank": pl.Int64},
+        ),
+    )
+
+
+def test_results_to_dataframe_with_result_dict() -> None:
+    frame = results_to_dataframe(
+        [
+            ResultDict({"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})}),
+            ResultDict({"train": Result({"loss": 0.4}), "val": Result({"loss": 0.2})}),
+        ]
+    )
+    assert_frame_equal(
+        frame,
+        pl.DataFrame(
+            {"train.loss": [0.5, 0.4], "val.loss": [0.3, 0.2]},
+            schema={"train.loss": pl.Float64, "val.loss": pl.Float64},
         ),
     )

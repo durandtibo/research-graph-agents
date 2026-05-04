@@ -7,6 +7,8 @@ __all__ = ["BaseAnalyzer"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from coola.equality.tester import EqualNanEqualityTester, get_default_registry
+
 if TYPE_CHECKING:
     import polars as pl
 
@@ -56,3 +58,20 @@ class BaseAnalyzer(ABC):
 
             ```
         """
+
+    @abstractmethod
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        r"""Return ``True`` if the two objects are equal, otherwise
+        ``False``.
+
+        Args:
+            other: The value to compare with.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
+
+        Returns:
+            ``True`` if the two objects are equal, otherwise ``False``
+        """
+
+
+get_default_registry().register_many({BaseAnalyzer: EqualNanEqualityTester()}, exist_ok=True)

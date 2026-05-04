@@ -18,6 +18,18 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
 
     Subclasses must implement :meth:`predict` to process a batch of
     inputs and return the corresponding outputs.
+
+    Example:
+        ```pycon
+        >>> from langchain_core.runnables import RunnableLambda
+        >>> from argos.meta_agent.agents import Agent, BaseAgent
+        >>> agent = Agent(RunnableLambda(str.upper))
+        >>> isinstance(agent, BaseAgent)
+        True
+        >>> agent.predict(["hello", "world"])
+        ['HELLO', 'WORLD']
+
+        ```
     """
 
     @abstractmethod

@@ -19,6 +19,17 @@ class BaseEvaluator(ABC, Generic[InputT, TargetT, OutputT]):
     Subclasses must implement :meth:`evaluate` to compare agent
     predictions against benchmark targets and return a dictionary of
     metrics.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.benchmark import Benchmark
+        >>> from argos.meta_agent.evaluators import BaseEvaluator, NoOpEvaluator
+        >>> from argos.meta_agent.prediction import PredictionResult
+        >>> evaluator = NoOpEvaluator()
+        >>> isinstance(evaluator, BaseEvaluator)
+        True
+
+        ```
     """
 
     @abstractmethod
@@ -31,8 +42,21 @@ class BaseEvaluator(ABC, Generic[InputT, TargetT, OutputT]):
 
         Args:
             predictions: The predictions to evaluate.
-            benchmark: The benchmark with the targets to evaluate the performance.
+            benchmark: The benchmark containing the ground-truth
+                targets.
 
         Returns:
-            The performance result.
+            A dictionary mapping metric names to their computed
+                values.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.benchmark import Benchmark
+            >>> from argos.meta_agent.evaluators import NoOpEvaluator
+            >>> from argos.meta_agent.prediction import PredictionResult
+            >>> evaluator = NoOpEvaluator()
+            >>> evaluator.evaluate(PredictionResult(records=[]), Benchmark({}))
+            {}
+
+            ```
         """

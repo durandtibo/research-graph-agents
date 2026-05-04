@@ -120,3 +120,15 @@ def test_example_supports_non_string_types(inp: object, target: object) -> None:
     example = Example(id="q1", input=inp, target=target)
     assert example.input == inp
     assert example.target == target
+
+
+def test_example_repr() -> None:
+    example = Example(id="q1", input="What is 2+2?", target="4")
+    assert repr(example) == "Example(id='q1', input='What is 2+2?', target='4', metadata=None)"
+
+
+def test_example_repr_with_metadata() -> None:
+    example = Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
+    assert repr(example) == (
+        "Example(id='q1', input='What is 2+2?', target='4', metadata={'source': 'math'})"
+    )

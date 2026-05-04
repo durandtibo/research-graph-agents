@@ -154,3 +154,19 @@ def test_benchmark_examples_are_indexed_by_id() -> None:
     ex = BenchmarkExample(id="id1", input=1, target=2)
     benchmark = Benchmark.from_examples([ex])
     assert benchmark.examples["id1"] == ex
+
+
+def test_benchmark_example_repr() -> None:
+    example = BenchmarkExample(id="q1", input="What is 2+2?", target="4")
+    assert repr(example) == "BenchmarkExample(id='q1', input='What is 2+2?', target='4', metadata=None)"
+
+
+def test_benchmark_example_repr_with_metadata() -> None:
+    example = BenchmarkExample(id="q1", input="What is 2+2?", target="4", metadata={"src": "math"})
+    assert repr(example) == (
+        "BenchmarkExample(id='q1', input='What is 2+2?', target='4', metadata={'src': 'math'})"
+    )
+
+
+def test_benchmark_repr_empty() -> None:
+    assert repr(Benchmark(examples={})) == "Benchmark(examples={}, metadata=None)"

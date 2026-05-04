@@ -49,3 +49,22 @@ def test_agent_config_metadata_accepts_arbitrary_values() -> None:
 def test_agent_config_components_can_be_empty() -> None:
     config = AgentConfig(components={})
     assert config.components == {}
+
+
+def test_agent_config_repr() -> None:
+    config = AgentConfig(components={"model": "gpt-4o", "prompt": "You are a helpful assistant."})
+    assert repr(config) == (
+        "AgentConfig(components={'model': 'gpt-4o', 'prompt': 'You are a helpful assistant.'}, metadata={})"
+    )
+
+
+def test_agent_config_repr_empty() -> None:
+    assert repr(AgentConfig(components={})) == "AgentConfig(components={}, metadata={})"
+
+
+def test_agent_config_equality() -> None:
+    assert AgentConfig(components={"llm": "gpt-4"}) == AgentConfig(components={"llm": "gpt-4"})
+
+
+def test_agent_config_inequality_different_components() -> None:
+    assert AgentConfig(components={"llm": "gpt-4"}) != AgentConfig(components={"llm": "claude"})

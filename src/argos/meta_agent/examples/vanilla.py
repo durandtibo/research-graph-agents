@@ -7,6 +7,8 @@ __all__ = ["Example"]
 from dataclasses import dataclass
 from typing import Any, Self
 
+from coola.equality import objects_are_equal
+
 from argos.meta_agent.examples.base import BaseExample
 from argos.meta_agent.typing import InputT, TargetT
 
@@ -40,6 +42,11 @@ class Example(BaseExample[InputT, TargetT]):
     input: InputT
     target: TargetT
     metadata: dict[str, Any] | None = None
+
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        if type(other) is not type(self):
+            return False
+        return objects_are_equal(self.to_dict(), other.to_dict(), equal_nan=equal_nan)
 
     def to_dict(self) -> dict[str, Any]:
         return {

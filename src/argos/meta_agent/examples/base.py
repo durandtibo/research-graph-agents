@@ -71,9 +71,7 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
         Example:
             ```pycon
             >>> from argos.meta_agent.examples import Example
-            >>> example = Example.from_dict(
-            ...     {"id": "q1", "input": "What is 2+2?", "target": "4"}
-            ... )
+            >>> example = Example.from_dict({"id": "q1", "input": "What is 2+2?", "target": "4"})
             >>> example.id
             'q1'
             >>> example.target

@@ -61,8 +61,8 @@ class RawHaikuJudgeOutput(BaseModel):
     r"""Define the raw structured output produced by the haiku judge LLM.
 
     This model captures the LLM's predictions and reasoning for
-    structure, topic relevance, and overall quality, without the
-    derived ``overall_prediction`` field.
+    structure, topic relevance, and overall quality, without the derived
+    ``overall_prediction`` field.
     """
 
     structure_reasoning: str = Field(

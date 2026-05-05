@@ -10,6 +10,7 @@ import polars as pl
 __all__ = [
     "concat_and_merge",
     "dataframe_to_csv",
+    "dataframe_to_markdown",
     "list_of_dicts_to_dataframe",
     "summarize_boolean_columns",
     "unnest_struct_columns",
@@ -185,7 +186,48 @@ def dataframe_to_csv(frame: pl.DataFrame) -> str:
     Returns:
         A CSV string representing the DataFrame.
     """
+    if frame.is_empty():
+        return "_No data available._"
     schema = ", ".join(f"{name}: {dtype}" for name, dtype in frame.schema.items())
     buf = StringIO()
     frame.write_csv(buf)
     return f"Schema: {schema}\n\n{buf.getvalue()}"
+
+
+def dataframe_to_markdown(frame: pl.DataFrame) -> str:
+    r"""Return a markdown string representation of the DataFrame.
+
+    Args:
+            frame: A DataFrame.
+
+    Returns:
+            A markdown string representing the DataFrame. Returns a message
+                indicating no data is available if the DataFrame is empty.
+
+    Example:
+    ```pycon
+    >>> import polars as pl
+    >>> from argos.utils.dataframe import dataframe_to_markdown
+    >>> frame = pl.DataFrame({"loss": [0.5, 0.3], "accuracy": [0.9, 0.95]})
+    >>> print(dataframe_to_markdown(frame))
+    | loss | accuracy |
+    |------|----------|
+    | 0.5  | 0.9      |
+    | 0.3  | 0.95     |
+
+    ```
+    """
+    if frame.is_empty():
+        return "_No data available._"
+    col_widths = {col: max(len(col), *(len(str(v)) for v in frame[col])) for col in frame.columns}
+
+    def fmt(value: object, col: str) -> str:
+        return str(value).ljust(col_widths[col])
+
+    header = "| " + " | ".join(col.ljust(col_widths[col]) for col in frame.columns) + " |"
+    separator = "|" + "|".join("-" * (col_widths[col] + 2) for col in frame.columns) + "|"
+    rows = [
+        "| " + " | ".join(fmt(row[col], col) for col in frame.columns) + " |"
+        for row in frame.iter_rows(named=True)
+    ]
+    return "\n".join([header, separator, *rows])

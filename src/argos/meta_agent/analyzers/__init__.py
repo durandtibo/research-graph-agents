@@ -7,6 +7,7 @@ __all__ = [
     "BaseAnalyzer",
     "Data2CsvAnalyzer",
     "Data2MarkdownAnalyzer",
+    "Data2StrAnalyzer",
     "JsonExportAnalyzer",
     "NoOpAnalyzer",
 ]
@@ -14,6 +15,7 @@ __all__ = [
 from argos.meta_agent.analyzers.base import BaseAnalyzer
 from argos.meta_agent.analyzers.data2csv import Data2CsvAnalyzer
 from argos.meta_agent.analyzers.data2markdown import Data2MarkdownAnalyzer
+from argos.meta_agent.analyzers.data2str import Data2StrAnalyzer
 from argos.meta_agent.analyzers.export import JsonExportAnalyzer
 from argos.meta_agent.analyzers.noop import NoOpAnalyzer
 from argos.meta_agent.analyzers.vanilla import Analyzer

@@ -2,12 +2,14 @@ r"""Utility functions for processing Polars DataFrames."""
 
 from __future__ import annotations
 
+from io import StringIO
 from typing import Any
 
 import polars as pl
 
 __all__ = [
     "concat_and_merge",
+    "dataframe_to_csv",
     "list_of_dicts_to_dataframe",
     "summarize_boolean_columns",
     "unnest_struct_columns",
@@ -172,3 +174,18 @@ def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> 
     ]
 
     return frame.unnest(struct_columns, separator=separator)
+
+
+def dataframe_to_csv(frame: pl.DataFrame) -> str:
+    r"""Return a CSV string representation of the DataFrame.
+
+    Args:
+        frame: A DataFrame.
+
+    Returns:
+        A CSV string representing the DataFrame.
+    """
+    schema = ", ".join(f"{name}: {dtype}" for name, dtype in frame.schema.items())
+    buf = StringIO()
+    frame.write_csv(buf)
+    return f"Schema: {schema}\n\n{buf.getvalue()}"

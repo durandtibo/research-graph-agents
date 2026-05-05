@@ -14,7 +14,7 @@ from argos.meta_agent.predictions.base import BasePrediction
 T = TypeVar("T")
 
 
-@dataclass
+@dataclass(frozen=True)
 class Prediction(BasePrediction[T]):
     r"""Store a single prediction paired with its example identifier.
 

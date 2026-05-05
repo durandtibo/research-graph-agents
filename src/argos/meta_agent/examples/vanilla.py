@@ -13,7 +13,7 @@ from argos.meta_agent.examples.base import BaseExample
 from argos.meta_agent.typing import InputT, TargetT
 
 
-@dataclass
+@dataclass(frozen=True)
 class Example(BaseExample[InputT, TargetT]):
     r"""Define a concrete labeled example for use in datasets.
 

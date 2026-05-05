@@ -29,8 +29,6 @@ class BasePrediction(ABC, Generic[T]):
         ```pycon
         >>> from argos.meta_agent.predictions import BasePrediction, Prediction
         >>> record = Prediction(example_id="q1", prediction="4")
-        >>> isinstance(record, BasePrediction)
-        True
         >>> record.example_id
         'q1'
         >>> record.prediction

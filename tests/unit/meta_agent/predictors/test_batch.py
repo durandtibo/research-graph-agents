@@ -12,7 +12,7 @@ from argos.meta_agent.prediction import (
     PredictionResult,
 )
 from argos.meta_agent.predictors import BatchPredictor
-from tests.unit.helpers.runnable import DoubleRunnable
+from tests.unit.helpers.runnable import DoubleRunnable, RaisingErrorRunnable
 
 
 @pytest.fixture
@@ -122,3 +122,12 @@ def test_batch_predictor_predict_preserves_example_id_order() -> None:
             PredictionRecord(example_id="m1", prediction=4),
         ]
     )
+
+
+def test_batch_predictor_predict_propagates_exception_from_agent() -> None:
+    benchmark = Benchmark.from_examples(
+        [BenchmarkExample(id="q1", input="hello", target="world")]
+    )
+    predictor = BatchPredictor(batch_size=1)
+    with pytest.raises(RuntimeError, match="model failure"):
+        predictor.predict(agent=Agent(RaisingErrorRunnable()), benchmark=benchmark)

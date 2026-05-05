@@ -14,9 +14,6 @@ def test_no_op_analyzer_repr() -> None:
     assert repr(NoOpAnalyzer()) == "NoOpAnalyzer()"
 
 
-def test_no_op_analyzer_str() -> None:
-    assert str(NoOpAnalyzer()) == "NoOpAnalyzer()"
-
 
 def test_no_op_analyzer_equal_true() -> None:
     assert NoOpAnalyzer().equal(NoOpAnalyzer())

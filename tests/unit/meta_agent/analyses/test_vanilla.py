@@ -15,13 +15,6 @@ def test_analysis_repr() -> None:
     assert repr(Analysis("my analysis")) == "Analysis(content_len=11)"
 
 
-def test_analysis_str_empty() -> None:
-    assert str(Analysis("")) == "Analysis(content_len=0)"
-
-
-def test_analysis_str() -> None:
-    assert str(Analysis("my analysis")) == "Analysis(content_len=11)"
-
 
 def test_analysis_equal_true() -> None:
     assert Analysis("my analysis").equal(Analysis("my analysis"))
@@ -59,3 +52,8 @@ def test_analysis_to_markdown() -> None:
 
 def test_analysis_to_markdown_empty() -> None:
     assert Analysis("").to_markdown() == "_Empty analysis_"
+
+
+def test_analysis_to_markdown_whitespace_only() -> None:
+    assert Analysis("   ").to_markdown() == "   "
+

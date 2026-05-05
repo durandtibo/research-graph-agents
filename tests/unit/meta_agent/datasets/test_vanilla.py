@@ -197,6 +197,18 @@ def test_dataset_from_dataframe(dataset: Dataset, dataframe: pl.DataFrame) -> No
     assert dataset == Dataset.from_dataframe(dataframe)
 
 
+def test_dataset_from_dataframe_with_metadata(dataframe: pl.DataFrame) -> None:
+    dataset = Dataset.from_dataframe(dataframe, metadata={"tag": "meow"})
+    assert dataset.metadata == {"tag": "meow"}
+
+
+def test_dataset_from_dataframe_with_custom_example_type(dataframe: pl.DataFrame) -> None:
+    class CustomExample(Example): ...
+
+    dataset = Dataset.from_dataframe(dataframe, example_type=CustomExample)
+    assert all(type(ex) is CustomExample for ex in dataset.examples.values())
+
+
 def test_dataset_from_dataframe_empty() -> None:
     assert Dataset.from_dataframe(pl.DataFrame({})) == Dataset({})
 

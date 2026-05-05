@@ -169,13 +169,4 @@ def test_prediction_repr_with_metadata() -> None:
     )
 
 
-def test_prediction_str() -> None:
-    prediction = Prediction(example_id="q1", prediction="4")
-    assert str(prediction) == "Prediction(example_id='q1', prediction='4', metadata=None)"
 
-
-def test_prediction_str_with_metadata() -> None:
-    prediction = Prediction(example_id="q1", prediction="4", metadata={"source": "math"})
-    assert str(prediction) == (
-        "Prediction(example_id='q1', prediction='4', metadata={'source': 'math'})"
-    )

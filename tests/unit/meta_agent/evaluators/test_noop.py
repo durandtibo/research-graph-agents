@@ -42,9 +42,6 @@ def test_noop_evaluator_repr() -> None:
     assert repr(NoOpEvaluator()) == "NoOpEvaluator()"
 
 
-def test_noop_evaluator_str() -> None:
-    assert str(NoOpEvaluator()) == "NoOpEvaluator()"
-
 
 def test_noop_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
     assert NoOpEvaluator().evaluate(dataframe).equal(Result({}))

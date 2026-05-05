@@ -88,9 +88,7 @@ class BasePrediction(ABC, Generic[T]):
         Example:
             ```pycon
             >>> from argos.meta_agent.predictions import Prediction
-            >>> record = Prediction.from_dict(
-            ...     {"example_id": "q1", "prediction": "4"}
-            ... )
+            >>> record = Prediction.from_dict({"example_id": "q1", "prediction": "4"})
             >>> record.example_id
             'q1'
             >>> record.prediction

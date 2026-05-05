@@ -17,7 +17,7 @@ class NoOpEvaluator(BaseEvaluator):
     r"""Implement an evaluator that does nothing.
 
     This evaluator should be used if no metrics are desired. It always
-    returns an empty dictionary.
+    returns an empty result.
 
     Example:
         ```pycon

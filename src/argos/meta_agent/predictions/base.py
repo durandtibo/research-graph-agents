@@ -24,6 +24,19 @@ class BasePrediction(ABC, Generic[T]):
         prediction: The prediction produced by the agent.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.predictions import BasePrediction, Prediction
+        >>> record = Prediction(example_id="q1", prediction="4")
+        >>> isinstance(record, BasePrediction)
+        True
+        >>> record.example_id
+        'q1'
+        >>> record.prediction
+        '4'
+
+        ```
     """
 
     example_id: str
@@ -46,11 +59,20 @@ class BasePrediction(ABC, Generic[T]):
 
     @abstractmethod
     def to_dict(self) -> dict[str, Any]:
-        r"""Serialise the example to a plain dictionary.
+        r"""Serialise the prediction to a plain dictionary.
 
         Returns:
-            A dictionary with keys ``id``, ``input``, ``target``, and
-            ``metadata``.
+            A dictionary with keys ``example_id``, ``prediction``,
+                and ``metadata``.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.predictions import Prediction
+            >>> record = Prediction(example_id="q1", prediction="4")
+            >>> record.to_dict()
+            {'example_id': 'q1', 'prediction': '4', 'metadata': None}
+
+            ```
         """
 
     @classmethod
@@ -59,11 +81,24 @@ class BasePrediction(ABC, Generic[T]):
         r"""Construct an instance from a plain dictionary.
 
         Args:
-            data: Must contain ``id``, ``input``, and ``target`` keys.
-                ``metadata`` is optional.
+            data: Must contain ``example_id`` and ``prediction``
+                keys. ``metadata`` is optional.
 
         Returns:
             A new instance of the calling subclass.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.predictions import Prediction
+            >>> record = Prediction.from_dict(
+            ...     {"example_id": "q1", "prediction": "4"}
+            ... )
+            >>> record.example_id
+            'q1'
+            >>> record.prediction
+            '4'
+
+            ```
         """
 
 

@@ -60,11 +60,21 @@ class BaseAnalysis(ABC):
     def to_markdown(self) -> str:
         r"""Return the analysis formatted as a Markdown string.
 
-        Produces a human-readable Markdown representation, typically
-        as a table. Useful for reports, notebooks, or CLI output.
+        Produces a human-readable Markdown representation. Useful
+        for reports, notebooks, or CLI output.
 
         Returns:
-            A string containing the Markdown representation of the analysis.
+            A string containing the Markdown representation of
+                the analysis.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.analyses import Analysis
+            >>> analysis = Analysis("my custom analysis: blabla...")
+            >>> analysis.to_markdown()
+            'my custom analysis: blabla...'
+
+            ```
         """
 
 

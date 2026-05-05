@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseAnalysis"]
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Self
 
 from coola.equality.tester import EqualNanEqualityTester, get_default_registry
 
@@ -41,6 +41,18 @@ class BaseAnalysis(ABC):
 
         Returns:
             ``True`` if the two objects are equal, otherwise ``False``
+        """
+
+    @classmethod
+    @abstractmethod
+    def from_dict(cls, data: dict[str, Any]) -> Self:
+        r"""Construct an instance from a plain dictionary.
+
+        Args:
+            data: Must contain the expected keys.
+
+        Returns:
+            A new instance of the calling subclass.
         """
 
     @abstractmethod

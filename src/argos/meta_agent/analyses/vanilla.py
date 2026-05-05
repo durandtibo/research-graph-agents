@@ -24,7 +24,7 @@ class Analysis(BaseAnalysis):
         >>> from argos.meta_agent.analyses import Analysis
         >>> analysis = Analysis("my custom analysis: blabla...")
         >>> analysis.to_dict()
-        {'content': 'my custom analysis: blabla...'}
+        {'content': 'my custom analysis: blabla...', 'metadata': None}
         >>> analysis.to_markdown()
         'my custom analysis: blabla...'
 
@@ -35,7 +35,7 @@ class Analysis(BaseAnalysis):
     metadata: dict[str, Any] | None = None
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(content_len={len(self.content)})"
+        return f"{self.__class__.__qualname__}(content_len={len(self.content)}, metadata={self.metadata})"
 
     def equal(self, other: object, equal_nan: bool = False) -> bool:
         if type(other) is not type(self):

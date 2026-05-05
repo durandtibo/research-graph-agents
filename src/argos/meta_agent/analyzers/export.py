@@ -34,8 +34,9 @@ class JsonExportAnalyzer(BaseAnalyzer):
         self._path = path
 
     def analyze(self, data: pl.DataFrame) -> BaseAnalysis:
+        logger.info("Analyzing the data...")
         analysis = self._analyzer.analyze(data)
-        logger.info(f"Saving the analysis to json: {self._path}")
+        logger.info(f"Exporting the analysis to a json file: {self._path}")
         save_json(analysis.to_dict(), self._path)
         return analysis
 

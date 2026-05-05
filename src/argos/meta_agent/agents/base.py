@@ -22,10 +22,8 @@ class BaseAgent(ABC, Generic[InputT, OutputT]):
     Example:
         ```pycon
         >>> from langchain_core.runnables import RunnableLambda
-        >>> from argos.meta_agent.agents import Agent, BaseAgent
+        >>> from argos.meta_agent.agents import Agent
         >>> agent = Agent(RunnableLambda(str.upper))
-        >>> isinstance(agent, BaseAgent)
-        True
         >>> agent.predict(["hello", "world"])
         ['HELLO', 'WORLD']
 

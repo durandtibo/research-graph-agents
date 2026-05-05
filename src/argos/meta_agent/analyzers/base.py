@@ -18,9 +18,9 @@ if TYPE_CHECKING:
 class BaseAnalyzer(ABC):
     r"""Define the base class to implement an analyzer.
 
-    Subclasses must implement :meth:`analyze` to compare agent
-    predictions against benchmark targets and return a dictionary of
-    metrics.
+    Subclasses must implement :meth:`analyze` to analyze the data
+    and return a :class:`~argos.meta_agent.analyses.BaseAnalysis`
+    object.
 
     Example:
         ```pycon
@@ -30,21 +30,20 @@ class BaseAnalyzer(ABC):
         >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
         >>> analysis = analyzer.analyze(data)
         >>> analysis
-        Result()
+        Analysis(content_len=0)
 
         ```
     """
 
     @abstractmethod
     def analyze(self, data: pl.DataFrame) -> BaseAnalysis:
-        r"""Evaluate the performance of the given data.
+        r"""Analyze the given data and return a diagnostic analysis.
 
         Args:
             data: The data used to analyze the performance.
 
         Returns:
-            A dictionary mapping metric names to their computed
-                values.
+            An analysis object containing the diagnostic information.
 
         Example:
             ```pycon
@@ -54,7 +53,7 @@ class BaseAnalyzer(ABC):
             >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
             >>> analysis = analyzer.analyze(data)
             >>> analysis
-            Result()
+            Analysis(content_len=0)
 
             ```
         """

@@ -17,8 +17,8 @@ class BaseEvaluator(ABC):
     r"""Define the base class to implement an evaluator.
 
     Subclasses must implement :meth:`evaluate` to compare agent
-    predictions against benchmark targets and return a dictionary of
-    metrics.
+    predictions against benchmark targets and return a
+    :class:`~argos.meta_agent.results.BaseResult` object.
 
     Example:
         ```pycon
@@ -41,8 +41,8 @@ class BaseEvaluator(ABC):
             data: The data used to evaluate the performance.
 
         Returns:
-            A dictionary mapping metric names to their computed
-                values.
+            A result object containing the computed evaluation
+                metrics.
 
         Example:
             ```pycon

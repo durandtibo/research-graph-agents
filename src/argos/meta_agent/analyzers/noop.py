@@ -16,8 +16,8 @@ if TYPE_CHECKING:
 class NoOpAnalyzer(BaseAnalyzer):
     r"""Implement an analyzer that does nothing.
 
-    This analyzer should be used if no metrics are desired. It always
-    returns an empty dictionary.
+    This analyzer should be used if no analysis is desired. It always
+    returns an empty analysis.
 
     Example:
         ```pycon
@@ -27,7 +27,7 @@ class NoOpAnalyzer(BaseAnalyzer):
         >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
         >>> analysis = analyzer.analyze(data)
         >>> analysis
-        Analysis()
+        Analysis(content_len=0)
 
         ```
     """

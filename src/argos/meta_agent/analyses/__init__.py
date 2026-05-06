@@ -1,8 +1,8 @@
 r"""Contain abstractions and implementations for analyses.
 
 An analysis encapsulates the diagnostic information produced by an
-analyzer, exposing it as text, a plain dictionary, or other
-serializable formats.
+analyzer, exposing it as text, a plain dictionary, or other serializable
+formats.
 """
 
 from __future__ import annotations

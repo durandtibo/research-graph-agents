@@ -84,7 +84,8 @@ class Predictor(BasePredictor):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
-        r"""Run batch inference on the dataset and return the merged results.
+        r"""Run batch inference on the dataset and return the merged
+        results.
 
         Calls :func:`generate_predictions` with the configured model, batch
         size, and concurrency settings. The output columns are then sorted

@@ -134,6 +134,24 @@ class ErrorFinder(BaseErrorFinder):
         return self._root_path.joinpath("error_topic.json")
 
     def find(self, predictions: pl.DataFrame) -> str:
+        r"""Find structure and topic prediction errors and return a
+        combined markdown report.
+
+        Delegates to :meth:`_find_structure_errors` and
+        :meth:`_find_topic_errors`, then concatenates both reports
+        under their own ``##`` headings.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` produced by the
+                haiku judge, containing prediction and target columns
+                for both structure and topic criteria.
+
+        Returns:
+            A markdown string with two sections:
+                ``## Examples with Structure Errors`` and
+                ``## Examples with Topic Errors``, each followed by
+                the corresponding error table.
+        """
         structure = self._find_structure_errors(predictions)
         topic = self._find_topic_errors(predictions)
         return (

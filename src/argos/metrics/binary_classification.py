@@ -87,6 +87,24 @@ class BinaryClassificationResults:
 
         Returns:
             A formatted string with progress bars for each metric and a confusion matrix.
+
+        Example:
+            ```pycon
+            >>> from argos.metrics import compute_binary_classification_metrics
+            >>> import polars as pl
+            >>> df = pl.DataFrame(
+            ...     {"target": [1, 0, 1, 0, 1], "prediction": [1, 0, 1, 1, 0]}
+            ... )
+            >>> results = compute_binary_classification_metrics(
+            ...     df, target_col="target", prediction_col="prediction"
+            ... )
+            >>> print(results.to_str())  # doctest: +SKIP
+            Classification Results (n=5)
+            ----------------------------
+            Accuracy    ████████████████░░░░  0.6000  (3/5)
+            ...
+
+            ```
         """
         metrics = [
             ("Accuracy", self.accuracy),

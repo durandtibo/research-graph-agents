@@ -79,6 +79,24 @@ class ErrorAnalyzer(BaseErrorAnalyzer):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def analyze(self, predictions: pl.DataFrame) -> str:
+        r"""Compute a textual analysis of the prediction errors.
+
+        Uses the error finder to extract mispredicted examples, passes
+        the formatted report to the model, and returns the analysis
+        string. Handles both
+        :class:`~langchain_core.messages.AIMessage` responses (via
+        ``.content``) and plain dict responses (via ``["analysis"]``).
+        If a ``path`` was provided at construction time, the analysis
+        text is also written to disk.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` produced by the
+                haiku judge, containing prediction and target columns.
+
+        Returns:
+            A string summarising the error patterns found in
+                ``predictions``.
+        """
         errors = self._error_finder.find(predictions)
         out = self._model.invoke({"text": errors})
         analysis = out.content if isinstance(out, AIMessage) else out["analysis"]

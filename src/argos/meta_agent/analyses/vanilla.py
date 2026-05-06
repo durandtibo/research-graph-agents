@@ -53,6 +53,26 @@ class Analysis(BaseAnalysis):
         return {"content": self.content, "metadata": self.metadata}
 
     def to_text(self) -> str:
+        r"""Return the analysis content as a plain string.
+
+        Returns ``"_Empty analysis_"`` when the content is empty or
+        whitespace-only, making it safe to use directly in reports or
+        LLM context without special-casing empty states.
+
+        Returns:
+            The ``content`` string, or ``"_Empty analysis_"`` if
+                ``content`` is falsy.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.analyses import Analysis
+            >>> Analysis("Summary: model performs well.").to_text()
+            'Summary: model performs well.'
+            >>> Analysis("").to_text()
+            '_Empty analysis_'
+
+            ```
+        """
         if not self.content:
             return "_Empty analysis_"
         return self.content

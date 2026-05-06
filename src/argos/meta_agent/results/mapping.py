@@ -83,9 +83,57 @@ class ResultDict(BaseResult):
         return to_flat_dict(self.to_dict(), separator=separator)
 
     def to_raw_dict(self) -> dict[str, Any]:
+        r"""Return the raw mapping of result objects without conversion.
+
+        Unlike :meth:`to_dict`, the values are returned as-is — each
+        value is a :class:`~argos.meta_agent.results.BaseResult`
+        instance rather than a plain Python dict.
+
+        Returns:
+            A dictionary mapping split names to their raw
+                :class:`~argos.meta_agent.results.BaseResult`
+                instances.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result, ResultDict
+            >>> result = ResultDict({"train": Result({"loss": 0.5})})
+            >>> raw = result.to_raw_dict()
+            >>> type(raw["train"])
+            <class 'argos.meta_agent.results.vanilla.Result'>
+
+            ```
+        """
         return self._results
 
     def to_markdown(self) -> str:
+        r"""Return the result formatted as a nested Markdown string.
+
+        Each top-level split is rendered as a bold label followed by
+        its sub-result's markdown representation, indented by two
+        spaces. Returns ``"_No metrics available._"`` when the mapping
+        is empty.
+
+        Returns:
+            A Markdown string with one section per split, or
+                ``"_No metrics available._"`` when the mapping is
+                empty.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result, ResultDict
+            >>> result = ResultDict({
+            ...     "train": Result({"loss": 0.5}),
+            ...     "val": Result({"loss": 0.3}),
+            ... })
+            >>> print(result.to_markdown())
+            - **train**:
+              - **loss**: 0.5
+            - **val**:
+              - **loss**: 0.3
+
+            ```
+        """
         if not self._results:
             return "_No metrics available._"
         metrics = [

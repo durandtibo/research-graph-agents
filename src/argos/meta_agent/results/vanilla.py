@@ -84,6 +84,26 @@ class Result(BaseResult):
         return self._metrics
 
     def to_markdown(self) -> str:
+        r"""Return the result formatted as a Markdown bullet list.
+
+        Each metric is rendered as ``- **<key>**: <value>``.
+        Returns ``"_No metrics available._"`` when the result is empty.
+
+        Returns:
+            A Markdown string with one bullet per metric, or
+                ``"_No metrics available._"`` when the metrics
+                dictionary is empty.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.results import Result
+            >>> result = Result({"loss": 0.5, "accuracy": 0.9})
+            >>> print(result.to_markdown())
+            - **loss**: 0.5
+            - **accuracy**: 0.9
+
+            ```
+        """
         if not self._metrics:
             return "_No metrics available._"
         metrics = [f"- **{key}**: {value}" for key, value in self._metrics.items()]

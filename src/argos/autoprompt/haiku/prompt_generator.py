@@ -71,6 +71,16 @@ class HistoryPromptGenerator(BasePromptGenerator):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def generate(self) -> str:
+        r"""Generate a new system prompt from the optimization history.
+
+        Formats the current history as a JSON array with an
+        explanatory preamble, invokes the model, optionally saves the
+        raw model output to disk, and returns the ``prompt`` field of
+        the :class:`~argos.models.prompt_generation.PromptGeneratorOutput`.
+
+        Returns:
+            The newly generated system prompt string.
+        """
         history_str = (
             f"The prompt history is provided below as a JSON array. "
             f"Items are listed in order of execution, starting with the "

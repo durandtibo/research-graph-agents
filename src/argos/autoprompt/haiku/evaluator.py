@@ -112,6 +112,22 @@ class HaikuJudgeEvaluator(BaseEvaluator):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def evaluate(self, predictions: pl.DataFrame) -> dict[str, Any]:
+        r"""Evaluate the haiku judge predictions and return metrics.
+
+        Computes binary classification metrics for the overall,
+        structure, and topic criteria. If a ``path`` was provided at
+        construction time, the serialised metrics are written to disk
+        as a JSON file.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` containing
+                the haiku judge predictions and ground-truth labels.
+
+        Returns:
+            A dictionary with keys ``"overall"``, ``"structure"``,
+                and ``"topic"``, each mapping to a plain dict of
+                binary classification metric values.
+        """
         metrics = evaluate_judge_classification_metrics(
             predictions,
             overall_prediction_col=self._overall_prediction_col,

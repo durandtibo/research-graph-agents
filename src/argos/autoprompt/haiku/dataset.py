@@ -22,7 +22,7 @@ def prepare_dataset() -> pl.DataFrame:
     Returns:
         A :class:`~polars.DataFrame` with columns ``topic``,
             ``haiku``, ``structure_target``, ``topic_target``, and
-            ``target`` — matching the schema produced by
+            ``overall_target`` — matching the schema produced by
             :func:`~argos.datasets.generate_haiku_dataset`.
     """
     logger.info("Preparing dataset...")

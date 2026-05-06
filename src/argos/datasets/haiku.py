@@ -27,7 +27,7 @@ def generate_haiku_dataset() -> pl.DataFrame:
           follows the 5-7-5 syllable structure.
         - ``topic_target`` (``Boolean``): ``True`` if the haiku
           clearly reflects the specified topic.
-        - ``target`` (``Boolean``): ``True`` only if both
+        - ``overall_target`` (``Boolean``): ``True`` only if both
           ``structure_target`` and ``topic_target`` are ``True``
           (i.e. the overall quality label).
 
@@ -52,9 +52,9 @@ def _generate_positive_examples() -> pl.DataFrame:
 
     Returns:
         A :class:`~polars.DataFrame` with columns ``topic``, ``haiku``,
-            ``structure_target``, ``topic_target``, and ``target``.
+            ``structure_target``, ``topic_target``, and ``overall_target``.
             All rows have ``structure_target=True``,
-            ``topic_target=True``, and ``target=True``.
+            ``topic_target=True``, and ``overall_target=True``.
     """
     return pl.from_dicts(
         [

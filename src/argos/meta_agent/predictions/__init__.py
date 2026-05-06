@@ -1,4 +1,9 @@
-r"""Contain abstractions and implementations for predictions."""
+r"""Contain abstractions and implementations for predictions.
+
+A prediction pairs a single agent output with the identifier of the
+benchmark example it corresponds to. This sub-package provides the
+abstract base class and a concrete frozen-dataclass implementation.
+"""
 
 from __future__ import annotations
 

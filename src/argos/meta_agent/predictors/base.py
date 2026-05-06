@@ -28,8 +28,11 @@ class BasePredictor(ABC, Generic[InputT, TargetT, OutputT]):
         >>> from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
         >>> from argos.meta_agent.predictors import BasePredictor, BatchPredictor
         >>> predictor = BatchPredictor(batch_size=4)
-        >>> isinstance(predictor, BasePredictor)
-        True
+        >>> predictor
+        BatchPredictor(
+          (batch_size): 4
+          (config): {'max_concurrency': 4}
+        )
 
         ```
     """

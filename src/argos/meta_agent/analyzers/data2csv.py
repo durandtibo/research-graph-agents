@@ -23,10 +23,15 @@ class Data2CsvAnalyzer(BaseAnalyzer):
         >>> import polars as pl
         >>> from argos.meta_agent.analyzers import Data2CsvAnalyzer
         >>> analyzer = Data2CsvAnalyzer()
+        >>> analyzer
+        Data2CsvAnalyzer()
         >>> data = pl.DataFrame({"id": ["q1", "q2"], "error": [True, False]})
         >>> analysis = analyzer.analyze(data)
-        >>> isinstance(analysis.to_text(), str)
-        True
+        >>> print(analysis.to_text())
+        Schema: id: String, error: Boolean
+        id,error
+        q1,true
+        q2,false
 
         ```
     """

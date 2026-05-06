@@ -24,8 +24,6 @@ class BaseResult(ABC):
         ```pycon
         >>> from argos.meta_agent.results import BaseResult, Result
         >>> result = Result({"accuracy": 0.9, "loss": 0.5})
-        >>> isinstance(result, BaseResult)
-        True
         >>> result.to_dict()
         {'accuracy': 0.9, 'loss': 0.5}
 

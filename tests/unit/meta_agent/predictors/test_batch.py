@@ -43,31 +43,6 @@ def mock_agent() -> BaseAgent:
 ####################################
 
 
-def test_batch_predictor_default_batch_size() -> None:
-    predictor = BatchPredictor()
-    assert predictor._batch_size == 1
-
-
-def test_batch_predictor_custom_batch_size() -> None:
-    predictor = BatchPredictor(batch_size=4)
-    assert predictor._batch_size == 4
-
-
-def test_batch_predictor_default_config_uses_batch_size_as_max_concurrency() -> None:
-    predictor = BatchPredictor(batch_size=4)
-    assert predictor._config["max_concurrency"] == 4
-
-
-def test_batch_predictor_custom_config_is_stored() -> None:
-    config = RunnableConfig(max_concurrency=8)
-    predictor = BatchPredictor(batch_size=2, config=config)
-    assert predictor._config == config
-
-
-def test_batch_predictor_none_config_generates_default() -> None:
-    assert BatchPredictor()._config is not None
-
-
 def test_batch_predictor_repr() -> None:
     assert repr(BatchPredictor()) == (
         "BatchPredictor(\n  (batch_size): 1\n  (config): {'max_concurrency': 1}\n)"
@@ -77,6 +52,14 @@ def test_batch_predictor_repr() -> None:
 def test_batch_predictor_repr_custom_batch_size() -> None:
     assert repr(BatchPredictor(batch_size=4)) == (
         "BatchPredictor(\n  (batch_size): 4\n  (config): {'max_concurrency': 4}\n)"
+    )
+
+
+def test_batch_predictor_custom_config_repr() -> None:
+    config = RunnableConfig(max_concurrency=8)
+    predictor = BatchPredictor(batch_size=2, config=config)
+    assert repr(predictor) == (
+        "BatchPredictor(\n  (batch_size): 2\n  (config): {'max_concurrency': 8}\n)"
     )
 
 

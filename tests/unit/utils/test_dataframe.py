@@ -8,6 +8,8 @@ from polars.testing import assert_frame_equal
 
 from argos.utils.dataframe import (
     concat_and_merge,
+    dataframe_to_csv,
+    dataframe_to_markdown,
     list_of_dicts_to_dataframe,
     summarize_boolean_columns,
     unnest_struct_columns,
@@ -459,3 +461,87 @@ def test_unnest_struct_columns_with_struct_cols_and_duplicated_names() -> None:
                 },
             )
         )
+
+
+######################################
+#     Tests for dataframe_to_csv     #
+######################################
+
+
+def test_dataframe_to_csv_empty() -> None:
+    assert dataframe_to_csv(pl.DataFrame()) == "_No data available._"
+
+
+def test_dataframe_to_csv_full_output() -> None:
+    df = pl.DataFrame({"loss": [0.5], "accuracy": [0.9]})
+    assert (
+        dataframe_to_csv(df)
+        == "Schema: loss: Float64, accuracy: Float64\n\nloss,accuracy\n0.5,0.9\n"
+    )
+
+
+def test_dataframe_to_csv_multiple_rows() -> None:
+    df = pl.DataFrame({"loss": [0.5, 0.3], "accuracy": [0.9, 0.95]})
+    assert (
+        dataframe_to_csv(df)
+        == "Schema: loss: Float64, accuracy: Float64\n\nloss,accuracy\n0.5,0.9\n0.3,0.95\n"
+    )
+
+
+def test_dataframe_to_csv_string_column() -> None:
+    df = pl.DataFrame({"model": ["resnet50"]})
+    assert dataframe_to_csv(df) == "Schema: model: String\n\nmodel\nresnet50\n"
+
+
+def test_dataframe_to_csv_integer_column() -> None:
+    df = pl.DataFrame({"epoch": [1, 2, 3]})
+    assert dataframe_to_csv(df) == "Schema: epoch: Int64\n\nepoch\n1\n2\n3\n"
+
+
+###########################################
+#     Tests for dataframe_to_markdown     #
+###########################################
+
+
+def test_dataframe_to_markdown_empty() -> None:
+    assert dataframe_to_markdown(pl.DataFrame()) == "_No data available._"
+
+
+def test_dataframe_to_markdown_single_row() -> None:
+    frame = pl.DataFrame({"loss": [0.5], "accuracy": [0.9]})
+    assert dataframe_to_markdown(frame) == (
+        "| loss | accuracy |\n|------|----------|\n| 0.5  | 0.9      |"
+    )
+
+
+def test_dataframe_to_markdown_multiple_rows() -> None:
+    frame = pl.DataFrame({"loss": [0.5, 0.3], "accuracy": [0.9, 0.95]})
+    assert dataframe_to_markdown(frame) == (
+        "| loss | accuracy |\n|------|----------|\n| 0.5  | 0.9      |\n| 0.3  | 0.95     |"
+    )
+
+
+def test_dataframe_to_markdown_single_column() -> None:
+    frame = pl.DataFrame({"loss": [0.5, 0.3]})
+    assert dataframe_to_markdown(frame) == "| loss |\n|------|\n| 0.5  |\n| 0.3  |"
+
+
+def test_dataframe_to_markdown_string_values() -> None:
+    frame = pl.DataFrame({"model": ["resnet50", "vgg16"]})
+    assert dataframe_to_markdown(frame) == (
+        "| model    |\n|----------|\n| resnet50 |\n| vgg16    |"
+    )
+
+
+def test_dataframe_to_markdown_wide_column_name() -> None:
+    frame = pl.DataFrame({"very_long_column_name": [1]})
+    assert dataframe_to_markdown(frame) == (
+        "| very_long_column_name |\n|-----------------------|\n| 1                     |"
+    )
+
+
+def test_dataframe_to_markdown_wide_value() -> None:
+    frame = pl.DataFrame({"x": ["a_very_long_value"]})
+    assert dataframe_to_markdown(frame) == (
+        "| x                 |\n|-------------------|\n| a_very_long_value |"
+    )

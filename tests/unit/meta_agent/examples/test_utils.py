@@ -28,10 +28,18 @@ def test_dataframe_to_examples_single() -> None:
             "id": ["q1"],
             "input": ["What is 2+2?"],
             "target": ["4"],
-            "metadata": [None],
-        }
+            "metadata": [{"source": "math"}],
+        },
+        schema={
+            "id": pl.String,
+            "input": pl.String,
+            "target": pl.String,
+            "metadata": pl.Struct({"source": pl.String}),
+        },
     )
-    assert dataframe_to_examples(frame) == [Example(id="q1", input="What is 2+2?", target="4")]
+    assert dataframe_to_examples(frame) == [
+        Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
+    ]
 
 
 def test_dataframe_to_examples_multiple() -> None:
@@ -40,27 +48,31 @@ def test_dataframe_to_examples_multiple() -> None:
             "id": ["q1", "q2"],
             "input": ["What is 2+2?", "What is 4+2?"],
             "target": ["4", "6"],
-            "metadata": [None, None],
-        }
+            "metadata": [{"source": "math"}, {"source": "math"}],
+        },
+        schema={
+            "id": pl.String,
+            "input": pl.String,
+            "target": pl.String,
+            "metadata": pl.Struct({"source": pl.String}),
+        },
     )
     assert dataframe_to_examples(frame) == [
-        Example(id="q1", input="What is 2+2?", target="4"),
-        Example(id="q2", input="What is 4+2?", target="6"),
+        Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"}),
+        Example(id="q2", input="What is 4+2?", target="6", metadata={"source": "math"}),
     ]
 
 
-def test_dataframe_to_examples_with_metadata() -> None:
+def test_dataframe_to_examples_without_metadata() -> None:
     frame = pl.DataFrame(
         {
             "id": ["q1"],
             "input": ["What is 2+2?"],
             "target": ["4"],
-            "metadata": [{"source": "math"}],
-        }
+        },
+        schema={"id": pl.String, "input": pl.String, "target": pl.String},
     )
-    assert dataframe_to_examples(frame) == [
-        Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
-    ]
+    assert dataframe_to_examples(frame) == [Example(id="q1", input="What is 2+2?", target="4")]
 
 
 def test_dataframe_to_examples_preserves_order() -> None:
@@ -69,26 +81,35 @@ def test_dataframe_to_examples_preserves_order() -> None:
             "id": ["q3", "q1", "q2"],
             "input": ["c", "a", "b"],
             "target": ["3", "1", "2"],
-            "metadata": [None, None, None],
-        }
+            "metadata": [{"tag": "t3"}, {"tag": "t1"}, {"tag": "t2"}],
+        },
+        schema={
+            "id": pl.String,
+            "input": pl.String,
+            "target": pl.String,
+            "metadata": pl.Struct({"tag": pl.String}),
+        },
     )
     assert dataframe_to_examples(frame) == [
-        Example(id="q3", input="c", target="3"),
-        Example(id="q1", input="a", target="1"),
-        Example(id="q2", input="b", target="2"),
+        Example(id="q3", input="c", target="3", metadata={"tag": "t3"}),
+        Example(id="q1", input="a", target="1", metadata={"tag": "t1"}),
+        Example(id="q2", input="b", target="2", metadata={"tag": "t2"}),
     ]
 
 
 def test_dataframe_to_examples_custom_class() -> None:
-
     examples = dataframe_to_examples(
         frame=pl.DataFrame(
             {
                 "id": ["q1", "q2"],
                 "input": ["What is 2+2?", "What is 4+2?"],
                 "target": ["4", "6"],
-                "metadata": [None, None],
-            }
+            },
+            schema={
+                "id": pl.String,
+                "input": pl.String,
+                "target": pl.String,
+            },
         ),
         example_type=CustomExample,
     )

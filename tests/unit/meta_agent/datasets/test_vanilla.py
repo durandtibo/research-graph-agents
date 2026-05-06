@@ -69,6 +69,119 @@ def examples() -> list[BaseExample]:
 #############################
 
 
+def test_dataset_examples() -> None:
+    assert Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    ).examples == {"q1": Example(id="q1", input="What is 2+2?", target="4")}
+
+
+def test_dataset_metadata_() -> None:
+    assert Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")},
+        metadata={"source": "math"},
+    ).metadata == {"source": "math"}
+
+
+def test_dataset_metadata_default_none() -> None:
+    assert (
+        Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}).metadata
+        is None
+    )
+
+
+def test_dataset_equal_true() -> None:
+    dataset = Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")})
+    assert dataset.equal(
+        Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")})
+    )
+
+
+def test_dataset_equal_true_empty() -> None:
+    assert Dataset(examples={}).equal(Dataset(examples={}))
+
+
+def test_dataset_equal_true_with_metadata() -> None:
+    dataset = Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")},
+        metadata={"source": "math"},
+    )
+    assert dataset.equal(
+        Dataset(
+            examples={"q1": Example(id="q1", input="What is 2+2?", target="4")},
+            metadata={"source": "math"},
+        )
+    )
+
+
+def test_dataset_equal_false_different_examples() -> None:
+    assert not Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}).equal(
+        Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="5")})
+    )
+
+
+def test_dataset_equal_false_different_example_ids() -> None:
+    assert not Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}).equal(
+        Dataset(examples={"q2": Example(id="q2", input="What is 2+2?", target="4")})
+    )
+
+
+def test_dataset_equal_false_different_number_of_examples() -> None:
+    assert not Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}).equal(
+        Dataset(
+            examples={
+                "q1": Example(id="q1", input="What is 2+2?", target="4"),
+                "q2": Example(id="q2", input="What is 4+2?", target="6"),
+            }
+        )
+    )
+
+
+def test_dataset_equal_false_different_metadata() -> None:
+    examples = {"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    assert not Dataset(examples=examples, metadata={"source": "math"}).equal(
+        Dataset(examples=examples, metadata={"source": "science"})
+    )
+
+
+def test_dataset_equal_false_metadata_vs_none() -> None:
+    examples = {"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    assert not Dataset(examples=examples, metadata={"source": "math"}).equal(
+        Dataset(examples=examples, metadata=None)
+    )
+
+
+def test_dataset_equal_false_different_type() -> None:
+    assert not Dataset(examples={}).equal({})
+
+
+def test_dataset_equal_nan_false_by_default() -> None:
+    assert not Dataset(examples={"q1": Example(id="q1", input=float("nan"), target="4")}).equal(
+        Dataset(examples={"q1": Example(id="q1", input=float("nan"), target="4")})
+    )
+
+
+def test_dataset_equal_nan_true() -> None:
+    assert Dataset(examples={"q1": Example(id="q1", input=float("nan"), target="4")}).equal(
+        Dataset(examples={"q1": Example(id="q1", input=float("nan"), target="4")}),
+        equal_nan=True,
+    )
+
+
+def test_dataset_equal_nan_false_by_default_in_metadata() -> None:
+    examples = {"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    assert not Dataset(examples=examples, metadata={"score": float("nan")}).equal(
+        Dataset(examples=examples, metadata={"score": float("nan")})
+    )
+
+
+def test_dataset_equal_nan_true_in_metadata() -> None:
+    examples = {"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    assert Dataset(examples=examples, metadata={"score": float("nan")}).equal(
+        Dataset(examples=examples, metadata={"score": float("nan")}),
+        equal_nan=True,
+    )
+
+
 def test_dataset_to_dataframe(dataset: Dataset, dataframe: pl.DataFrame) -> None:
     assert_frame_equal(dataset.to_dataframe(), dataframe)
 
@@ -78,6 +191,14 @@ def test_dataset_to_dataframe_empty() -> None:
         Dataset({}).to_dataframe(),
         pl.DataFrame({}),
     )
+
+
+def test_dataset_from_dataframe(dataset: Dataset, dataframe: pl.DataFrame) -> None:
+    assert dataset == Dataset.from_dataframe(dataframe)
+
+
+def test_dataset_from_dataframe_empty() -> None:
+    assert Dataset.from_dataframe(pl.DataFrame({})) == Dataset({})
 
 
 def test_dataset_from_examples(dataset: Dataset, examples: list[BaseExample]) -> None:
@@ -142,9 +263,9 @@ def test_dataset_repr() -> None:
 
 
 def test_dataset_equality() -> None:
-    assert Dataset(
+    assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) == Dataset(
         examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
-    ) == Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")})
+    )
 
 
 def test_dataset_inequality_different_examples() -> None:
@@ -170,4 +291,6 @@ def test_dataset_to_dataframe_single_example() -> None:
                 "metadata": pl.Null,
             },
         ),
+    assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) != Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="5")}
     )

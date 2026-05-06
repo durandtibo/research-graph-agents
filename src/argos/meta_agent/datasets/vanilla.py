@@ -8,8 +8,10 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Self
 
 import polars as pl
+from coola.equality import objects_are_equal
 
 from argos.meta_agent.datasets import BaseDataset
+from argos.meta_agent.examples import Example, dataframe_to_examples
 from argos.meta_agent.typing import InputT, TargetT
 
 if TYPE_CHECKING:
@@ -50,8 +52,25 @@ class Dataset(BaseDataset[InputT, TargetT]):
     examples: dict[str, BaseExample[InputT, TargetT]]
     metadata: dict[str, Any] | None = None
 
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        if type(other) is not type(self):
+            return False
+        return objects_are_equal(
+            self.examples, other.examples, equal_nan=equal_nan
+        ) and objects_are_equal(self.metadata, other.metadata, equal_nan=equal_nan)
+
     def to_dataframe(self) -> pl.DataFrame:
         return pl.DataFrame([example.to_dict() for example in self.examples.values()])
+
+    @classmethod
+    def from_dataframe(
+        cls,
+        frame: pl.DataFrame,
+        metadata: dict[str, Any] | None = None,
+        example_type: type[BaseExample[InputT, TargetT]] = Example,
+    ) -> Self:
+        examples = dataframe_to_examples(frame=frame, example_type=example_type)
+        return cls.from_examples(examples=examples, metadata=metadata)
 
     @classmethod
     def from_examples(

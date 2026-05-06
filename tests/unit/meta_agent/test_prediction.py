@@ -277,6 +277,6 @@ def test_prediction_record_inequality_different_prediction() -> None:
 
 
 def test_prediction_record_inequality_different_metadata() -> None:
-    assert PredictionRecord(
-        example_id="q1", prediction="4", metadata={"a": 1}
-    ) != PredictionRecord(example_id="q1", prediction="4", metadata={"a": 2})
+    assert PredictionRecord(example_id="q1", prediction="4", metadata={"a": 1}) != PredictionRecord(
+        example_id="q1", prediction="4", metadata={"a": 2}
+    )

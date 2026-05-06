@@ -5,58 +5,54 @@ from __future__ import annotations
 __all__ = ["BaseEvaluator"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Generic
-
-from argos.meta_agent.typing import InputT, OutputT, TargetT
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from argos.meta_agent.prediction import Benchmark, PredictionResult
+    import polars as pl
+
+    from argos.meta_agent.results import BaseResult
 
 
-class BaseEvaluator(ABC, Generic[InputT, TargetT, OutputT]):
+class BaseEvaluator(ABC):
     r"""Define the base class to implement an evaluator.
 
     Subclasses must implement :meth:`evaluate` to compare agent
-    predictions against benchmark targets and return a dictionary of
-    metrics.
+    predictions against benchmark targets and return a
+    :class:`~argos.meta_agent.results.BaseResult` object.
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.benchmark import Benchmark
-        >>> from argos.meta_agent.evaluators import BaseEvaluator, NoOpEvaluator
-        >>> from argos.meta_agent.prediction import PredictionResult
+        >>> import polars as pl
+        >>> from argos.meta_agent.evaluators import NoOpEvaluator
         >>> evaluator = NoOpEvaluator()
-        >>> isinstance(evaluator, BaseEvaluator)
-        True
+        >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
+        >>> result = evaluator.evaluate(data)
+        >>> result
+        Result()
 
         ```
     """
 
     @abstractmethod
-    def evaluate(
-        self,
-        predictions: PredictionResult[OutputT],
-        benchmark: Benchmark[InputT, TargetT],
-    ) -> dict[Any, Any]:
-        r"""Evaluate the performance of the given predictions.
+    def evaluate(self, data: pl.DataFrame) -> BaseResult:
+        r"""Evaluate the performance of the given data.
 
         Args:
-            predictions: The predictions to evaluate.
-            benchmark: The benchmark containing the ground-truth
-                targets.
+            data: The data used to evaluate the performance.
 
         Returns:
-            A dictionary mapping metric names to their computed
-                values.
+            A result object containing the computed evaluation
+                metrics.
 
         Example:
             ```pycon
-            >>> from argos.meta_agent.benchmark import Benchmark
+            >>> import polars as pl
             >>> from argos.meta_agent.evaluators import NoOpEvaluator
-            >>> from argos.meta_agent.prediction import PredictionResult
             >>> evaluator = NoOpEvaluator()
-            >>> evaluator.evaluate(PredictionResult(records=[]), Benchmark({}))
-            {}
+            >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
+            >>> result = evaluator.evaluate(data)
+            >>> result
+            Result()
 
             ```
         """

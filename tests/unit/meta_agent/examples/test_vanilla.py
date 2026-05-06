@@ -9,6 +9,10 @@ from argos.meta_agent.examples import BaseExample, Example
 #############################
 
 
+def test_example_is_instance_of_base_example() -> None:
+    assert isinstance(Example(id="q1", input="What is 2+2?", target="4"), BaseExample)
+
+
 def test_example_id() -> None:
     assert Example(id="q1", input="What is 2+2?", target="4").id == "q1"
 
@@ -29,6 +33,74 @@ def test_example_metadata() -> None:
     assert Example(
         id="q1", input="What is 2+2?", target="4", metadata={"source": "math"}
     ).metadata == {"source": "math"}
+
+
+def test_example_equal_true() -> None:
+    assert Example(id="q1", input="What is 2+2?", target="4").equal(
+        Example(id="q1", input="What is 2+2?", target="4")
+    )
+
+
+def test_example_equal_true_with_metadata() -> None:
+    assert Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"}).equal(
+        Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
+    )
+
+
+def test_example_equal_false_different_id() -> None:
+    assert not Example(id="q1", input="What is 2+2?", target="4").equal(
+        Example(id="q2", input="What is 2+2?", target="4")
+    )
+
+
+def test_example_equal_false_different_input() -> None:
+    assert not Example(id="q1", input="What is 2+2?", target="4").equal(
+        Example(id="q1", input="What is 4+2?", target="4")
+    )
+
+
+def test_example_equal_false_different_target() -> None:
+    assert not Example(id="q1", input="What is 2+2?", target="4").equal(
+        Example(id="q1", input="What is 2+2?", target="5")
+    )
+
+
+def test_example_equal_false_different_metadata() -> None:
+    assert not Example(
+        id="q1", input="What is 2+2?", target="4", metadata={"source": "math"}
+    ).equal(Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "science"}))
+
+
+def test_example_equal_false_metadata_vs_none() -> None:
+    assert not Example(
+        id="q1", input="What is 2+2?", target="4", metadata={"source": "math"}
+    ).equal(Example(id="q1", input="What is 2+2?", target="4"))
+
+
+def test_example_equal_false_different_type() -> None:
+    assert not Example(id="q1", input="What is 2+2?", target="4").equal(
+        {"id": "q1", "input": "What is 2+2?", "target": "4", "metadata": None}
+    )
+
+
+def test_example_equal_false_different_type_child() -> None:
+    class ChildExample(Example): ...
+
+    assert not Example(id="q1", input="What is 2+2?", target="4").equal(
+        ChildExample(id="q1", input="What is 2+2?", target="4")
+    )
+
+
+def test_example_equal_nan_false_by_default() -> None:
+    assert not Example(id="q1", input=float("nan"), target="4").equal(
+        Example(id="q1", input=float("nan"), target="4")
+    )
+
+
+def test_example_equal_nan_true() -> None:
+    assert Example(id="q1", input=float("nan"), target="4").equal(
+        Example(id="q1", input=float("nan"), target="4"), equal_nan=True
+    )
 
 
 def test_example_to_dict() -> None:
@@ -85,10 +157,6 @@ def test_example_roundtrip_without_metadata() -> None:
     assert Example.from_dict(example.to_dict()) == example
 
 
-def test_example_is_instance_of_base_example() -> None:
-    assert isinstance(Example(id="q1", input="What is 2+2?", target="4"), BaseExample)
-
-
 def test_example_equality() -> None:
     ex1 = Example(id="q1", input="What is 2+2?", target="4")
     ex2 = Example(id="q1", input="What is 2+2?", target="4")
@@ -104,6 +172,18 @@ def test_example_inequality_different_id() -> None:
 def test_example_inequality_different_input() -> None:
     ex1 = Example(id="q1", input="What is 2+2?", target="4")
     ex2 = Example(id="q1", input="What is 3+3?", target="4")
+    assert ex1 != ex2
+
+
+def test_example_inequality_different_target() -> None:
+    ex1 = Example(id="q1", input="What is 2+2?", target="4")
+    ex2 = Example(id="q1", input="What is 2+2?", target="5")
+    assert ex1 != ex2
+
+
+def test_example_inequality_different_metadata() -> None:
+    ex1 = Example(id="q1", input="What is 2+2?", target="4")
+    ex2 = Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
     assert ex1 != ex2
 
 
@@ -130,5 +210,17 @@ def test_example_repr() -> None:
 def test_example_repr_with_metadata() -> None:
     example = Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
     assert repr(example) == (
+        "Example(id='q1', input='What is 2+2?', target='4', metadata={'source': 'math'})"
+    )
+
+
+def test_example_str() -> None:
+    example = Example(id="q1", input="What is 2+2?", target="4")
+    assert str(example) == "Example(id='q1', input='What is 2+2?', target='4', metadata=None)"
+
+
+def test_example_str_with_metadata() -> None:
+    example = Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
+    assert str(example) == (
         "Example(id='q1', input='What is 2+2?', target='4', metadata={'source': 'math'})"
     )

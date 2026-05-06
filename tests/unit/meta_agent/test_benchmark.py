@@ -176,9 +176,10 @@ def test_benchmark_repr_empty() -> None:
 
 
 def test_benchmark_repr() -> None:
-    assert repr(
-        Benchmark(examples={"id1": BenchmarkExample(id="id1", input=1, target=2)})
-    ) == "Benchmark(examples={'id1': BenchmarkExample(id='id1', input=1, target=2, metadata=None)}, metadata=None)"
+    assert (
+        repr(Benchmark(examples={"id1": BenchmarkExample(id="id1", input=1, target=2)}))
+        == "Benchmark(examples={'id1': BenchmarkExample(id='id1', input=1, target=2, metadata=None)}, metadata=None)"
+    )
 
 
 def test_benchmark_example_inequality_different_target() -> None:

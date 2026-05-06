@@ -18,7 +18,13 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BaseHistory(ABC):
-    r"""Define the base class to implement a history."""
+    r"""Abstract base class for history stores.
+
+    Subclasses must implement :meth:`append`, :meth:`get_values`, and
+    :meth:`clear` to manage an ordered sequence of dict entries that
+    record the configuration and metrics from past optimization
+    iterations.
+    """
 
     @abstractmethod
     def append(self, data: dict[Any, Any]) -> None:
@@ -30,10 +36,10 @@ class BaseHistory(ABC):
 
     @abstractmethod
     def get_values(self) -> list[dict[Any, Any]]:
-        r"""Return the history values.
+        r"""Return all entries stored in the history.
 
         Returns:
-            The history values.
+            A list of dict entries in the order they were appended.
         """
 
     @abstractmethod
@@ -46,6 +52,20 @@ class InMemoryHistory(BaseHistory):
 
     Args:
         data: The initial data to store in the history.
+
+    Example:
+        ```pycon
+        >>> from argos.utils.history import InMemoryHistory
+        >>> history = InMemoryHistory()
+        >>> history.append({"step": 1, "loss": 0.5})
+        >>> history.append({"step": 2, "loss": 0.3})
+        >>> history.get_values()
+        [{'step': 1, 'loss': 0.5}, {'step': 2, 'loss': 0.3}]
+        >>> history.clear()
+        >>> history.get_values()
+        []
+
+        ```
     """
 
     def __init__(self, data: list[Any] | None = None) -> None:
@@ -64,8 +84,26 @@ class InMemoryHistory(BaseHistory):
 class JsonHistory(BaseHistory):
     r"""Implement a history that stores data in a JSON file.
 
+    The history is persisted to disk on every :meth:`append` and
+    :meth:`clear` call. If the file at ``path`` already exists when
+    the instance is created, its contents are preserved; otherwise an
+    empty JSON array is written to initialize the file.
+
     Args:
         path: The path to the history file.
+
+    Example:
+        ```pycon
+        >>> import pathlib, tempfile
+        >>> from argos.utils.history import JsonHistory
+        >>> with tempfile.TemporaryDirectory() as tmp:
+        ...     path = pathlib.Path(tmp) / "history.json"
+        ...     history = JsonHistory(path)
+        ...     history.append({"step": 1, "loss": 0.5})
+        ...     history.get_values()
+        [{'step': 1, 'loss': 0.5}]
+
+        ```
     """
 
     def __init__(self, path: Path) -> None:

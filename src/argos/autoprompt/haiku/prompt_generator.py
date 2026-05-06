@@ -22,14 +22,20 @@ if TYPE_CHECKING:
 
 
 class BasePromptGenerator(ABC):
-    r"""Define the base class to implement a prompt generator."""
+    r"""Abstract base class for prompt generators.
+
+    Subclasses must implement :meth:`generate` to produce a new system
+    prompt string, typically by consulting the history of past prompts
+    and their associated evaluation metrics.
+    """
 
     @abstractmethod
     def generate(self) -> str:
-        r"""Generate a prompt.
+        r"""Generate a new system prompt.
 
         Returns:
-            The generated prompt.
+            The generated system prompt string to be used in the
+                next iteration of the optimization loop.
         """
 
 

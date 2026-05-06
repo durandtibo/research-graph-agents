@@ -84,7 +84,7 @@ class RaisingErrorRunnable(Runnable[InputT, OutputT]):
         config: RunnableConfig | None = None,  # noqa: ARG002
         **kwargs: Any,  # noqa: ARG002
     ) -> OutputT:
-        msg = "model failure"
+        msg = "runnable failure"
         raise RuntimeError(msg)
 
     def batch(
@@ -93,5 +93,5 @@ class RaisingErrorRunnable(Runnable[InputT, OutputT]):
         config: RunnableConfig | None = None,  # noqa: ARG002
         **kwargs: Any,  # noqa: ARG002
     ) -> list[OutputT]:
-        msg = "model failure"
+        msg = "runnable failure"
         raise RuntimeError(msg)

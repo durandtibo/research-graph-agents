@@ -4,30 +4,30 @@ from __future__ import annotations
 
 __all__ = ["NoOpEvaluator"]
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from argos.meta_agent.evaluators.base import BaseEvaluator
-from argos.meta_agent.typing import InputT, OutputT, TargetT
+from argos.meta_agent.results import Result
 
 if TYPE_CHECKING:
-    from argos.meta_agent.benchmark import Benchmark
-    from argos.meta_agent.prediction import PredictionResult
+    import polars as pl
 
 
-class NoOpEvaluator(BaseEvaluator[InputT, TargetT, OutputT]):
+class NoOpEvaluator(BaseEvaluator):
     r"""Implement an evaluator that does nothing.
 
     This evaluator should be used if no metrics are desired. It always
-    returns an empty dictionary.
+    returns an empty result.
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.benchmark import Benchmark
+        >>> import polars as pl
         >>> from argos.meta_agent.evaluators import NoOpEvaluator
-        >>> from argos.meta_agent.prediction import PredictionResult
         >>> evaluator = NoOpEvaluator()
-        >>> evaluator.evaluate(PredictionResult(records=[]), Benchmark({}))
-        {}
+        >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
+        >>> result = evaluator.evaluate(data)
+        >>> result
+        Result()
 
         ```
     """
@@ -35,9 +35,5 @@ class NoOpEvaluator(BaseEvaluator[InputT, TargetT, OutputT]):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"
 
-    def evaluate(
-        self,
-        predictions: PredictionResult[OutputT],  # noqa: ARG002
-        benchmark: Benchmark[InputT, TargetT],  # noqa: ARG002
-    ) -> dict[Any, Any]:
-        return {}
+    def evaluate(self, data: pl.DataFrame) -> Result:  # noqa: ARG002
+        return Result({})

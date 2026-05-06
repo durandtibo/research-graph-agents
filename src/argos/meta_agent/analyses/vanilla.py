@@ -25,7 +25,7 @@ class Analysis(BaseAnalysis):
         >>> analysis = Analysis("my custom analysis: blabla...")
         >>> analysis.to_dict()
         {'content': 'my custom analysis: blabla...', 'metadata': None}
-        >>> analysis.to_markdown()
+        >>> analysis.to_text()
         'my custom analysis: blabla...'
 
         ```
@@ -52,7 +52,7 @@ class Analysis(BaseAnalysis):
     def to_dict(self) -> dict[str, Any]:
         return {"content": self.content, "metadata": self.metadata}
 
-    def to_markdown(self) -> str:
+    def to_text(self) -> str:
         if not self.content:
             return "_Empty analysis_"
         return self.content

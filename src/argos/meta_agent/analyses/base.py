@@ -23,7 +23,7 @@ class BaseAnalysis(ABC):
         >>> analysis = Analysis("my custom analysis: blabla...")
         >>> analysis.to_dict()
         {'content': 'my custom analysis: blabla...'}
-        >>> analysis.to_markdown()
+        >>> analysis.to_text()
         'my custom analysis: blabla...'
 
         ```
@@ -69,7 +69,7 @@ class BaseAnalysis(ABC):
         """
 
     @abstractmethod
-    def to_markdown(self) -> str:
+    def to_text(self) -> str:
         r"""Return the analysis formatted as a Markdown string.
 
         Produces a human-readable Markdown representation. Useful
@@ -83,7 +83,7 @@ class BaseAnalysis(ABC):
             ```pycon
             >>> from argos.meta_agent.analyses import Analysis
             >>> analysis = Analysis("my custom analysis: blabla...")
-            >>> analysis.to_markdown()
+            >>> analysis.to_text()
             'my custom analysis: blabla...'
 
             ```

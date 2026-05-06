@@ -25,12 +25,13 @@ class BaseAnalyzer(ABC):
     Example:
         ```pycon
         >>> import polars as pl
-        >>> from argos.meta_agent.analyzers import NoOpAnalyzer
-        >>> analyzer = NoOpAnalyzer()
+        >>> from argos.meta_agent.analyses import Analysis
+        >>> from argos.meta_agent.analyzers import Analyzer
+        >>> analyzer = Analyzer(Analysis("my analysis blabla..."))
         >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
         >>> analysis = analyzer.analyze(data)
         >>> analysis
-        Analysis(content_len=0)
+        Analysis(content_len=21, metadata=None)
 
         ```
     """
@@ -48,12 +49,13 @@ class BaseAnalyzer(ABC):
         Example:
             ```pycon
             >>> import polars as pl
-            >>> from argos.meta_agent.analyzers import NoOpAnalyzer
-            >>> analyzer = NoOpAnalyzer()
+            >>> from argos.meta_agent.analyses import Analysis
+            >>> from argos.meta_agent.analyzers import Analyzer
+            >>> analyzer = Analyzer(Analysis("my analysis blabla..."))
             >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
             >>> analysis = analyzer.analyze(data)
             >>> analysis
-            Analysis(content_len=0)
+            Analysis(content_len=21, metadata=None)
 
             ```
         """

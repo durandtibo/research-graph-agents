@@ -22,7 +22,7 @@ class BaseAnalysis(ABC):
         >>> from argos.meta_agent.analyses import Analysis
         >>> analysis = Analysis("my custom analysis: blabla...")
         >>> analysis.to_dict()
-        {'content': 'my custom analysis: blabla...'}
+        {'content': 'my custom analysis: blabla...', 'metadata': None}
         >>> analysis.to_text()
         'my custom analysis: blabla...'
 
@@ -66,6 +66,15 @@ class BaseAnalysis(ABC):
 
         Returns:
             A dictionary mapping metric names to their converted values.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.analyses import Analysis
+            >>> analysis = Analysis("my custom analysis: blabla...")
+            >>> analysis.to_dict()
+            {'content': 'my custom analysis: blabla...', 'metadata': None}
+
+            ```
         """
 
     @abstractmethod

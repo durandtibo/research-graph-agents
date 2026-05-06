@@ -29,8 +29,8 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
         ```pycon
         >>> from argos.meta_agent.examples import BaseExample, Example
         >>> example = Example(id="q1", input="What is 2+2?", target="4")
-        >>> isinstance(example, BaseExample)
-        True
+        >>> example
+        Example(id='q1', input='What is 2+2?', target='4', metadata=None)
 
         ```
     """

@@ -24,17 +24,25 @@ if TYPE_CHECKING:
 
 
 class BaseErrorFinder(ABC):
-    r"""Define the base class to implement an error finder."""
+    r"""Abstract base class for error finders.
+
+    Subclasses must implement :meth:`find` to locate mispredicted
+    examples in a predictions DataFrame and return a formatted report
+    string that can be passed to an LLM for error analysis.
+    """
 
     @abstractmethod
     def find(self, predictions: pl.DataFrame) -> str:
         r"""Find the prediction errors and return a formatted report.
 
         Args:
-            predictions: A DataFrame with the predictions.
+            predictions: A :class:`~polars.DataFrame` produced by the
+                haiku judge, containing prediction and target columns
+                for all evaluated criteria.
 
         Returns:
-            A string report describing the errors found.
+            A markdown-formatted string report describing the errors
+                found, ready to be consumed by an LLM error analyzer.
         """
 
 

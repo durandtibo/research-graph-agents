@@ -21,17 +21,35 @@ if TYPE_CHECKING:
 
 
 class BaseEvaluator(ABC):
-    r"""Abstract base class for evaluators."""
+    r"""Abstract base class for haiku-judge evaluators.
+
+    Subclasses must implement :meth:`evaluate` to compute evaluation
+    metrics from a predictions DataFrame and return them as a
+    plain dictionary.
+
+    Example:
+        ```pycon
+        >>> from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
+        >>> evaluator = HaikuJudgeEvaluator()
+        >>> isinstance(evaluator, BaseEvaluator)
+        True
+
+        ```
+    """
 
     @abstractmethod
     def evaluate(self, predictions: pl.DataFrame) -> dict[str, Any]:
         r"""Evaluate the performances.
 
         Args:
-            predictions: The predictions and targets.
+            predictions: A :class:`~polars.DataFrame` containing
+                the haiku judge predictions and ground-truth labels.
 
         Returns:
-            The evaluation results.
+            A dictionary of evaluation metrics, typically keyed by
+                criterion name (e.g. ``"overall"``, ``"structure"``,
+                ``"topic"``) and mapping to structured metric objects
+                or their serialised representations.
         """
 
 

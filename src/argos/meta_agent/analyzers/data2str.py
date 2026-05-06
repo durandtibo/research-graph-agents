@@ -16,7 +16,20 @@ if TYPE_CHECKING:
 
 class Data2StrAnalyzer(BaseAnalyzer):
     r"""Implement an analyzer that converts a DataFrame to a string
-    format."""
+    format.
+
+    Example:
+        ```pycon
+        >>> import polars as pl
+        >>> from argos.meta_agent.analyzers import Data2StrAnalyzer
+        >>> analyzer = Data2StrAnalyzer()
+        >>> data = pl.DataFrame({"id": ["q1", "q2"], "error": [True, False]})
+        >>> analysis = analyzer.analyze(data)
+        >>> isinstance(analysis.to_text(), str)
+        True
+
+        ```
+    """
 
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"

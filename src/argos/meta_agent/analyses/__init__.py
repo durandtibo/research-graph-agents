@@ -7,7 +7,8 @@ formats.
 
 from __future__ import annotations
 
-__all__ = ["Analysis", "BaseAnalysis"]
+__all__ = ["Analysis", "AnalysisDict", "BaseAnalysis"]
 
 from argos.meta_agent.analyses.base import BaseAnalysis
+from argos.meta_agent.analyses.mapping import AnalysisDict
 from argos.meta_agent.analyses.vanilla import Analysis

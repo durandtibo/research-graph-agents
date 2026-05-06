@@ -84,6 +84,23 @@ class Predictor(BasePredictor):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
+        r"""Run batch inference on the dataset and return the merged results.
+
+        Calls :func:`generate_predictions` with the configured model, batch
+        size, and concurrency settings. The output columns are then sorted
+        alphabetically and, if ``output_columns`` was provided, filtered to
+        only those columns.
+
+        Args:
+            dataset: The input DataFrame. Each row is passed to the model
+                as an individual inference request.
+
+        Returns:
+            A :class:`~polars.DataFrame` containing the original columns
+                from ``dataset`` merged with the model's structured output
+                columns. If ``output_columns`` was supplied at construction
+                time, only those columns are included in the result.
+        """
         predictions = generate_predictions(
             model=self._model,
             dataset=dataset,

@@ -1,4 +1,9 @@
-r"""Contain system prompts for the haiku judge."""
+r"""Contain system prompts for the prompt generator.
+
+These prompts instruct a meta-agent LLM on how to iteratively
+generate improved system prompts based on performance history and
+error analysis from previous optimization iterations.
+"""
 
 from __future__ import annotations
 

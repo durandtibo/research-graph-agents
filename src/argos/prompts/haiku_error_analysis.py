@@ -1,4 +1,4 @@
-r"""Contain systems prompts to analyze haiku judge errors."""
+r"""Contain system prompts to analyze haiku judge errors."""
 
 from __future__ import annotations
 

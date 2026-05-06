@@ -82,9 +82,9 @@ def test_analysis_to_dict_with_metadata() -> None:
     }
 
 
-def test_analysis_to_markdown() -> None:
-    assert Analysis("my analysis").to_markdown() == "my analysis"
+def test_analysis_to_text() -> None:
+    assert Analysis("my analysis").to_text() == "my analysis"
 
 
-def test_analysis_to_markdown_empty() -> None:
-    assert Analysis("").to_markdown() == "_Empty analysis_"
+def test_analysis_to_text_empty() -> None:
+    assert Analysis("").to_text() == "_Empty analysis_"

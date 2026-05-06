@@ -101,6 +101,7 @@ class JsonHistory(BaseHistory):
         ...     history = JsonHistory(path)
         ...     history.append({"step": 1, "loss": 0.5})
         ...     history.get_values()
+        ...
         [{'step': 1, 'loss': 0.5}]
 
         ```

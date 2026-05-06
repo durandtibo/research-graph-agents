@@ -269,9 +269,9 @@ def test_dataset_equality() -> None:
 
 
 def test_dataset_inequality_different_examples() -> None:
-    assert Dataset(
-        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
-    ) != Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="5")})
+    assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) != Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="5")}
+    )
 
 
 def test_dataset_is_instance_of_base_dataset() -> None:
@@ -291,6 +291,7 @@ def test_dataset_to_dataframe_single_example() -> None:
                 "metadata": pl.Null,
             },
         ),
+    )
     assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) != Dataset(
         examples={"q1": Example(id="q1", input="What is 2+2?", target="5")}
     )

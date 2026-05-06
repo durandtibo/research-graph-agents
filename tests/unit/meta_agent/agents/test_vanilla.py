@@ -26,6 +26,16 @@ def mock_runnable() -> Runnable:
 ###########################
 
 
+def test_agent_repr() -> None:
+    assert (
+        repr(Agent(RunnableLambda(str.upper))) == "Agent(\n  (runnable): RunnableLambda(upper)\n)"
+    )
+
+
+def test_agent_str() -> None:
+    assert str(Agent(RunnableLambda(str.upper))) == "Agent(\n  (runnable): RunnableLambda(upper)\n)"
+
+
 def test_agent_predict_returns_runnable_output() -> None:
     agent = Agent(DoubleRunnable())
     assert agent.predict([1, 2, 3]) == [2, 4, 6]

@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 from polars.testing import assert_frame_equal
 
-from argos.meta_agent.datasets import Dataset
+from argos.meta_agent.datasets import BaseDataset, Dataset
 from argos.meta_agent.examples import BaseExample, Example
 
 
@@ -269,6 +269,28 @@ def test_dataset_equality() -> None:
 
 
 def test_dataset_inequality_different_examples() -> None:
+    assert Dataset(
+        examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}
+    ) != Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="5")})
+
+
+def test_dataset_is_instance_of_base_dataset() -> None:
+    assert isinstance(Dataset(examples={}), BaseDataset)
+
+
+def test_dataset_to_dataframe_single_example() -> None:
+    dataset = Dataset.from_examples([Example(id="id1", input="hello", target="world")])
+    assert_frame_equal(
+        dataset.to_dataframe(),
+        pl.DataFrame(
+            {"id": ["id1"], "input": ["hello"], "target": ["world"], "metadata": [None]},
+            schema={
+                "id": pl.String,
+                "input": pl.String,
+                "target": pl.String,
+                "metadata": pl.Null,
+            },
+        ),
     assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) != Dataset(
         examples={"q1": Example(id="q1", input="What is 2+2?", target="5")}
     )

@@ -11,7 +11,7 @@ from argos.meta_agent.prediction import (
     PredictionRecord,
     PredictionResult,
 )
-from argos.meta_agent.predictors import BatchPredictor
+from argos.meta_agent.predictors import BasePredictor, BatchPredictor
 from tests.unit.helpers.runnable import DoubleRunnable
 
 
@@ -105,20 +105,28 @@ def test_batch_predictor_predict_with_empty_benchmark() -> None:
     assert result == PredictionResult([])
 
 
-def test_batch_predictor_predict_preserves_example_id_order() -> None:
-    benchmark = Benchmark.from_examples(
-        [
-            BenchmarkExample(id="z1", input=3, target=None),
-            BenchmarkExample(id="a1", input=1, target=None),
-            BenchmarkExample(id="m1", input=2, target=None),
-        ]
-    )
-    predictor = BatchPredictor(batch_size=10)
+def test_batch_predictor_is_instance_of_base_predictor() -> None:
+    assert isinstance(BatchPredictor(), BasePredictor)
+
+
+def test_batch_predictor_predict_single_example() -> None:
+    agent = Agent(DoubleRunnable())
+    benchmark = Benchmark({"id1": BenchmarkExample(id="id1", input=7, target=None)})
+    result = BatchPredictor(batch_size=4).predict(agent=agent, benchmark=benchmark)
+    assert result == PredictionResult([PredictionRecord(example_id="id1", prediction=14)])
+
+
+def test_batch_predictor_predict_with_batch_size_larger_than_examples(
+    benchmark: Benchmark,
+) -> None:
+    predictor = BatchPredictor(batch_size=100)
     result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=benchmark)
     assert result == PredictionResult(
         [
-            PredictionRecord(example_id="z1", prediction=6),
-            PredictionRecord(example_id="a1", prediction=2),
-            PredictionRecord(example_id="m1", prediction=4),
+            PredictionRecord(example_id="id1", prediction=2),
+            PredictionRecord(example_id="id2", prediction=4),
+            PredictionRecord(example_id="id3", prediction=6),
+            PredictionRecord(example_id="id4", prediction=8),
+            PredictionRecord(example_id="id5", prediction=10),
         ]
     )

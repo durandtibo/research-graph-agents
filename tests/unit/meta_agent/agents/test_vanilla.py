@@ -1,5 +1,3 @@
-r"""Unit tests for Agent."""
-
 from __future__ import annotations
 
 from unittest.mock import Mock
@@ -7,7 +5,7 @@ from unittest.mock import Mock
 import pytest
 from langchain_core.runnables import Runnable, RunnableConfig, RunnableLambda
 
-from argos.meta_agent.agents import Agent
+from argos.meta_agent.agents import Agent, BaseAgent
 from tests.unit.helpers.runnable import (
     ConfigCaptureRunnable,
     DoubleRunnable,
@@ -31,9 +29,13 @@ def test_agent_repr() -> None:
         repr(Agent(RunnableLambda(str.upper))) == "Agent(\n  (runnable): RunnableLambda(upper)\n)"
     )
 
-
+    
 def test_agent_str() -> None:
     assert str(Agent(RunnableLambda(str.upper))) == "Agent(\n  (runnable): RunnableLambda(upper)\n)"
+
+
+def test_agent_is_instance_of_base_agent() -> None:
+    assert isinstance(Agent(DoubleRunnable()), BaseAgent)
 
 
 def test_agent_predict_returns_runnable_output() -> None:

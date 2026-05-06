@@ -93,28 +93,19 @@ def test_prediction_result_from_predictions_with_single_pair() -> None:
     )
 
 
-def test_prediction_result_from_predictions_raises_when_lengths_differ() -> None:
+@pytest.mark.parametrize(
+    ("example_ids", "predictions"),
+    [
+        pytest.param(["id1", "id2"], ["pred1"], id="more_ids_than_predictions"),
+        pytest.param(["id1", "id2", "id3"], ["pred1", "pred2"], id="ids_longer"),
+        pytest.param(["id1"], ["pred1", "pred2"], id="predictions_longer"),
+    ],
+)
+def test_prediction_result_from_predictions_raises_when_lengths_differ(
+    example_ids: list[str], predictions: list[str]
+) -> None:
     with pytest.raises(ValueError, match="example_ids and predictions must have the same length"):
-        PredictionResult.from_predictions(
-            example_ids=["id1", "id2"],
-            predictions=["pred1"],
-        )
-
-
-def test_prediction_result_from_predictions_raises_when_ids_longer_than_predictions() -> None:
-    with pytest.raises(ValueError, match="example_ids and predictions must have the same length"):
-        PredictionResult.from_predictions(
-            example_ids=["id1", "id2", "id3"],
-            predictions=["pred1", "pred2"],
-        )
-
-
-def test_prediction_result_from_predictions_raises_when_predictions_longer_than_ids() -> None:
-    with pytest.raises(ValueError, match="example_ids and predictions must have the same length"):
-        PredictionResult.from_predictions(
-            example_ids=["id1"],
-            predictions=["pred1", "pred2"],
-        )
+        PredictionResult.from_predictions(example_ids=example_ids, predictions=predictions)
 
 
 def test_prediction_result_from_predictions_with_dict_predictions() -> None:

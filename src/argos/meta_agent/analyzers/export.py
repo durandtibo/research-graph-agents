@@ -22,11 +22,32 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class JsonExportAnalyzer(BaseAnalyzer):
-    r"""Define a analyzer wrapper to export the analysis to a json file.
+    r"""Implement an analyzer wrapper that persists the analysis to a
+    JSON file.
+
+    Delegates the analysis to an inner ``analyzer``, then serialises
+    the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_dict`
+    and saves it to ``path``.  The original analysis object is returned
+    unchanged so the wrapper is transparent to callers.
 
     Args:
-        analyzer: An analyzer to save the analysis to a json file.
-        path: Path to save the analysis to a json file.
+        analyzer: The inner analyzer whose output is saved.
+        path: Destination path for the JSON file.
+
+    Example:
+        ```pycon
+        >>> import pathlib, tempfile, polars as pl
+        >>> from argos.meta_agent.analyses import Analysis
+        >>> from argos.meta_agent.analyzers import Analyzer, JsonExportAnalyzer
+        >>> with tempfile.TemporaryDirectory() as tmp:
+        ...     path = pathlib.Path(tmp) / "analysis.json"
+        ...     inner = Analyzer(Analysis("my analysis"))
+        ...     analyzer = JsonExportAnalyzer(analyzer=inner, path=path)
+        ...     analysis = analyzer.analyze(pl.DataFrame())
+        ...     analysis.to_text()
+        'my analysis'
+
+        ```
     """
 
     def __init__(self, analyzer: BaseAnalyzer, path: Path) -> None:

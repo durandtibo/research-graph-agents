@@ -22,17 +22,25 @@ if TYPE_CHECKING:
 
 
 class BaseErrorAnalyzer(ABC):
-    r"""Define the base class to implement an error analyzer."""
+    r"""Abstract base class for error analyzers.
+
+    Subclasses must implement :meth:`analyze` to inspect a predictions
+    DataFrame, identify mispredicted examples, and return a textual
+    analysis suitable for use as LLM context in the next optimization
+    iteration.
+    """
 
     @abstractmethod
     def analyze(self, predictions: pl.DataFrame) -> str:
-        r"""Compute a textual analysis of the errors.
+        r"""Compute a textual analysis of the prediction errors.
 
         Args:
-            predictions: A DataFrame with the predictions.
+            predictions: A :class:`~polars.DataFrame` produced by the
+                haiku judge, containing prediction and target columns.
 
         Returns:
-            The analysis of the errors.
+            A string summarising the error patterns found in
+                ``predictions``.
         """
 
 

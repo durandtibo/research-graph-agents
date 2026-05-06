@@ -180,11 +180,32 @@ def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> 
 def dataframe_to_csv(frame: pl.DataFrame) -> str:
     r"""Return a CSV string representation of the DataFrame.
 
+    The returned string starts with a ``Schema:`` line listing every
+    column name and its dtype, followed by the CSV body. If the frame
+    is empty the string ``"_No data available._"`` is returned instead.
+
     Args:
         frame: A DataFrame.
 
     Returns:
-        A CSV string representing the DataFrame.
+        A CSV string (with a schema header) representing the
+            DataFrame, or ``"_No data available._"`` when the frame
+            is empty.
+
+    Example:
+        ```pycon
+        >>> import polars as pl
+        >>> from argos.utils.dataframe import dataframe_to_csv
+        >>> frame = pl.DataFrame({"loss": [0.5, 0.3], "accuracy": [0.9, 0.95]})
+        >>> print(dataframe_to_csv(frame))
+        Schema: loss: Float64, accuracy: Float64
+        <BLANKLINE>
+        loss,accuracy
+        0.5,0.9
+        0.3,0.95
+        <BLANKLINE>
+
+        ```
     """
     if frame.is_empty():
         return "_No data available._"
@@ -197,25 +218,28 @@ def dataframe_to_csv(frame: pl.DataFrame) -> str:
 def dataframe_to_markdown(frame: pl.DataFrame) -> str:
     r"""Return a markdown string representation of the DataFrame.
 
+    Builds a GitHub-flavored markdown table from the DataFrame. If the
+    frame is empty, ``"_No data available._"`` is returned instead.
+
     Args:
-            frame: A DataFrame.
+        frame: A DataFrame.
 
     Returns:
-            A markdown string representing the DataFrame. Returns a message
-                indicating no data is available if the DataFrame is empty.
+        A markdown table string representing the DataFrame, or
+            ``"_No data available._"`` when the frame is empty.
 
     Example:
-    ```pycon
-    >>> import polars as pl
-    >>> from argos.utils.dataframe import dataframe_to_markdown
-    >>> frame = pl.DataFrame({"loss": [0.5, 0.3], "accuracy": [0.9, 0.95]})
-    >>> print(dataframe_to_markdown(frame))
-    | loss | accuracy |
-    |------|----------|
-    | 0.5  | 0.9      |
-    | 0.3  | 0.95     |
+        ```pycon
+        >>> import polars as pl
+        >>> from argos.utils.dataframe import dataframe_to_markdown
+        >>> frame = pl.DataFrame({"loss": [0.5, 0.3], "accuracy": [0.9, 0.95]})
+        >>> print(dataframe_to_markdown(frame))
+        | loss | accuracy |
+        |------|----------|
+        | 0.5  | 0.9      |
+        | 0.3  | 0.95     |
 
-    ```
+        ```
     """
     if frame.is_empty():
         return "_No data available._"

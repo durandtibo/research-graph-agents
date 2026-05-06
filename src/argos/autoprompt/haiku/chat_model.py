@@ -18,13 +18,21 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 def create_chat_model(config: ChatModelConfig) -> BaseChatModel:
-    r"""Create the chat model based on the config.
+    r"""Instantiate a LangChain chat model from a
+    :class:`~argos.autoprompt.haiku.config.ChatModelConfig`.
+
+    Uses :func:`langchain.chat_models.init_chat_model` under the hood,
+    forwarding the ``model``, ``temperature``, ``max_retries``, and any
+    extra ``init_kwargs`` from the config. Logs the class name, resolved
+    model version, and temperature at ``INFO`` level.
 
     Args:
-        config: The chat model config.
+        config: The chat model configuration specifying the model
+            identifier, sampling temperature, retry settings, and any
+            optional extra keyword arguments.
 
     Returns:
-        The instantiated chat model.
+        The instantiated :class:`~langchain_core.language_models.BaseChatModel`.
     """
     init_kwargs = config.init_kwargs or {}
     model = init_chat_model(

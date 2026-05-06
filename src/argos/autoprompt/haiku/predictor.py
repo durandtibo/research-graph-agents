@@ -24,17 +24,25 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BasePredictor(ABC):
-    r"""Define the base class to generate the predictions."""
+    r"""Abstract base class for haiku-judge predictors.
+
+    Subclasses must implement :meth:`predict` to run the model over
+    a dataset DataFrame and return a new DataFrame that includes the
+    model predictions alongside the original columns.
+    """
 
     @abstractmethod
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
         r"""Compute the predictions for the given dataset.
 
         Args:
-            dataset: The dataset to predict on.
+            dataset: The input DataFrame. Each row is passed to the
+                model as an individual inference request.
 
         Returns:
-            The predictions for the given dataset.
+            A :class:`~polars.DataFrame` that contains the original
+                columns from ``dataset`` merged with the model's
+                structured output columns.
         """
 
 
@@ -102,7 +110,14 @@ def generate_predictions(
     batch_size: int = 20,
     config: RunnableConfig | None = None,
 ) -> pl.DataFrame:
-    r"""Run the inference and returns the results in a DataFrame.
+    r"""Run batch inference with a Runnable model and return the results
+    merged with the input dataset.
+
+    Each row of ``dataset`` is serialised to a dict and passed to the
+    model as a separate input.  Outputs are collected, flattened (struct
+    columns are unnested), and horizontally merged back into ``dataset``
+    so that the returned DataFrame contains both the original columns and
+    all prediction columns.
 
     Args:
         model: The :class:`~langchain_core.runnables.Runnable` used
@@ -116,7 +131,8 @@ def generate_predictions(
             with ``max_concurrency=batch_size`` is used.
 
     Returns:
-        The results of the inference.
+        A :class:`~polars.DataFrame` with all columns from ``dataset``
+            plus any columns produced by the model.
     """
     logger.info(f"Running inference with {batch_size:,} batches...")
     batches = batchify(list(dataset.iter_rows(named=True)), size=batch_size)

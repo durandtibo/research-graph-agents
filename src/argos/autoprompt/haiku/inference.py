@@ -21,14 +21,28 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BaseInferencePipeline(ABC):
-    r"""Define the base class to implement inference pipeline."""
+    r"""Abstract base class for inference pipelines.
+
+    Subclasses must implement :meth:`process` to run the end-to-end
+    prediction step and return the results as a
+    :class:`~polars.DataFrame`.
+
+    Example:
+        ```pycon
+        >>> from argos.autoprompt.haiku.inference import InferencePipeline
+        >>> isinstance(InferencePipeline.__bases__[0], type)
+        True
+
+        ```
+    """
 
     @abstractmethod
     def process(self) -> pl.DataFrame:
-        r"""Process the predictions of the inference pipeline.
+        r"""Run the inference pipeline and return the predictions.
 
         Returns:
-            The result of the inference pipeline.
+            A :class:`~polars.DataFrame` containing the prediction
+                results for the entire dataset.
         """
 
 

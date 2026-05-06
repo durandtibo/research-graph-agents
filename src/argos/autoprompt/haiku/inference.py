@@ -26,14 +26,6 @@ class BaseInferencePipeline(ABC):
     Subclasses must implement :meth:`process` to run the end-to-end
     prediction step and return the results as a
     :class:`~polars.DataFrame`.
-
-    Example:
-        ```pycon
-        >>> from argos.autoprompt.haiku.inference import InferencePipeline
-        >>> isinstance(InferencePipeline.__bases__[0], type)
-        True
-
-        ```
     """
 
     @abstractmethod

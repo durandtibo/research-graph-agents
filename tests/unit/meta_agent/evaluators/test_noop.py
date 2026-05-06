@@ -3,9 +3,8 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
 from argos.meta_agent.evaluators import BaseEvaluator, NoOpEvaluator
-from argos.meta_agent.prediction import PredictionRecord, PredictionResult
+from argos.meta_agent.results import Result
 
 
 @pytest.fixture
@@ -39,6 +38,10 @@ def dataframe() -> pl.DataFrame:
 ###################################
 
 
+def test_noop_evaluator_is_instance_of_base_evaluator() -> None:
+    assert isinstance(NoOpEvaluator(), BaseEvaluator)
+
+
 def test_noop_evaluator_repr() -> None:
     assert repr(NoOpEvaluator()) == "NoOpEvaluator()"
 
@@ -52,15 +55,4 @@ def test_noop_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
 
 
 def test_noop_evaluator_evaluate_empty() -> None:
-    assert NoOpEvaluator().evaluate(PredictionResult([]), Benchmark({})) == {}
-
-
-def test_noop_evaluator_returns_empty_dict_regardless_of_predictions(
-    benchmark: Benchmark,
-) -> None:
-    predictions = PredictionResult([PredictionRecord(example_id="id1", prediction="unexpected")])
-    assert NoOpEvaluator().evaluate(predictions=predictions, benchmark=benchmark) == {}
-
-
-def test_noop_evaluator_is_instance_of_base_evaluator() -> None:
-    assert isinstance(NoOpEvaluator(), BaseEvaluator)
+    assert NoOpEvaluator().evaluate(pl.DataFrame({})).equal(Result({}))

@@ -16,8 +16,7 @@ if TYPE_CHECKING:
 
 
 class Data2CsvAnalyzer(BaseAnalyzer):
-    r"""Implement an analyzer that converts a DataFrame to a CSV
-    format.
+    r"""Implement an analyzer that converts a DataFrame to a CSV format.
 
     Example:
         ```pycon

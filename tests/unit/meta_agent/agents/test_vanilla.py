@@ -29,7 +29,7 @@ def test_agent_repr() -> None:
         repr(Agent(RunnableLambda(str.upper))) == "Agent(\n  (runnable): RunnableLambda(upper)\n)"
     )
 
-    
+
 def test_agent_str() -> None:
     assert str(Agent(RunnableLambda(str.upper))) == "Agent(\n  (runnable): RunnableLambda(upper)\n)"
 

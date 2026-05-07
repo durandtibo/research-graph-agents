@@ -28,8 +28,10 @@ class AnalysisDict(BaseAnalysis):
         >>> analysis = AnalysisDict(
         ...     {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")}
         ... )
+        >>> analysis
+        AnalysisDict(count=2)
         >>> analysis.to_dict()
-        {'style': Analysis(content_len=14, metadata=None), 'semantic': Analysis(content_len=17, metadata=None)}
+        {'analyses': {'style': Analysis(content_len=14, metadata=None), 'semantic': Analysis(content_len=17, metadata=None)}}
         >>> print(analysis.to_text())
         {'style': 'style analysis', 'semantic': 'semantic analysis'}
 
@@ -43,8 +45,8 @@ class AnalysisDict(BaseAnalysis):
         return f"{self.__class__.__qualname__}(count={len(self._analyses):,})"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping(self._analyses))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+        args = f"\n  {str_indent(str_mapping(self._analyses))}\n" if self._analyses else ""
+        return f"{self.__class__.__qualname__}({args})"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
@@ -53,10 +55,10 @@ class AnalysisDict(BaseAnalysis):
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Self:
-        return cls(data)
+        return cls(data["analyses"])
 
     def to_dict(self) -> dict[str, Any]:
-        return self._analyses
+        return {"analyses": self._analyses}
 
     def to_text(self) -> str:
         return str({key: value.to_text() for key, value in self._analyses.items()})
@@ -75,8 +77,10 @@ class IndentedListAnalysisDict(AnalysisDict):
         >>> analysis = IndentedListAnalysisDict(
         ...     {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")}
         ... )
+        >>> analysis
+        IndentedListAnalysisDict(count=2)
         >>> analysis.to_dict()
-        {'style': Analysis(content_len=14, metadata=None), 'semantic': Analysis(content_len=17, metadata=None)}
+        {'analyses': {'style': Analysis(content_len=14, metadata=None), 'semantic': Analysis(content_len=17, metadata=None)}}
         >>> print(analysis.to_text())
         - style: style analysis
         - semantic: semantic analysis

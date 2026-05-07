@@ -2,7 +2,7 @@ r"""Contain an analysis which is a dictionary of analyses."""
 
 from __future__ import annotations
 
-__all__ = ["AnalysisDict"]
+__all__ = ["AnalysisDict", "IndentedListAnalysisDict"]
 
 from typing import TYPE_CHECKING, Any, Self
 
@@ -29,8 +29,8 @@ class AnalysisDict(BaseAnalysis):
         ...     {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")}
         ... )
         >>> analysis.to_dict()
-        {'style': {'content': 'style analysis', 'metadata': None}, 'semantic': {'content': 'semantic analysis', 'metadata': None}}
-        >>> analysis.to_text()
+        {'style': Analysis(content_len=14, metadata=None), 'semantic': Analysis(content_len=17, metadata=None)}
+        >>> print(analysis.to_text())
         {'style': 'style analysis', 'semantic': 'semantic analysis'}
 
         ```
@@ -60,3 +60,37 @@ class AnalysisDict(BaseAnalysis):
 
     def to_text(self) -> str:
         return str({key: value.to_text() for key, value in self._analyses.items()})
+
+
+class IndentedListAnalysisDict(AnalysisDict):
+    r"""Implement an output that combines a mapping of output objects
+    with a indented list approach.
+
+    Args:
+        analyses: The mapping of output objects to combine.
+
+    Example:
+        ```pycon
+        >>> from argos.meta_agent.analyses import Analysis, IndentedListAnalysisDict
+        >>> analysis = IndentedListAnalysisDict(
+        ...     {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")}
+        ... )
+        >>> analysis.to_dict()
+        {'style': Analysis(content_len=14, metadata=None), 'semantic': Analysis(content_len=17, metadata=None)}
+        >>> print(analysis.to_text())
+        - style: style analysis
+        - semantic: semantic analysis
+
+        ```
+    """
+
+    def to_text(self) -> str:
+        items = [
+            (
+                f"- {key}: {str_indent(value.to_text())}"
+                if not isinstance(value, IndentedListAnalysisDict)
+                else f"- {key}:\n  {str_indent(value.to_text())}"
+            )
+            for key, value in self._analyses.items()
+        ]
+        return "\n".join(items)

@@ -82,6 +82,11 @@ def test_analysis_to_dict_with_metadata() -> None:
     }
 
 
+def test_analysis_to_dict_roundtrip() -> None:
+    analysis = Analysis("my analysis", metadata={"tag": "meow"})
+    assert Analysis.from_dict(analysis.to_dict()).equal(analysis)
+
+
 def test_analysis_to_text() -> None:
     assert Analysis("my analysis").to_text() == "my analysis"
 

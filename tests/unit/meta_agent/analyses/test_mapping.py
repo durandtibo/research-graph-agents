@@ -30,7 +30,7 @@ def test_analysis_dict_repr_multiple() -> None:
 
 
 def test_analysis_dict_str_empty() -> None:
-    assert str(AnalysisDict({})) == "AnalysisDict(\n  \n)"
+    assert str(AnalysisDict({})) == "AnalysisDict()"
 
 
 def test_analysis_dict_str_single() -> None:
@@ -89,20 +89,20 @@ def test_analysis_dict_equal_nan_true() -> None:
 
 def test_analysis_dict_from_dict() -> None:
     analyses = {"style": Analysis("style analysis")}
-    assert AnalysisDict.from_dict(analyses).equal(AnalysisDict(analyses))
+    assert AnalysisDict.from_dict({"analyses": analyses}).equal(AnalysisDict(analyses))
 
 
 def test_analysis_dict_from_dict_empty() -> None:
-    assert AnalysisDict.from_dict({}).equal(AnalysisDict({}))
+    assert AnalysisDict.from_dict({"analyses": {}}).equal(AnalysisDict({}))
 
 
 def test_analysis_dict_to_dict_empty() -> None:
-    assert AnalysisDict({}).to_dict() == {}
+    assert AnalysisDict({}).to_dict() == {"analyses": {}}
 
 
 def test_analysis_dict_to_dict_single() -> None:
     assert AnalysisDict({"style": Analysis("style analysis")}).to_dict() == {
-        "style": Analysis("style analysis")
+        "analyses": {"style": Analysis("style analysis")}
     }
 
 
@@ -113,8 +113,10 @@ def test_analysis_dict_to_dict_multiple() -> None:
             "semantic": Analysis("semantic analysis"),
         }
     ).to_dict() == {
-        "style": Analysis("style analysis"),
-        "semantic": Analysis("semantic analysis"),
+        "analyses": {
+            "style": Analysis("style analysis"),
+            "semantic": Analysis("semantic analysis"),
+        }
     }
 
 

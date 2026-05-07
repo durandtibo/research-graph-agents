@@ -37,7 +37,7 @@ class AnalysisDict(BaseAnalysis):
     """
 
     def __init__(self, analyses: Mapping[str, BaseAnalysis]) -> None:
-        self._analyses = analyses
+        self._analyses = dict(analyses)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(count={len(self._analyses):,})"
@@ -53,10 +53,10 @@ class AnalysisDict(BaseAnalysis):
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Self:
-        return cls(analyses=data["analyses"])
+        return cls(data)
 
     def to_dict(self) -> dict[str, Any]:
-        return {key: value.to_dict() for key, value in self._analyses.items()}
+        return self._analyses
 
     def to_text(self) -> str:
         return str({key: value.to_text() for key, value in self._analyses.items()})

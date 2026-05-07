@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from argos.meta_agent.analyses import Analysis, AnalysisDict
+from argos.meta_agent.analyses import Analysis, AnalysisDict, IndentedListAnalysisDict
 
 ##################################
 #     Tests for AnalysisDict     #
@@ -147,4 +147,72 @@ def test_analysis_dict_to_text_multiple() -> None:
             }
         ).to_text()
         == "{'style': 'style analysis', 'semantic': 'semantic analysis'}"
+    )
+
+
+def test_analysis_dict_to_text_nested() -> None:
+    assert (
+        AnalysisDict(
+            {
+                "style": Analysis("style analysis"),
+                "semantic": Analysis("semantic analysis"),
+                "other": AnalysisDict(
+                    {
+                        "cat": Analysis("I am a cat"),
+                        "bear": Analysis("I am a bear"),
+                    }
+                ),
+            }
+        ).to_text()
+        == "{'style': 'style analysis', 'semantic': 'semantic analysis', "
+        "'other': \"{'cat': 'I am a cat', 'bear': 'I am a bear'}\"}"
+    )
+
+
+##############################################
+#     Tests for IndentedListAnalysisDict     #
+##############################################
+
+
+def test_indented_list_analysis_dict_to_text_empty() -> None:
+    assert IndentedListAnalysisDict({}).to_text() == ""
+
+
+def test_indented_list_analysis_dict_to_text_single() -> None:
+    assert IndentedListAnalysisDict({"style": Analysis("style analysis")}).to_text() == (
+        "- style: style analysis"
+    )
+
+
+def test_indented_list_analysis_dict_to_text_multiple() -> None:
+    assert (
+        IndentedListAnalysisDict(
+            {
+                "style": Analysis("style analysis"),
+                "semantic": Analysis("semantic analysis"),
+            }
+        ).to_text()
+        == "- style: style analysis\n- semantic: semantic analysis"
+    )
+
+
+def test_indented_list_analysis_dict_to_text_nested() -> None:
+    assert (
+        IndentedListAnalysisDict(
+            {
+                "style": Analysis("style analysis"),
+                "semantic": Analysis("semantic analysis"),
+                "other": IndentedListAnalysisDict(
+                    {
+                        "cat": Analysis("I am a cat"),
+                        "bear": Analysis("I am a bear"),
+                    }
+                ),
+            }
+        ).to_text()
+        == "- style: style analysis\n"
+        "- semantic: semantic analysis\n"
+        "- other:\n"
+        "  - cat: I am a cat\n"
+        "  - bear: I am a bear"
     )

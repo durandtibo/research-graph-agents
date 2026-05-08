@@ -12,7 +12,8 @@ __all__ = [
     "AnalysisDict",
     "AnalysisList",
     "BaseAnalysis",
-    "IndentedListAnalysisDict",
+    "BaseAnalysisDict",
+    "BulletPointAnalysisDict",
     "IndentedListAnalysisList",
     "YamlAnalysisDict",
 ]
@@ -20,7 +21,8 @@ __all__ = [
 from argos.meta_agent.analyses.base import BaseAnalysis
 from argos.meta_agent.analyses.mapping import (
     AnalysisDict,
-    IndentedListAnalysisDict,
+    BaseAnalysisDict,
+    BulletPointAnalysisDict,
     YamlAnalysisDict,
 )
 from argos.meta_agent.analyses.sequence import AnalysisList, IndentedListAnalysisList

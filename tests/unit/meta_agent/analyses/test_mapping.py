@@ -3,7 +3,7 @@ from __future__ import annotations
 from argos.meta_agent.analyses import (
     Analysis,
     AnalysisDict,
-    IndentedListAnalysisDict,
+    BulletPointAnalysisDict,
     YamlAnalysisDict,
 )
 
@@ -176,24 +176,24 @@ def test_analysis_dict_to_text_nested() -> None:
     )
 
 
-##############################################
-#     Tests for IndentedListAnalysisDict     #
-##############################################
+#############################################
+#     Tests for BulletPointAnalysisDict     #
+#############################################
 
 
-def test_indented_list_analysis_dict_to_text_empty() -> None:
-    assert IndentedListAnalysisDict({}).to_text() == ""
+def test_bullet_point_analysis_dict_to_text_empty() -> None:
+    assert BulletPointAnalysisDict({}).to_text() == ""
 
 
-def test_indented_list_analysis_dict_to_text_single() -> None:
-    assert IndentedListAnalysisDict({"style": Analysis("style analysis")}).to_text() == (
+def test_bullet_point_analysis_dict_to_text_single() -> None:
+    assert BulletPointAnalysisDict({"style": Analysis("style analysis")}).to_text() == (
         "- style: style analysis"
     )
 
 
-def test_indented_list_analysis_dict_to_text_multiple() -> None:
+def test_bullet_point_analysis_dict_to_text_multiple() -> None:
     assert (
-        IndentedListAnalysisDict(
+        BulletPointAnalysisDict(
             {
                 "style": Analysis("style analysis"),
                 "semantic": Analysis("semantic analysis"),
@@ -203,13 +203,13 @@ def test_indented_list_analysis_dict_to_text_multiple() -> None:
     )
 
 
-def test_indented_list_analysis_dict_to_text_nested() -> None:
+def test_bullet_point_analysis_dict_to_text_nested() -> None:
     assert (
-        IndentedListAnalysisDict(
+        BulletPointAnalysisDict(
             {
                 "style": Analysis("style analysis"),
                 "semantic": Analysis("semantic analysis"),
-                "other": IndentedListAnalysisDict(
+                "other": BulletPointAnalysisDict(
                     {
                         "cat": Analysis("I am a cat"),
                         "bear": Analysis("I am a bear"),

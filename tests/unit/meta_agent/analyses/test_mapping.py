@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from argos.meta_agent.analyses import Analysis, AnalysisDict, IndentedListAnalysisDict
+from argos.meta_agent.analyses import (
+    Analysis,
+    AnalysisDict,
+    IndentedListAnalysisDict,
+    YamlAnalysisDict,
+)
 
 ##################################
 #     Tests for AnalysisDict     #
@@ -217,4 +222,53 @@ def test_indented_list_analysis_dict_to_text_nested() -> None:
         "- other:\n"
         "  - cat: I am a cat\n"
         "  - bear: I am a bear"
+    )
+
+
+######################################
+#     Tests for YamlAnalysisDict     #
+######################################
+
+
+def test_yaml_analysis_dict_to_text_empty() -> None:
+    assert YamlAnalysisDict({}).to_text() == ""
+
+
+def test_yaml_analysis_dict_to_text_single() -> None:
+    assert YamlAnalysisDict({"style": Analysis("style analysis")}).to_text() == (
+        "style: style analysis"
+    )
+
+
+def test_yaml_analysis_dict_to_text_multiple() -> None:
+    assert (
+        YamlAnalysisDict(
+            {
+                "style": Analysis("style analysis"),
+                "semantic": Analysis("semantic analysis"),
+            }
+        ).to_text()
+        == "style: style analysis\nsemantic: semantic analysis"
+    )
+
+
+def test_yaml_analysis_dict_to_text_nested() -> None:
+    assert (
+        YamlAnalysisDict(
+            {
+                "style": Analysis("style analysis"),
+                "semantic": Analysis("semantic analysis"),
+                "other": YamlAnalysisDict(
+                    {
+                        "cat": Analysis("I am a cat"),
+                        "bear": Analysis("I am a bear"),
+                    }
+                ),
+            }
+        ).to_text()
+        == "style: style analysis\n"
+        "semantic: semantic analysis\n"
+        "other:\n"
+        "  cat: I am a cat\n"
+        "  bear: I am a bear"
     )

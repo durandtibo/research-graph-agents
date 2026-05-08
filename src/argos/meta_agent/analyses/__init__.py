@@ -9,20 +9,18 @@ from __future__ import annotations
 
 __all__ = [
     "Analysis",
-    "AnalysisDict",
     "AnalysisList",
     "BaseAnalysis",
     "BaseAnalysisDict",
-    "BulletPointAnalysisDict",
     "IndentedListAnalysisList",
+    "JsonAnalysisDict",
     "YamlAnalysisDict",
 ]
 
 from argos.meta_agent.analyses.base import BaseAnalysis
 from argos.meta_agent.analyses.mapping import (
-    AnalysisDict,
     BaseAnalysisDict,
-    BulletPointAnalysisDict,
+    JsonAnalysisDict,
     YamlAnalysisDict,
 )
 from argos.meta_agent.analyses.sequence import AnalysisList, IndentedListAnalysisList

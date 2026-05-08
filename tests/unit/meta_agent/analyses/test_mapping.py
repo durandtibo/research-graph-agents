@@ -2,72 +2,153 @@ from __future__ import annotations
 
 from argos.meta_agent.analyses import (
     Analysis,
-    AnalysisDict,
-    BulletPointAnalysisDict,
+    JsonAnalysisDict,
     YamlAnalysisDict,
 )
 
-##################################
-#     Tests for AnalysisDict     #
-##################################
+######################################
+#     Tests for JsonAnalysisDict     #
+######################################
 
 
 def test_analysis_dict_repr_empty() -> None:
-    assert repr(AnalysisDict({})) == "AnalysisDict(count=0)"
+    assert repr(JsonAnalysisDict({})) == "JsonAnalysisDict()"
 
 
 def test_analysis_dict_repr_single() -> None:
-    assert repr(AnalysisDict({"style": Analysis("style analysis")})) == "AnalysisDict(count=1)"
+    assert (
+        repr(JsonAnalysisDict({"style": Analysis("style analysis")}))
+        == "JsonAnalysisDict(num_analyses=1, indent=None, sort_keys=False)"
+    )
 
 
 def test_analysis_dict_repr_multiple() -> None:
     assert (
         repr(
-            AnalysisDict(
+            JsonAnalysisDict(
                 {
                     "style": Analysis("style analysis"),
                     "semantic": Analysis("semantic analysis"),
                 }
             )
         )
-        == "AnalysisDict(count=2)"
+        == "JsonAnalysisDict(num_analyses=2, indent=None, sort_keys=False)"
+    )
+
+
+def test_analysis_dict_repr_nested() -> None:
+    assert (
+        repr(
+            JsonAnalysisDict(
+                {
+                    "style": Analysis("style analysis"),
+                    "semantic": Analysis("semantic analysis"),
+                    "other": JsonAnalysisDict(
+                        {
+                            "cat": Analysis("I am a cat"),
+                            "bear": Analysis("I am a bear"),
+                        }
+                    ),
+                }
+            )
+        )
+        == "JsonAnalysisDict(num_analyses=3, indent=None, sort_keys=False)"
     )
 
 
 def test_analysis_dict_str_empty() -> None:
-    assert str(AnalysisDict({})) == "AnalysisDict()"
+    assert str(JsonAnalysisDict({})) == "JsonAnalysisDict()"
 
 
 def test_analysis_dict_str_single() -> None:
-    result = str(AnalysisDict({"style": Analysis("style analysis")}))
-    assert result == "AnalysisDict(\n  (style): Analysis(content_len=14, metadata=None)\n)"
+    assert (
+        str(JsonAnalysisDict({"style": Analysis("style analysis")})) == "JsonAnalysisDict(\n"
+        "  (indent): None\n"
+        "  (sort_keys): False\n"
+        "  (analyses): \n"
+        "      (style): Analysis(content_len=14, metadata=None)\n"
+        ")"
+    )
+
+
+def test_analysis_dict_str_multiple() -> None:
+    assert (
+        str(
+            JsonAnalysisDict(
+                {
+                    "style": Analysis("style analysis"),
+                    "semantic": Analysis("semantic analysis"),
+                }
+            )
+        )
+        == "JsonAnalysisDict(\n"
+        "  (indent): None\n"
+        "  (sort_keys): False\n"
+        "  (analyses): \n"
+        "      (style): Analysis(content_len=14, metadata=None)\n"
+        "      (semantic): Analysis(content_len=17, metadata=None)\n"
+        ")"
+    )
+
+
+def test_analysis_dict_str_nested() -> None:
+    assert (
+        str(
+            JsonAnalysisDict(
+                {
+                    "style": Analysis("style analysis"),
+                    "semantic": Analysis("semantic analysis"),
+                    "other": JsonAnalysisDict(
+                        {
+                            "cat": Analysis("I am a cat"),
+                            "bear": Analysis("I am a bear"),
+                        }
+                    ),
+                }
+            )
+        )
+        == "JsonAnalysisDict(\n"
+        "  (indent): None\n"
+        "  (sort_keys): False\n"
+        "  (analyses): \n"
+        "      (style): Analysis(content_len=14, metadata=None)\n"
+        "      (semantic): Analysis(content_len=17, metadata=None)\n"
+        "      (other): JsonAnalysisDict(\n"
+        "          (indent): None\n"
+        "          (sort_keys): False\n"
+        "          (analyses): \n"
+        "              (cat): Analysis(content_len=10, metadata=None)\n"
+        "              (bear): Analysis(content_len=11, metadata=None)\n"
+        "        )"
+        "\n)"
+    )
 
 
 def test_analysis_dict_equal_true() -> None:
-    assert AnalysisDict({"style": Analysis("style analysis")}).equal(
-        AnalysisDict({"style": Analysis("style analysis")})
+    assert JsonAnalysisDict({"style": Analysis("style analysis")}).equal(
+        JsonAnalysisDict({"style": Analysis("style analysis")})
     )
 
 
 def test_analysis_dict_equal_true_empty() -> None:
-    assert AnalysisDict({}).equal(AnalysisDict({}))
+    assert JsonAnalysisDict({}).equal(JsonAnalysisDict({}))
 
 
 def test_analysis_dict_equal_false_different_keys() -> None:
-    assert not AnalysisDict({"style": Analysis("my analysis")}).equal(
-        AnalysisDict({"semantic": Analysis("my analysis")})
+    assert not JsonAnalysisDict({"style": Analysis("my analysis")}).equal(
+        JsonAnalysisDict({"semantic": Analysis("my analysis")})
     )
 
 
 def test_analysis_dict_equal_false_different_values() -> None:
-    assert not AnalysisDict({"style": Analysis("style analysis")}).equal(
-        AnalysisDict({"style": Analysis("other analysis")})
+    assert not JsonAnalysisDict({"style": Analysis("style analysis")}).equal(
+        JsonAnalysisDict({"style": Analysis("other analysis")})
     )
 
 
 def test_analysis_dict_equal_false_different_number_of_analyses() -> None:
-    assert not AnalysisDict({"style": Analysis("style analysis")}).equal(
-        AnalysisDict(
+    assert not JsonAnalysisDict({"style": Analysis("style analysis")}).equal(
+        JsonAnalysisDict(
             {
                 "style": Analysis("style analysis"),
                 "semantic": Analysis("semantic analysis"),
@@ -76,43 +157,57 @@ def test_analysis_dict_equal_false_different_number_of_analyses() -> None:
     )
 
 
+def test_analysis_dict_equal_false_different_indent() -> None:
+    assert not JsonAnalysisDict({"style": Analysis("my analysis")}).equal(
+        JsonAnalysisDict({"style": Analysis("my analysis")}, indent=2)
+    )
+
+
+def test_analysis_dict_equal_false_different_sort_keys() -> None:
+    assert not JsonAnalysisDict({"style": Analysis("my analysis")}).equal(
+        JsonAnalysisDict({"style": Analysis("my analysis")}, sort_keys=True)
+    )
+
+
 def test_analysis_dict_equal_false_different_type() -> None:
-    assert not AnalysisDict({}).equal({})
+    assert not JsonAnalysisDict({}).equal({})
 
 
 def test_analysis_dict_equal_nan_false_by_default() -> None:
-    assert not AnalysisDict({"style": Analysis(float("nan"))}).equal(
-        AnalysisDict({"style": Analysis(float("nan"))})
+    assert not JsonAnalysisDict({"style": Analysis(float("nan"))}).equal(
+        JsonAnalysisDict({"style": Analysis(float("nan"))})
     )
 
 
 def test_analysis_dict_equal_nan_true() -> None:
-    assert AnalysisDict({"style": Analysis(float("nan"))}).equal(
-        AnalysisDict({"style": Analysis(float("nan"))}), equal_nan=True
+    assert JsonAnalysisDict({"style": Analysis(float("nan"))}).equal(
+        JsonAnalysisDict({"style": Analysis(float("nan"))}), equal_nan=True
     )
 
 
 def test_analysis_dict_from_dict() -> None:
     analyses = {"style": Analysis("style analysis")}
-    assert AnalysisDict.from_dict({"analyses": analyses}).equal(AnalysisDict(analyses))
+    assert JsonAnalysisDict.from_dict({"analyses": analyses}).equal(JsonAnalysisDict(analyses))
 
 
 def test_analysis_dict_from_dict_empty() -> None:
-    assert AnalysisDict.from_dict({"analyses": {}}).equal(AnalysisDict({}))
+    assert JsonAnalysisDict.from_dict({"analyses": {}}).equal(JsonAnalysisDict({}))
 
 
 def test_analysis_dict_to_dict_empty() -> None:
-    assert AnalysisDict({}).to_dict() == {"analyses": {}}
+    assert JsonAnalysisDict({}).to_dict() == {"analyses": {}, "indent": None, "sort_keys": False}
 
 
 def test_analysis_dict_to_dict_single() -> None:
-    assert AnalysisDict({"style": Analysis("style analysis")}).to_dict() == {
-        "analyses": {"style": Analysis("style analysis")}
+    assert JsonAnalysisDict({"style": Analysis("style analysis")}).to_dict() == {
+        "analyses": {"style": Analysis("style analysis")},
+        "indent": None,
+        "sort_keys": False,
     }
 
 
 def test_analysis_dict_to_dict_multiple() -> None:
-    assert AnalysisDict(
+    assert JsonAnalysisDict(
         {
             "style": Analysis("style analysis"),
             "semantic": Analysis("semantic analysis"),
@@ -121,49 +216,69 @@ def test_analysis_dict_to_dict_multiple() -> None:
         "analyses": {
             "style": Analysis("style analysis"),
             "semantic": Analysis("semantic analysis"),
-        }
+        },
+        "indent": None,
+        "sort_keys": False,
+    }
+
+
+def test_analysis_dict_to_dict_indent() -> None:
+    assert JsonAnalysisDict({"style": Analysis("style analysis")}, indent=2).to_dict() == {
+        "analyses": {"style": Analysis("style analysis")},
+        "indent": 2,
+        "sort_keys": False,
+    }
+
+
+def test_analysis_dict_to_dict_sort_keys() -> None:
+    assert JsonAnalysisDict({"style": Analysis("style analysis")}, sort_keys=True).to_dict() == {
+        "analyses": {"style": Analysis("style analysis")},
+        "indent": None,
+        "sort_keys": True,
     }
 
 
 def test_analysis_dict_to_dict_roundtrip() -> None:
-    analysis = AnalysisDict(
+    analysis = JsonAnalysisDict(
         {
             "style": Analysis("style analysis"),
             "semantic": Analysis("semantic analysis"),
-        }
+        },
+        indent=2,
+        sort_keys=True,
     )
-    assert AnalysisDict.from_dict(analysis.to_dict()).equal(analysis)
+    assert JsonAnalysisDict.from_dict(analysis.to_dict()).equal(analysis)
 
 
 def test_analysis_dict_to_text_empty() -> None:
-    assert AnalysisDict({}).to_text() == "{}"
+    assert JsonAnalysisDict({}).to_text() == "{}"
 
 
 def test_analysis_dict_to_text_single() -> None:
-    assert AnalysisDict({"style": Analysis("style analysis")}).to_text() == (
-        "{'style': 'style analysis'}"
+    assert JsonAnalysisDict({"style": Analysis("style analysis")}).to_text() == (
+        '{"style": "style analysis"}'
     )
 
 
 def test_analysis_dict_to_text_multiple() -> None:
     assert (
-        AnalysisDict(
+        JsonAnalysisDict(
             {
                 "style": Analysis("style analysis"),
                 "semantic": Analysis("semantic analysis"),
             }
         ).to_text()
-        == "{'style': 'style analysis', 'semantic': 'semantic analysis'}"
+        == '{"style": "style analysis", "semantic": "semantic analysis"}'
     )
 
 
 def test_analysis_dict_to_text_nested() -> None:
     assert (
-        AnalysisDict(
+        JsonAnalysisDict(
             {
                 "style": Analysis("style analysis"),
                 "semantic": Analysis("semantic analysis"),
-                "other": AnalysisDict(
+                "other": JsonAnalysisDict(
                     {
                         "cat": Analysis("I am a cat"),
                         "bear": Analysis("I am a bear"),
@@ -171,57 +286,8 @@ def test_analysis_dict_to_text_nested() -> None:
                 ),
             }
         ).to_text()
-        == "{'style': 'style analysis', 'semantic': 'semantic analysis', "
-        "'other': \"{'cat': 'I am a cat', 'bear': 'I am a bear'}\"}"
-    )
-
-
-#############################################
-#     Tests for BulletPointAnalysisDict     #
-#############################################
-
-
-def test_bullet_point_analysis_dict_to_text_empty() -> None:
-    assert BulletPointAnalysisDict({}).to_text() == ""
-
-
-def test_bullet_point_analysis_dict_to_text_single() -> None:
-    assert BulletPointAnalysisDict({"style": Analysis("style analysis")}).to_text() == (
-        "- style: style analysis"
-    )
-
-
-def test_bullet_point_analysis_dict_to_text_multiple() -> None:
-    assert (
-        BulletPointAnalysisDict(
-            {
-                "style": Analysis("style analysis"),
-                "semantic": Analysis("semantic analysis"),
-            }
-        ).to_text()
-        == "- style: style analysis\n- semantic: semantic analysis"
-    )
-
-
-def test_bullet_point_analysis_dict_to_text_nested() -> None:
-    assert (
-        BulletPointAnalysisDict(
-            {
-                "style": Analysis("style analysis"),
-                "semantic": Analysis("semantic analysis"),
-                "other": BulletPointAnalysisDict(
-                    {
-                        "cat": Analysis("I am a cat"),
-                        "bear": Analysis("I am a bear"),
-                    }
-                ),
-            }
-        ).to_text()
-        == "- style: style analysis\n"
-        "- semantic: semantic analysis\n"
-        "- other:\n"
-        "  - cat: I am a cat\n"
-        "  - bear: I am a bear"
+        == r'{"style": "style analysis", "semantic": "semantic analysis", '
+        r'"other": "{\"cat\": \"I am a cat\", \"bear\": \"I am a bear\"}"}'
     )
 
 

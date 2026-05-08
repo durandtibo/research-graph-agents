@@ -2,7 +2,7 @@ r"""Contain an analysis which is a dictionary of analyses."""
 
 from __future__ import annotations
 
-__all__ = ["AnalysisDict", "IndentedListAnalysisDict", "YamlAnalysisDict"]
+__all__ = ["AnalysisDict", "BaseAnalysisDict", "BulletPointAnalysisDict", "YamlAnalysisDict"]
 
 from typing import TYPE_CHECKING, Any, Self
 
@@ -45,8 +45,11 @@ class BaseAnalysisDict(BaseAnalysis):
         return f"{self.__class__.__qualname__}(count={len(self._analyses):,})"
 
     def __str__(self) -> str:
-        args = f"\n  {str_indent(str_mapping(self._analyses))}\n" if self._analyses else ""
-        return f"{self.__class__.__qualname__}({args})"
+        if not self._analyses:
+            return f"{self.__class__.__qualname__}()"
+
+        args = str_indent(str_mapping(self._analyses))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
@@ -59,6 +62,13 @@ class BaseAnalysisDict(BaseAnalysis):
 
     def to_dict(self) -> dict[str, Any]:
         return {"analyses": self._analyses}
+
+    def _format_item(self, key: str, value: BaseAnalysis, prefix: str = "") -> str:
+        """Format a single analysis item with proper indentation."""
+        value_text = str_indent(value.to_text())
+        if isinstance(value, BaseAnalysisDict):
+            return f"{prefix}{key}:\n  {value_text}"
+        return f"{prefix}{key}: {value_text}"
 
 
 class AnalysisDict(BaseAnalysisDict):
@@ -88,7 +98,7 @@ class AnalysisDict(BaseAnalysisDict):
         return str({key: value.to_text() for key, value in self._analyses.items()})
 
 
-class IndentedListAnalysisDict(BaseAnalysisDict):
+class BulletPointAnalysisDict(BaseAnalysisDict):
     r"""Implement an output that combines a mapping of output objects
     with a indented list approach.
 
@@ -97,8 +107,8 @@ class IndentedListAnalysisDict(BaseAnalysisDict):
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.analyses import Analysis, IndentedListAnalysisDict
-        >>> analysis = IndentedListAnalysisDict(
+        >>> from argos.meta_agent.analyses import Analysis, BulletPointAnalysisDict
+        >>> analysis = BulletPointAnalysisDict(
         ...     {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")}
         ... )
         >>> analysis
@@ -114,12 +124,7 @@ class IndentedListAnalysisDict(BaseAnalysisDict):
 
     def to_text(self) -> str:
         items = [
-            (
-                f"- {key}: {str_indent(value.to_text())}"
-                if not isinstance(value, BaseAnalysisDict)
-                else f"- {key}:\n  {str_indent(value.to_text())}"
-            )
-            for key, value in self._analyses.items()
+            self._format_item(key, value, prefix="- ") for key, value in self._analyses.items()
         ]
         return "\n".join(items)
 
@@ -149,12 +154,5 @@ class YamlAnalysisDict(BaseAnalysisDict):
     """
 
     def to_text(self) -> str:
-        items = [
-            (
-                f"{key}: {str_indent(value.to_text())}"
-                if not isinstance(value, BaseAnalysisDict)
-                else f"{key}:\n  {str_indent(value.to_text())}"
-            )
-            for key, value in self._analyses.items()
-        ]
+        items = [self._format_item(key, value) for key, value in self._analyses.items()]
         return "\n".join(items)

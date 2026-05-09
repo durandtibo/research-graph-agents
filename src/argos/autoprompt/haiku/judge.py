@@ -1,4 +1,4 @@
-r"""Contain an alternative LangGraph builder for the haiku judge."""
+r"""Contain a LangGraph builder for the haiku judge."""
 
 from __future__ import annotations
 

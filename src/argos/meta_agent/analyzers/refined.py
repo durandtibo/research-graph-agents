@@ -34,7 +34,7 @@ class RefinedAnalyzer(BaseAnalyzer):
         analyzer: The inner analyzer used to produce the initial
             analysis from the data.
         agent: The agent used to refine the initial analysis. It
-            receives the markdown representation of the initial
+            receives the text representation of the initial
             analysis and its response is used as the final content.
 
     Example:

@@ -25,6 +25,10 @@ class BaseAnalysisDict(BaseAnalysis):
     r"""Implement an analysis that combines a mapping of analysis objects
     into a single analysis object.
 
+    Subclasses define how the child analyses are rendered. Each child is
+    converted with :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_text`
+    before the mapping is formatted.
+
     Args:
         analyses: The mapping of analysis objects to combine.
         indent: The indentation to use.
@@ -88,6 +92,9 @@ class JsonAnalysisDict(BaseAnalysisDict):
     r"""Implement an analysis that combines a mapping of analyses with a
     JSON style.
 
+    Each child analysis is converted with :meth:`to_text` and then
+    serialised with :func:`json.dumps`.
+
     Args:
         analyses: The mapping of analysis objects to combine.
         indent: The indentation to use.
@@ -136,6 +143,9 @@ class JsonAnalysisDict(BaseAnalysisDict):
 class YamlAnalysisDict(BaseAnalysisDict):
     r"""Implement an analysis that combines a mapping of analysis objects
     with YAML style.
+
+    Each child analysis is converted with :meth:`to_text` and then
+    serialised with :func:`yaml.safe_dump`.
 
     Args:
         analyses: The mapping of analysis objects to combine.

@@ -13,9 +13,8 @@ from coola.equality.tester import EqualNanEqualityTester, get_default_registry
 class BaseAnalysis(ABC):
     r"""Abstract base class for storing and formatting metrics analyses.
 
-    Subclasses must implement methods to expose analyses in multiple
-    representations: raw internal types, serialization-ready dicts,
-    flat dicts, dataframes, and markdown.
+    Subclasses must implement methods to serialise an analysis to a
+    plain dictionary and to render it as human-readable text.
 
     Example:
         ```pycon
@@ -79,14 +78,14 @@ class BaseAnalysis(ABC):
 
     @abstractmethod
     def to_text(self) -> str:
-        r"""Return the analysis formatted as a Markdown string.
+        r"""Return the analysis formatted as text.
 
-        Produces a human-readable Markdown representation. Useful
-        for reports, notebooks, or CLI output.
+        Produces a human-readable string representation that can be used
+        in reports, notebooks, or CLI output.
 
         Returns:
-            A string containing the Markdown representation of
-                the analysis.
+            A string containing the text representation of the
+                analysis.
 
         Example:
             ```pycon

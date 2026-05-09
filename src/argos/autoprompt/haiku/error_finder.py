@@ -1,4 +1,10 @@
-r"""Contain code to find the errors."""
+r"""Contain abstractions and implementations for error finders.
+
+An error finder inspects a predictions DataFrame, identifies
+mispredicted haiku examples (structure and topic errors), and
+returns a formatted markdown report suitable for use as LLM context
+in the next optimization iteration.
+"""
 
 from __future__ import annotations
 

@@ -88,6 +88,23 @@ def list_of_dicts_to_dataframe(list_of_dicts: list[dict[Any, Any]]) -> pl.DataFr
 
     Returns:
         A DataFrame representation of the list of dicts.
+
+    Example:
+        ```pycon
+        >>> import polars as pl
+        >>> from argos.utils.dataframe import list_of_dicts_to_dataframe
+        >>> list_of_dicts_to_dataframe([{"a": 1, "b": 10}, {"a": 2, "b": 20}])
+        shape: (2, 2)
+        ┌─────┬─────┐
+        │ a   ┆ b   │
+        │ --- ┆ --- │
+        │ i64 ┆ i64 │
+        ╞═════╪═════╡
+        │ 1   ┆ 10  │
+        │ 2   ┆ 20  │
+        └─────┴─────┘
+
+        ```
     """
     rows = recursive_to_dict(list_of_dicts)
     return pl.DataFrame(rows)
@@ -161,6 +178,9 @@ def summarize_boolean_columns(df: pl.DataFrame) -> pl.DataFrame:
 def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> pl.DataFrame:
     r"""Unnest all the struct columns in a DataFrame.
 
+    Non-struct columns are passed through unchanged. If no struct
+    columns are present the DataFrame is returned as-is.
+
     Args:
         frame: A DataFrame that can have struct columns.
         separator: If provided, renamed output columns follow the
@@ -169,6 +189,24 @@ def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> 
 
     Returns:
         A DataFrame where all the struct columns are unnested.
+
+    Example:
+        ```pycon
+        >>> import polars as pl
+        >>> from argos.utils.dataframe import unnest_struct_columns
+        >>> frame = pl.DataFrame({"id": [1, 2], "coords": [{"x": 10, "y": 20}, {"x": 30, "y": 40}]})
+        >>> unnest_struct_columns(frame)
+        shape: (2, 3)
+        ┌─────┬─────┬─────┐
+        │ id  ┆ x   ┆ y   │
+        │ --- ┆ --- ┆ --- │
+        │ i64 ┆ i64 ┆ i64 │
+        ╞═════╪═════╪═════╡
+        │ 1   ┆ 10  ┆ 20  │
+        │ 2   ┆ 30  ┆ 40  │
+        └─────┴─────┴─────┘
+
+        ```
     """
     struct_columns = [
         col_name for col_name, dtype in frame.schema.items() if isinstance(dtype, pl.Struct)

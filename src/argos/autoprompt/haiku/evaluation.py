@@ -1,4 +1,9 @@
-r"""Contain the code to evaluate the performances."""
+r"""Contain functions to compute haiku judge classification metrics.
+
+This module evaluates the haiku judge's predictions against
+ground-truth labels, computing binary classification metrics for
+overall pass/fail, structure adherence, and topic relevance.
+"""
 
 from __future__ import annotations
 

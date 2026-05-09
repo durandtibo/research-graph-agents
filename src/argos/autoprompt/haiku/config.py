@@ -48,12 +48,12 @@ class ExperimentConfig:
             (results, artifacts, history) are stored.
         iteration: Current iteration index used to namespace artifact
             subdirectories. Defaults to ``0``.
-        prompt_generator: Optional :class:`LlmConfig` for the prompt
-            generator model. Defaults to ``None``.
-        judge: Optional :class:`LlmConfig` for the judge model.
+        prompt_generator: Optional :class:`ChatModelConfig` for the
+            prompt generator model. Defaults to ``None``.
+        judge: Optional :class:`ChatModelConfig` for the judge model.
             Defaults to ``None``.
-        error_analyzer: Optional :class:`LlmConfig` for the error
-            analyzer model. Defaults to ``None``.
+        error_analyzer: Optional :class:`ChatModelConfig` for the
+            error analyzer model. Defaults to ``None``.
     """
 
     path_experiment: Path

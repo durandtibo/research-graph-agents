@@ -1,4 +1,9 @@
-r"""Contain code to generate predictions."""
+r"""Contain abstractions and implementations for haiku judge predictors.
+
+A predictor runs a LangChain ``Runnable`` model over a dataset
+DataFrame in batches and returns the predictions merged back with the
+original columns.
+"""
 
 from __future__ import annotations
 

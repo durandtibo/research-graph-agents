@@ -1,4 +1,8 @@
-r"""Contain code to prepare the datasets."""
+r"""Contain a utility function to prepare the haiku judge dataset.
+
+This module loads the labeled haiku dataset and logs summary
+statistics about the boolean target columns.
+"""
 
 from __future__ import annotations
 

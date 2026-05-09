@@ -1,4 +1,4 @@
-r"""Define a analyzer wrapper to export the analysis to a json file."""
+r"""Define an analyzer wrapper to export the analysis to a JSON file."""
 
 from __future__ import annotations
 

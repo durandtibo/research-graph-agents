@@ -1,8 +1,8 @@
 r"""Contain abstractions and implementations for haiku judge predictors.
 
-A predictor runs a LangChain ``Runnable`` model over a dataset
-DataFrame in batches and returns the predictions merged back with the
-original columns.
+A predictor runs a LangChain ``Runnable`` model over a dataset DataFrame
+in batches and returns the predictions merged back with the original
+columns.
 """
 
 from __future__ import annotations
@@ -31,9 +31,9 @@ logger: logging.Logger = logging.getLogger(__name__)
 class BasePredictor(ABC):
     r"""Abstract base class for haiku-judge predictors.
 
-    Subclasses must implement :meth:`predict` to run the model over
-    a dataset DataFrame and return a new DataFrame that includes the
-    model predictions alongside the original columns.
+    Subclasses must implement :meth:`predict` to run the model over a
+    dataset DataFrame and return a new DataFrame that includes the model
+    predictions alongside the original columns.
     """
 
     @abstractmethod

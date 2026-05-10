@@ -1,8 +1,9 @@
 r"""Implement evaluators for the haiku judge optimization pipeline.
 
-This module provides :class:`BaseEvaluator` and :class:`HaikuJudgeEvaluator`,
-which compute binary classification metrics (overall, structure, and topic)
-from a predictions DataFrame produced by the haiku judge.
+This module provides :class:`BaseEvaluator` and
+:class:`HaikuJudgeEvaluator`, which compute binary classification
+metrics (overall, structure, and topic) from a predictions DataFrame
+produced by the haiku judge.
 """
 
 from __future__ import annotations

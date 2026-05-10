@@ -105,27 +105,24 @@ class BaseAnalysis(ABC):
         return json.dumps(self.to_primitive(), **kwargs)
 
     def to_yaml(self, **kwargs: Any) -> str:
-        r"""Return the analysis serialized as a JSON string.
+        r"""Return the analysis serialized as a YAML string.
 
-        Calls ``to_primitive`` and serializes the result to JSON.
-        Any keyword arguments are forwarded to ``json.dumps`` (e.g.
-        ``indent=2`` for pretty-printing).
+        Calls ``to_primitive`` and serializes the result to YAML.
+        Any keyword arguments are forwarded to ``yaml.safe_dump``.
 
         Args:
             **kwargs: Additional keyword arguments forwarded to
-                ``json.dumps``.
+                ``yaml.safe_dump``.
 
         Returns:
-            A JSON string representation of the analysis.
+            A YAML string representation of the analysis.
 
         Example:
             ```pycon
             >>> from argos.meta_agent.analyses import Analysis
             >>> analysis = Analysis("my custom analysis: blabla...")
-            >>> analysis.to_json()
-            '"my custom analysis: blabla..."'
-            >>> analysis.to_json(indent=2)
-            '"my custom analysis: blabla..."'
+            >>> analysis.to_yaml()
+            "'my custom analysis: blabla...'\n"
 
             ```
         """

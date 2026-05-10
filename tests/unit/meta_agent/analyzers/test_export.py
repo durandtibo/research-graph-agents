@@ -69,7 +69,7 @@ def test_json_export_analyzer_analyze_returns_analysis_and_creates_file(
     out = JsonExportAnalyzer(Analyzer(analysis), path).analyze(pl.DataFrame())
     assert out.equal(analysis)
     assert path.is_file()
-    assert load_json(path) == {"content": "my analysis blabla...", "metadata": None}
+    assert load_json(path) == "my analysis blabla..."
 
 
 def test_json_export_analyzer_analyze_creates_parent_directory(
@@ -79,4 +79,4 @@ def test_json_export_analyzer_analyze_creates_parent_directory(
     out = JsonExportAnalyzer(Analyzer(analysis), path).analyze(pl.DataFrame())
     assert out.equal(analysis)
     assert path.is_file()
-    assert load_json(path) == {"content": "my analysis blabla...", "metadata": None}
+    assert load_json(path) == "my analysis blabla..."

@@ -18,6 +18,10 @@ class Data2StrAnalyzer(BaseAnalyzer):
     r"""Implement an analyzer that converts a DataFrame to a string
     format.
 
+    Note:
+        When the DataFrame is empty, returns
+        ``Analysis("_No data available._")`` instead of an empty string.
+
     Example:
         ```pycon
         >>> import polars as pl

@@ -26,7 +26,7 @@ class JsonExportAnalyzer(BaseAnalyzer):
     JSON file.
 
     Delegates the analysis to an inner ``analyzer``, then serialises
-    the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_dict`
+    the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_primitive`
     and saves it to ``path``.  The original analysis object is returned
     unchanged so the wrapper is transparent to callers.
 

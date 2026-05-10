@@ -1,4 +1,5 @@
-r"""Define the meta-agent state."""
+r"""Define the meta-agent graph state shared across optimization
+iterations."""
 
 from __future__ import annotations
 

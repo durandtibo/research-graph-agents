@@ -1,4 +1,10 @@
-r"""Contain utility functions to manage optional dependencies."""
+r"""Contain utility functions to check and import optional dependencies.
+
+This package exposes helper functions and decorators for the
+optional ``colorlog`` and ``rich`` packages, such as
+:func:`is_colorlog_available`, :func:`is_rich_available`, and the
+:func:`colorlog_available` / :func:`rich_available` decorators.
+"""
 
 from __future__ import annotations
 

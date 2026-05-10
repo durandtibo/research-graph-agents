@@ -15,7 +15,7 @@ class BaseResult(ABC):
 
     Subclasses must implement methods to expose results in multiple
     representations: raw internal types, serialization-ready dicts,
-    flat dicts, dataframes, and markdown.
+    flat dicts, and Markdown-friendly text.
 
     All ``to_*`` methods are non-destructive and return a new object
     or data structure without modifying the result instance.
@@ -126,8 +126,10 @@ class BaseResult(ABC):
     def to_markdown(self) -> str:
         r"""Return the result formatted as a Markdown string.
 
-        Produces a human-readable Markdown representation, typically
-        as a table. Useful for reports, notebooks, or CLI output.
+        Produces a human-readable Markdown representation. Concrete
+        implementations in this package render bullet lists rather than
+        tables, but callers should treat the exact layout as an
+        implementation detail of the result type.
 
         Returns:
             A string containing the Markdown representation of the result.

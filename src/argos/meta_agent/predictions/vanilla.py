@@ -18,7 +18,7 @@ T = TypeVar("T")
 class Prediction(BasePrediction[T]):
     r"""Store a single prediction paired with its example identifier.
 
-    Attributes:
+    Args:
         example_id: The identifier of the benchmark example this
             prediction corresponds to.
         prediction: The prediction produced by the agent.

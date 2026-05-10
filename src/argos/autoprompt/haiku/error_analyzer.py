@@ -1,4 +1,10 @@
-r"""Contain code to analyze the errors."""
+r"""Contain abstractions and implementations for error analyzers.
+
+An error analyzer calls an inner error finder to locate mispredicted
+examples, then passes the formatted report to an LLM to produce a
+textual analysis. The analysis is returned as a string and can
+optionally be saved to disk.
+"""
 
 from __future__ import annotations
 

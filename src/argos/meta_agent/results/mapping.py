@@ -27,6 +27,11 @@ class ResultDict(BaseResult):
             instances. Each key typically identifies a dataset split or
             evaluation phase (e.g. ``"train"``, ``"val"``).
 
+    Note:
+        :meth:`to_markdown` renders one top-level bullet per key and
+        nests the child result markdown underneath it. Empty mappings
+        return ``"_No metrics available._"``.
+
     Example:
         ```pycon
         >>> from argos.meta_agent.results import Result, ResultDict
@@ -35,6 +40,11 @@ class ResultDict(BaseResult):
         {'train': {'loss': 0.5}, 'val': {'loss': 0.3}}
         >>> result.to_flat_dict()
         {'train.loss': 0.5, 'val.loss': 0.3}
+        >>> print(result.to_markdown())
+        - **train**:
+          - **loss**: 0.5
+        - **val**:
+          - **loss**: 0.3
 
         ```
     """

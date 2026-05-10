@@ -1,4 +1,4 @@
-r"""Contain an analysis which is a dictionary of analyses."""
+r"""Contain analyses that combine a sequence of analysis objects."""
 
 from __future__ import annotations
 
@@ -16,11 +16,15 @@ if TYPE_CHECKING:
 
 
 class AnalysisList(BaseAnalysis):
-    r"""Implement an output that combines a mapping of output objects
+    r"""Implement an output that combines a sequence of analysis objects
     into a single output object.
 
+    :meth:`to_text` returns the Python string representation of the
+    child analyses' text values, which is convenient for debugging but
+    intentionally preserves the list-like structure.
+
     Args:
-        analyses: The mapping of output objects to combine.
+        analyses: The sequence of analysis objects to combine.
 
     Example:
         ```pycon
@@ -63,11 +67,14 @@ class AnalysisList(BaseAnalysis):
 
 
 class IndentedListAnalysisList(AnalysisList):
-    r"""Implement an output that combines a mapping of output objects
-    with a indented list approach.
+    r"""Implement an output that combines a sequence of analysis objects
+    with an indented list approach.
+
+    Unlike :class:`AnalysisList`, :meth:`to_text` renders each child
+    analysis as a Markdown bullet item.
 
     Args:
-        analyses: The mapping of output objects to combine.
+        analyses: The sequence of analysis objects to combine.
 
     Example:
         ```pycon

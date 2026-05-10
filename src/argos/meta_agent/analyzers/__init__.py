@@ -11,6 +11,7 @@ from __future__ import annotations
 __all__ = [
     "Analyzer",
     "BaseAnalyzer",
+    "BaseExportAnalyzer",
     "Data2CsvAnalyzer",
     "Data2MarkdownAnalyzer",
     "Data2StrAnalyzer",

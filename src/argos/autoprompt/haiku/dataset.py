@@ -1,7 +1,7 @@
 r"""Contain a utility function to prepare the haiku judge dataset.
 
-This module loads the labeled haiku dataset and logs summary
-statistics about the boolean target columns.
+This module loads the labeled haiku dataset and logs summary statistics
+about the boolean target columns.
 """
 
 from __future__ import annotations

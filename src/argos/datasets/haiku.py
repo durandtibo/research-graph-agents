@@ -1,8 +1,8 @@
 r"""Contain code to generate a labeled haiku dataset.
 
-The dataset combines valid haiku examples (correct 5-7-5 structure
-and on-topic) with invalid ones (structure errors, topic errors, or
-both), and is used to benchmark and evaluate the haiku judge.
+The dataset combines valid haiku examples (correct 5-7-5 structure and
+on-topic) with invalid ones (structure errors, topic errors, or both),
+and is used to benchmark and evaluate the haiku judge.
 """
 
 from __future__ import annotations

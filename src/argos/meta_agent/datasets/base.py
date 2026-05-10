@@ -108,7 +108,7 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
         metadata: dict[str, Any] | None = None,
         example_type: type[BaseExample[InputT, TargetT]] = Example,
     ) -> Self:
-        r"""Create a dataset from a list of examples.
+        r"""Create a dataset from a dataframe.
 
         Args:
             frame: A Polars DataFrame where each row represents a single

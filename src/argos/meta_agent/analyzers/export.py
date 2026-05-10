@@ -45,8 +45,10 @@ class JsonExportAnalyzer(BaseAnalyzer):
         ...     analyzer = JsonExportAnalyzer(analyzer=inner, path=path)
         ...     analysis = analyzer.analyze(pl.DataFrame())
         ...     analysis.to_text()
+        ...     path.exists()
         ...
         'my analysis'
+        True
 
         ```
     """

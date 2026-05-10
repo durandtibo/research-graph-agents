@@ -17,7 +17,10 @@ class Analysis(BaseAnalysis):
     r"""Define a simple analysis.
 
     Args:
-        content: The content of the analysis in a markdown format.
+        content: The human-readable analysis content. The value is
+            returned unchanged by :meth:`to_text`.
+        metadata: Optional auxiliary information associated with the
+            analysis.
 
     Example:
         ```pycon

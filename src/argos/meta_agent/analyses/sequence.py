@@ -19,6 +19,10 @@ class AnalysisList(BaseAnalysis):
     r"""Implement an output that combines a sequence of analysis objects
     into a single output object.
 
+    :meth:`to_text` returns the Python string representation of the
+    child analyses' text values, which is convenient for debugging but
+    intentionally preserves the list-like structure.
+
     Args:
         analyses: The sequence of analysis objects to combine.
 
@@ -65,6 +69,9 @@ class AnalysisList(BaseAnalysis):
 class IndentedListAnalysisList(AnalysisList):
     r"""Implement an output that combines a sequence of analysis objects
     with an indented list approach.
+
+    Unlike :class:`AnalysisList`, :meth:`to_text` renders each child
+    analysis as a Markdown bullet item.
 
     Args:
         analyses: The sequence of analysis objects to combine.

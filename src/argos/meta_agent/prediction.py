@@ -148,6 +148,9 @@ class PredictionResult(Generic[T]):
     def to_dict(self) -> dict[str, T]:
         r"""Return a dictionary mapping example IDs to predictions.
 
+        The result only includes the prediction payload. Record-level and
+        result-level metadata are omitted.
+
         Returns:
             A dictionary mapping each example ID to its prediction.
 

@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from argos.meta_agent.analyses2 import Analysis
+from argos.meta_agent.analyses import Analysis
 
 ##############################
 #     Tests for Analysis     #

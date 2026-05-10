@@ -14,7 +14,7 @@ from coola.utils.format import (
     str_sequence,
 )
 
-from argos.meta_agent.analyses2.base import BaseAnalysis, PrimitiveType
+from argos.meta_agent.analyses.base import BaseAnalysis, PrimitiveType
 
 
 @dataclass(frozen=True)
@@ -26,7 +26,7 @@ class AnalysisList(BaseAnalysis):
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.analyses2 import Analysis, AnalysisList
+        >>> from argos.meta_agent.analyses import Analysis, AnalysisList
         >>> analysis = AnalysisList([Analysis("style analysis"), Analysis("semantic analysis")])
         >>> analysis
         AnalysisList(

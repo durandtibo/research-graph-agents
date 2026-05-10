@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from argos.meta_agent.analyses2 import Analysis, AnalysisDict, AnalysisList
+from argos.meta_agent.analyses import Analysis, AnalysisDict, AnalysisList
 
 ##################################
 #     Tests for AnalysisList     #

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from coola.equality import objects_are_equal
 from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 
-from argos.meta_agent.analyses2.base import BaseAnalysis, PrimitiveType
+from argos.meta_agent.analyses.base import BaseAnalysis, PrimitiveType
 
 
 @dataclass(frozen=True)
@@ -21,7 +21,7 @@ class AnalysisDict(BaseAnalysis):
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.analyses2 import Analysis, AnalysisDict
+        >>> from argos.meta_agent.analyses import Analysis, AnalysisDict
         >>> analysis = AnalysisDict(
         ...     {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")}
         ... )

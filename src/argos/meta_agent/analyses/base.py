@@ -29,7 +29,7 @@ class BaseAnalysis(ABC):
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.analyses2 import Analysis
+        >>> from argos.meta_agent.analyses import Analysis
         >>> analysis = Analysis("my custom analysis: blabla...")
         >>> analysis
         Analysis(content='my custom analysis: blabla...', metadata=None)
@@ -69,7 +69,7 @@ class BaseAnalysis(ABC):
 
         Example:
             ```pycon
-            >>> from argos.meta_agent.analyses2 import Analysis
+            >>> from argos.meta_agent.analyses import Analysis
             >>> analysis = Analysis("my custom analysis: blabla...")
             >>> analysis.to_primitive()
             'my custom analysis: blabla...'
@@ -93,7 +93,7 @@ class BaseAnalysis(ABC):
 
         Example:
             ```pycon
-            >>> from argos.meta_agent.analyses2 import Analysis
+            >>> from argos.meta_agent.analyses import Analysis
             >>> analysis = Analysis("my custom analysis: blabla...")
             >>> analysis.to_json()
             '"my custom analysis: blabla..."'
@@ -120,7 +120,7 @@ class BaseAnalysis(ABC):
 
         Example:
             ```pycon
-            >>> from argos.meta_agent.analyses2 import Analysis
+            >>> from argos.meta_agent.analyses import Analysis
             >>> analysis = Analysis("my custom analysis: blabla...")
             >>> analysis.to_json()
             '"my custom analysis: blabla..."'

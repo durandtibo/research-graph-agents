@@ -2,8 +2,8 @@ r"""Contain abstractions and implementations for analyzers.
 
 An analyzer inspects a Polars DataFrame of prediction results and
 returns a :class:`~argos.meta_agent.analyses.BaseAnalysis` object.
-Concrete implementations include no-op, data-to-text converters, an
-LLM-based refinement wrapper, and a JSON export decorator.
+Concrete implementations include no-op, data-to-text converters, an LLM-
+based refinement wrapper, and a JSON export decorator.
 """
 
 from __future__ import annotations

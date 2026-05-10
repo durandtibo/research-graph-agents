@@ -1,8 +1,8 @@
 r"""Contain abstractions and implementations for examples.
 
 An example is a single labeled instance in a dataset, pairing an
-``input`` with a ground-truth ``target``. This sub-package also
-provides utilities for converting between lists of examples and Polars
+``input`` with a ground-truth ``target``. This sub-package also provides
+utilities for converting between lists of examples and Polars
 DataFrames.
 """
 

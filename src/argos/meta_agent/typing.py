@@ -1,8 +1,8 @@
 r"""Contain type variables and type aliases used across the meta-agent.
 
-``InputT``, ``OutputT``, and ``TargetT`` are generic type variables
-that parameterize agents, predictors, datasets, and examples.
-``FlatDict`` is a type alias for flat, JSON-compatible dictionaries.
+``InputT``, ``OutputT``, and ``TargetT`` are generic type variables that
+parameterize agents, predictors, datasets, and examples. ``FlatDict`` is
+a type alias for flat, JSON-compatible dictionaries.
 """
 
 from __future__ import annotations

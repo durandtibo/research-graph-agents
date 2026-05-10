@@ -29,17 +29,9 @@ class AnalysisList(BaseAnalysis):
         >>> from argos.meta_agent.analyses2 import Analysis, AnalysisList
         >>> analysis = AnalysisList([Analysis("style analysis"), Analysis("semantic analysis")])
         >>> analysis
-        AnalysisList(num_analyses=2)
-        >>> print(analysis)
         AnalysisList(
-          (0): Analysis(
-              (content): style analysis
-              (metadata): None
-            )
-          (1): Analysis(
-              (content): semantic analysis
-              (metadata): None
-            )
+          (0): Analysis(content='style analysis', metadata=None)
+          (1): Analysis(content='semantic analysis', metadata=None)
         )
         >>> analysis.to_primitive()
         ['style analysis', 'semantic analysis']

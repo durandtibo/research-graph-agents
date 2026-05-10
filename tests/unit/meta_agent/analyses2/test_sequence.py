@@ -16,20 +16,24 @@ def test_analysis_list_repr_empty() -> None:
 
 
 def test_analysis_list_repr_single() -> None:
-    assert repr(AnalysisList([Analysis("style analysis")])) == "AnalysisList("
+    assert repr(AnalysisList([Analysis("style analysis")])) == (
+        "AnalysisList(\n  (0): Analysis(content='style analysis', metadata=None)\n)"
+    )
 
 
 def test_analysis_list_repr_multiple() -> None:
-    assert (
-        repr(
-            AnalysisList(
-                [
-                    Analysis("style analysis"),
-                    Analysis("semantic analysis"),
-                ]
-            )
+    assert repr(
+        AnalysisList(
+            [
+                Analysis("style analysis"),
+                Analysis("semantic analysis"),
+            ]
         )
-        == ""
+    ) == (
+        "AnalysisList(\n"
+        "  (0): Analysis(content='style analysis', metadata=None)\n"
+        "  (1): Analysis(content='semantic analysis', metadata=None)\n"
+        ")"
     )
 
 

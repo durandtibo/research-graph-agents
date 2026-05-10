@@ -7,17 +7,17 @@ __all__ = ["AnalysisDict"]
 from dataclasses import dataclass
 
 from coola.equality import objects_are_equal
-from coola.utils.format import str_indent, str_mapping
+from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 
 from argos.meta_agent.analyses2.base import BaseAnalysis, PrimitiveType
 
 
 @dataclass(frozen=True)
 class AnalysisDict(BaseAnalysis):
-    r"""Implement an analysis that combines a mapping of analyses.
+    r"""Implement an analysis that combines a dict of analyses.
 
     Args:
-        analyses: The mapping of analysis objects to combine.
+        analyses: The dict of analysis objects to combine.
 
     Example:
         ```pycon
@@ -26,17 +26,9 @@ class AnalysisDict(BaseAnalysis):
         ...     {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")}
         ... )
         >>> analysis
-        AnalysisDict(num_analyses=2)
-        >>> print(analysis)
         AnalysisDict(
-          (style): Analysis(
-              (content): style analysis
-              (metadata): None
-            )
-          (semantic): Analysis(
-              (content): semantic analysis
-              (metadata): None
-            )
+          (style): Analysis(content='style analysis', metadata=None)
+          (semantic): Analysis(content='semantic analysis', metadata=None)
         )
         >>> analysis.to_primitive()
         {'style': 'style analysis', 'semantic': 'semantic analysis'}
@@ -52,7 +44,11 @@ class AnalysisDict(BaseAnalysis):
     analyses: dict[str, BaseAnalysis]
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(num_analyses={len(self.analyses):,})"
+        if not self.analyses:
+            return f"{self.__class__.__qualname__}()"
+
+        args = repr_indent(repr_mapping(self.analyses))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def __str__(self) -> str:
         if not self.analyses:

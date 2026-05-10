@@ -9,6 +9,7 @@ from typing import Any
 
 from coola.equality import objects_are_equal
 from coola.utils.format import repr_mapping_line, str_indent, str_mapping
+from coola.utils.string import truncate_str
 
 from argos.meta_agent.analyses2.base import BaseAnalysis, PrimitiveType
 
@@ -26,7 +27,7 @@ class Analysis(BaseAnalysis):
         >>> from argos.meta_agent.analyses2 import Analysis
         >>> analysis = Analysis("my custom analysis: blabla...")
         >>> analysis
-        {'content': 'my custom analysis: blabla...', 'metadata': None}
+        Analysis(content='my custom analysis: blabla...', metadata=None)
         >>> analysis.to_primitive()
         'my custom analysis: blabla...'
 
@@ -38,7 +39,7 @@ class Analysis(BaseAnalysis):
 
     def __repr__(self) -> str:
         args = repr_mapping_line(
-            {"content": truncate_str(self.content, max_len=50), "metadata": self.metadata}
+            {"content": truncate_str(str(self.content), max_len=50), "metadata": self.metadata}
         )
         return f"{self.__class__.__qualname__}({args})"
 

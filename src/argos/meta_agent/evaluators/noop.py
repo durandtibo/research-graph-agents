@@ -37,3 +37,6 @@ class NoOpEvaluator(BaseEvaluator):
 
     def evaluate(self, data: pl.DataFrame) -> Result:  # noqa: ARG002
         return Result({})
+
+    def equal(self, other: object, equal_nan: bool = False) -> bool:  # noqa: ARG002
+        return type(other) is type(self)

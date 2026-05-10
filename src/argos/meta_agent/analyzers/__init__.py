@@ -11,17 +11,20 @@ from __future__ import annotations
 __all__ = [
     "Analyzer",
     "BaseAnalyzer",
+    "BaseCacheAnalyzer",
     "BaseExportAnalyzer",
     "Data2CsvAnalyzer",
     "Data2MarkdownAnalyzer",
     "Data2StrAnalyzer",
     "JsonExportAnalyzer",
     "NoOpAnalyzer",
+    "PickleCacheAnalyzer",
     "PickleExportAnalyzer",
     "RefinedAnalyzer",
 ]
 
 from argos.meta_agent.analyzers.base import BaseAnalyzer
+from argos.meta_agent.analyzers.cache import BaseCacheAnalyzer, PickleCacheAnalyzer
 from argos.meta_agent.analyzers.data2csv import Data2CsvAnalyzer
 from argos.meta_agent.analyzers.data2markdown import Data2MarkdownAnalyzer
 from argos.meta_agent.analyzers.data2str import Data2StrAnalyzer

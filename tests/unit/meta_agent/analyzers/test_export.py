@@ -121,9 +121,9 @@ def test_json_export_analyzer_analyze_creates_parent_directory(
     assert load_json(path) == "my analysis blabla..."
 
 
-########################################
+##########################################
 #     Tests for PickleExportAnalyzer     #
-########################################
+##########################################
 
 
 def test_pickle_export_analyzer_repr(tmp_path: Path, analysis: BaseAnalysis) -> None:

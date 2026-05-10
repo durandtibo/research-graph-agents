@@ -1,4 +1,4 @@
-r"""Implement an analyzer that does nothing."""
+r"""Implement an analyzer that always returns a fixed analysis."""
 
 from __future__ import annotations
 
@@ -19,8 +19,9 @@ if TYPE_CHECKING:
 class Analyzer(BaseAnalyzer):
     r"""Implement an analyzer that always returns the same analysis.
 
-    This analyzer should be used if no analysis is desired. It always
-    returns an empty analysis.
+    The analysis to return is supplied at construction time and is
+    returned unchanged on every :meth:`analyze` call, regardless of
+    the input data.
 
     Example:
         ```pycon

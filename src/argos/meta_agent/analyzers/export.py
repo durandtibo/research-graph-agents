@@ -1,4 +1,4 @@
-r"""Define a analyzer wrapper to export the analysis to a json file."""
+r"""Define an analyzer wrapper to export the analysis to a JSON file."""
 
 from __future__ import annotations
 
@@ -45,8 +45,10 @@ class JsonExportAnalyzer(BaseAnalyzer):
         ...     analyzer = JsonExportAnalyzer(analyzer=inner, path=path)
         ...     analysis = analyzer.analyze(pl.DataFrame())
         ...     analysis.to_text()
+        ...     path.exists()
         ...
         'my analysis'
+        True
 
         ```
     """

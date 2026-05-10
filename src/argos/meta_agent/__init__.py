@@ -1,8 +1,11 @@
-r"""Contain the implementation of the meta-agent.
+r"""Provide the building blocks for meta-agent optimization loops.
 
-This sub-package provides the core abstractions and concrete
-implementations for building meta-agents that iteratively optimize an
-agent's configuration using feedback from evaluation.
+The package models the objects exchanged across an optimization cycle:
+agent configurations, benchmark examples, predictions, evaluation
+results, and analyses. A typical workflow creates an agent from a
+configuration, runs a predictor on a benchmark, evaluates the
+predictions, and then analyzes the resulting records to decide how to
+update the next configuration.
 """
 
 from __future__ import annotations

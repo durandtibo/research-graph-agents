@@ -1,4 +1,9 @@
-r"""Contain code to generate predictions."""
+r"""Contain abstractions and implementations for haiku judge predictors.
+
+A predictor runs a LangChain ``Runnable`` model over a dataset
+DataFrame in batches and returns the predictions merged back with the
+original columns.
+"""
 
 from __future__ import annotations
 
@@ -84,7 +89,8 @@ class Predictor(BasePredictor):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def predict(self, dataset: pl.DataFrame) -> pl.DataFrame:
-        r"""Run batch inference on the dataset and return the merged results.
+        r"""Run batch inference on the dataset and return the merged
+        results.
 
         Calls :func:`generate_predictions` with the configured model, batch
         size, and concurrency settings. The output columns are then sorted

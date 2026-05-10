@@ -26,14 +26,19 @@ class Result(BaseResult):
             values are JSON-compatible scalar types (``int``, ``float``,
             ``str``, ``bool``, or ``None``).
 
+    Note:
+        :meth:`to_markdown` renders one Markdown bullet per metric. When
+        the result is empty it returns ``"_No metrics available._"``.
+
     Example:
         ```pycon
         >>> from argos.meta_agent.results import Result
         >>> result = Result({"loss": 0.5, "accuracy": 0.9})
         >>> result.to_dict()
         {'loss': 0.5, 'accuracy': 0.9}
-        >>> result.to_markdown()
-        '- **loss**: 0.5\n- **accuracy**: 0.9'
+        >>> print(result.to_markdown())
+        - **loss**: 0.5
+        - **accuracy**: 0.9
 
         ```
     """

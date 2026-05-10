@@ -17,7 +17,7 @@ from argos.meta_agent.typing import InputT, TargetT
 class Example(BaseExample[InputT, TargetT]):
     r"""Define a concrete labeled example for use in datasets.
 
-    Attributes:
+    Args:
         id: A unique identifier for the example.
         input: The input passed to the agent.
         target: The expected ground-truth output.

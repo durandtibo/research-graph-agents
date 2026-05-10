@@ -12,13 +12,18 @@ from argos.meta_agent.analyzers import Analyzer
 
 def test_analyzer_repr() -> None:
     assert repr(Analyzer(Analysis("my analysis"))) == (
-        "Analyzer(\n  (analysis): Analysis(content_len=11, metadata=None)\n)"
+        "Analyzer(\n  (analysis): Analysis(content='my analysis', metadata=None)\n)"
     )
 
 
 def test_analyzer_str() -> None:
     assert str(Analyzer(Analysis("my analysis"))) == (
-        "Analyzer(\n  (analysis): Analysis(content_len=11, metadata=None)\n)"
+        "Analyzer(\n"
+        "  (analysis): Analysis(\n"
+        "      (content): my analysis\n"
+        "      (metadata): None\n"
+        "    )\n"
+        ")"
     )
 
 

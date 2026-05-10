@@ -56,3 +56,15 @@ def test_noop_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
 
 def test_noop_evaluator_evaluate_empty() -> None:
     assert NoOpEvaluator().evaluate(pl.DataFrame({})).equal(Result({}))
+
+
+def test_no_op_evaluator_equal_true() -> None:
+    assert NoOpEvaluator().equal(NoOpEvaluator())
+
+
+def test_no_op_evaluator_equal_false_different_type() -> None:
+    assert not NoOpEvaluator().equal("abc")
+
+
+def test_no_op_evaluator_equal_false_none() -> None:
+    assert not NoOpEvaluator().equal(None)

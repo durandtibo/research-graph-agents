@@ -31,7 +31,7 @@ class BaseAnalyzer(ABC):
         >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
         >>> analysis = analyzer.analyze(data)
         >>> analysis
-        Analysis(content_len=21, metadata=None)
+        Analysis(content='my analysis blabla...', metadata=None)
 
         ```
     """
@@ -55,7 +55,7 @@ class BaseAnalyzer(ABC):
             >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
             >>> analysis = analyzer.analyze(data)
             >>> analysis
-            Analysis(content_len=21, metadata=None)
+            Analysis(content='my analysis blabla...', metadata=None)
 
             ```
         """

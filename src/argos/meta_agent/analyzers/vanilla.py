@@ -31,12 +31,12 @@ class Analyzer(BaseAnalyzer):
         >>> analyzer = Analyzer(Analysis("my analysis blabla..."))
         >>> analyzer
         Analyzer(
-          (analysis): Analysis(content_len=21, metadata=None)
+          (analysis): Analysis(content='my analysis blabla...', metadata=None)
         )
         >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
         >>> analysis = analyzer.analyze(data)
         >>> analysis
-        Analysis(content_len=21, metadata=None)
+        Analysis(content='my analysis blabla...', metadata=None)
 
         ```
     """

@@ -28,7 +28,7 @@ class Data2MarkdownAnalyzer(BaseAnalyzer):
         Data2MarkdownAnalyzer()
         >>> data = pl.DataFrame({"id": ["q1", "q2"], "error": [True, False]})
         >>> analysis = analyzer.analyze(data)
-        >>> print(analysis.to_text())
+        >>> print(analysis.to_primitive())
         | id | error |
         |----|-------|
         | q1 | True  |

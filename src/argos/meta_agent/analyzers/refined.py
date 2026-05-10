@@ -51,15 +51,15 @@ class RefinedAnalyzer(BaseAnalyzer):
         >>> analyzer
         RefinedAnalyzer(
           (analyzer): Analyzer(
-              (analysis): Analysis(content_len=12, metadata=None)
+              (analysis): Analysis(content='raw analysis', metadata=None)
             )
           (agent): Agent(
               (runnable): RunnableLambda(upper)
             )
         )
         >>> analysis = analyzer.analyze(pl.DataFrame())
-        >>> analysis.to_text()
-        'RAW ANALYSIS'
+        >>> analysis
+        Analysis(content='RAW ANALYSIS', metadata=None)
 
         ```
     """
@@ -84,7 +84,7 @@ class RefinedAnalyzer(BaseAnalyzer):
         logger.info("Generating an analysis of the data...")
         analysis = self._analyzer.analyze(data)
         logger.info("Calling an agent on the analysis...")
-        content = self._agent.predict([analysis.to_text()])[0]
+        content = self._agent.predict([str(analysis.to_primitive())])[0]
         return Analysis(content)
 
     def equal(self, other: object, equal_nan: bool = False) -> bool:

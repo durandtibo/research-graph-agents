@@ -23,6 +23,30 @@ def analysis() -> Analysis:
 ########################################
 
 
+def test_json_export_analyzer_repr(tmp_path: Path, analysis: BaseAnalysis) -> None:
+    path = tmp_path.joinpath("analysis.json")
+    assert repr(JsonExportAnalyzer(Analyzer(analysis), path)).startswith("JsonExportAnalyzer(")
+
+
+def test_json_export_analyzer_repr_with_kwargs(tmp_path: Path, analysis: BaseAnalysis) -> None:
+    path = tmp_path.joinpath("analysis.json")
+    assert repr(JsonExportAnalyzer(Analyzer(analysis), path, exist_ok=True)).startswith(
+        "JsonExportAnalyzer("
+    )
+
+
+def test_json_export_analyzer_str(tmp_path: Path, analysis: BaseAnalysis) -> None:
+    path = tmp_path.joinpath("analysis.json")
+    assert str(JsonExportAnalyzer(Analyzer(analysis), path)).startswith("JsonExportAnalyzer(")
+
+
+def test_json_export_analyzer_str_with_kwargs(tmp_path: Path, analysis: BaseAnalysis) -> None:
+    path = tmp_path.joinpath("analysis.json")
+    assert str(JsonExportAnalyzer(Analyzer(analysis), path, exist_ok=True)).startswith(
+        "JsonExportAnalyzer("
+    )
+
+
 def test_json_export_analyzer_equal_true(tmp_path: Path, analysis: BaseAnalysis) -> None:
     path = tmp_path.joinpath("analysis.json")
     assert JsonExportAnalyzer(Analyzer(analysis), path).equal(
@@ -44,6 +68,15 @@ def test_json_export_analyzer_equal_false_different_path(
 ) -> None:
     assert not JsonExportAnalyzer(Analyzer(analysis), tmp_path.joinpath("a.json")).equal(
         JsonExportAnalyzer(Analyzer(analysis), tmp_path.joinpath("b.json"))
+    )
+
+
+def test_json_export_analyzer_equal_false_different_kwargs(
+    tmp_path: Path, analysis: BaseAnalysis
+) -> None:
+    path = tmp_path.joinpath("analysis.json")
+    assert not JsonExportAnalyzer(Analyzer(analysis), path).equal(
+        JsonExportAnalyzer(Analyzer(analysis), path, exist_ok=True)
     )
 
 

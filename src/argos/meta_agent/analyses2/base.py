@@ -32,7 +32,7 @@ class BaseAnalysis(ABC):
         >>> from argos.meta_agent.analyses2 import Analysis
         >>> analysis = Analysis("my custom analysis: blabla...")
         >>> analysis
-        abc
+        Analysis(content='my custom analysis: blabla...', metadata=None)
         >>> analysis.to_primitive()
         'my custom analysis: blabla...'
 

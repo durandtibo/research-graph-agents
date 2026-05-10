@@ -12,26 +12,28 @@ from argos.meta_agent.analyses2 import Analysis, AnalysisDict
 
 
 def test_analysis_dict_repr_empty() -> None:
-    assert repr(AnalysisDict({})) == "AnalysisDict(num_analyses=0)"
+    assert repr(AnalysisDict({})) == "AnalysisDict()"
 
 
 def test_analysis_dict_repr_single() -> None:
-    assert (
-        repr(AnalysisDict({"style": Analysis("style analysis")})) == "AnalysisDict(num_analyses=1)"
+    assert repr(AnalysisDict({"style": Analysis("style analysis")})) == (
+        "AnalysisDict(\n  (style): Analysis(content='style analysis', metadata=None)\n)"
     )
 
 
 def test_analysis_dict_repr_multiple() -> None:
-    assert (
-        repr(
-            AnalysisDict(
-                {
-                    "style": Analysis("style analysis"),
-                    "semantic": Analysis("semantic analysis"),
-                }
-            )
+    assert repr(
+        AnalysisDict(
+            {
+                "style": Analysis("style analysis"),
+                "semantic": Analysis("semantic analysis"),
+            }
         )
-        == "AnalysisDict(num_analyses=2)"
+    ) == (
+        "AnalysisDict(\n"
+        "  (style): Analysis(content='style analysis', metadata=None)\n"
+        "  (semantic): Analysis(content='semantic analysis', metadata=None)\n"
+        ")"
     )
 
 

@@ -17,7 +17,7 @@ def test_analysis_repr_short_content() -> None:
 
 def test_analysis_repr_long_content() -> None:
     content = "a" * 100
-    assert repr(Analysis(content)) == f"Analysis(content='{'a' * 47}'..., metadata=None)"
+    assert repr(Analysis(content)) == f"Analysis(content='{'a' * 47}...', metadata=None)"
 
 
 def test_analysis_repr_with_metadata() -> None:
@@ -144,7 +144,7 @@ def test_analysis_to_json_indent() -> None:
 @pytest.mark.parametrize(
     ("content", "expected"),
     [
-        pytest.param("my analysis", "my analysis\n", id="string"),
+        pytest.param("my analysis", "my analysis\n...\n", id="string"),
         pytest.param("", "''\n", id="empty_string"),
         pytest.param(3.14, "3.14\n...\n", id="float"),
         pytest.param(42, "42\n...\n", id="integer"),

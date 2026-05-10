@@ -44,10 +44,10 @@ class JsonExportAnalyzer(BaseAnalyzer):
         ...     inner = Analyzer(Analysis("my analysis"))
         ...     analyzer = JsonExportAnalyzer(analyzer=inner, path=path)
         ...     analysis = analyzer.analyze(pl.DataFrame())
-        ...     analysis.to_text()
-        ...     path.exists()
+        ...     analysis
+        ...     path.is_file()
         ...
-        'my analysis'
+        Analysis(content='my analysis', metadata=None)
         True
 
         ```
@@ -61,7 +61,7 @@ class JsonExportAnalyzer(BaseAnalyzer):
         logger.info("Analyzing the data...")
         analysis = self._analyzer.analyze(data)
         logger.info(f"Exporting the analysis to a json file: {self._path}")
-        save_json(analysis.to_dict(), self._path)
+        save_json(analysis.to_primitive(), self._path)
         return analysis
 
     def equal(self, other: object, equal_nan: bool = False) -> bool:

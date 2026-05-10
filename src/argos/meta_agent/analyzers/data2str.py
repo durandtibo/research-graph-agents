@@ -27,7 +27,7 @@ class Data2StrAnalyzer(BaseAnalyzer):
         Data2StrAnalyzer()
         >>> data = pl.DataFrame({"id": ["q1", "q2"], "error": [True, False]})
         >>> analysis = analyzer.analyze(data)
-        >>> print(analysis.to_text())
+        >>> print(analysis.to_primitive())
         shape: (2, 2)
         ┌─────┬───────┐
         │ id  ┆ error │

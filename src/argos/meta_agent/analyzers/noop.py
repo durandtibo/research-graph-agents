@@ -27,7 +27,7 @@ class NoOpAnalyzer(BaseAnalyzer):
         >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
         >>> analysis = analyzer.analyze(data)
         >>> analysis
-        Analysis(content_len=0, metadata=None)
+        Analysis(content='', metadata=None)
 
         ```
     """

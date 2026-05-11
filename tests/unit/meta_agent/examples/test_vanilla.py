@@ -113,6 +113,16 @@ def test_example_to_dict() -> None:
     }
 
 
+def test_example_to_dict_with_dict() -> None:
+    example = Example(id="q1", input="What is 2+2?", target={"answer": 4, "style": "math"})
+    assert example.to_dict() == {
+        "id": "q1",
+        "input": "What is 2+2?",
+        "target": {"answer": 4, "style": "math"},
+        "metadata": None,
+    }
+
+
 def test_example_to_dict_with_metadata() -> None:
     example = Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
     assert example.to_dict() == {
@@ -120,6 +130,37 @@ def test_example_to_dict_with_metadata() -> None:
         "input": "What is 2+2?",
         "target": "4",
         "metadata": {"source": "math"},
+    }
+
+
+def test_example_to_flat_dict() -> None:
+    example = Example(id="q1", input="What is 2+2?", target="4")
+    assert example.to_flat_dict() == {
+        "id": "q1",
+        "input": "What is 2+2?",
+        "target": "4",
+        "metadata": None,
+    }
+
+
+def test_example_to_flat_dict_with_dict() -> None:
+    example = Example(id="q1", input="What is 2+2?", target={"answer": 4, "style": "math"})
+    assert example.to_flat_dict() == {
+        "id": "q1",
+        "input": "What is 2+2?",
+        "target.answer": 4,
+        "target.style": "math",
+        "metadata": None,
+    }
+
+
+def test_example_to_flat_dict_with_metadata() -> None:
+    example = Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})
+    assert example.to_flat_dict() == {
+        "id": "q1",
+        "input": "What is 2+2?",
+        "target": "4",
+        "metadata.source": "math",
     }
 
 

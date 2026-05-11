@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import logging
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from argos.testing.fixtures import colorlog_available, rich_available
+from argos.testing.fixtures import rich_available
 from argos.utils.logging import configure_logging, log_dict_pretty, log_markdown
 
 MODULE = "argos.utils.logging"
@@ -21,14 +21,34 @@ def _reset_logging() -> None:
 #######################################
 
 
-@colorlog_available
-def test_configure_logging() -> None:
-    configure_logging()
-
-
 def test_configure_logging_without_colorlog() -> None:
-    with patch(f"{MODULE}.is_colorlog_available", lambda: False):
+    with (
+        patch(f"{MODULE}.is_colorlog_available", return_value=False),
+        patch(f"{MODULE}.logging.basicConfig") as basic_config,
+    ):
         configure_logging()
+
+    basic_config.assert_called_once_with(level=logging.INFO)
+
+
+def test_configure_logging_with_colorlog() -> None:
+    handler = MagicMock()
+    formatter = MagicMock()
+    fake_colorlog = MagicMock()
+    fake_colorlog.StreamHandler.return_value = handler
+    fake_colorlog.ColoredFormatter.return_value = formatter
+
+    with (
+        patch(f"{MODULE}.is_colorlog_available", return_value=True),
+        patch(f"{MODULE}.colorlog", fake_colorlog, create=True),
+        patch(f"{MODULE}.logging.basicConfig") as basic_config,
+    ):
+        configure_logging(level=logging.WARNING)
+
+    fake_colorlog.StreamHandler.assert_called_once_with()
+    fake_colorlog.ColoredFormatter.assert_called_once()
+    handler.setFormatter.assert_called_once_with(formatter)
+    basic_config.assert_called_once_with(level=logging.WARNING, handlers=[handler])
 
 
 @pytest.mark.parametrize("level", [logging.INFO, logging.WARNING, logging.ERROR])

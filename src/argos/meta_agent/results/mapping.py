@@ -41,10 +41,10 @@ class ResultDict(BaseResult):
         >>> result.to_flat_dict()
         {'train.loss': 0.5, 'val.loss': 0.3}
         >>> print(result.to_markdown())
-        - **train**:
-          - **loss**: 0.5
-        - **val**:
-          - **loss**: 0.3
+        - train:
+          - loss: 0.5
+        - val:
+          - loss: 0.3
 
         ```
     """

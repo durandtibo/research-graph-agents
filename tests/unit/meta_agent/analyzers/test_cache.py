@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import polars as pl
 import pytest
-from iden.io import load_pickle
+from iden.io import load_pickle, save_pickle
 
 from argos.meta_agent.analyses import Analysis, BaseAnalysis
 from argos.meta_agent.analyzers import (
@@ -118,4 +118,14 @@ def test_pickle_cache_analyzer_analyze_creates_parent_directory(
     out = PickleCacheAnalyzer(Analyzer(analysis), path).analyze(pl.DataFrame())
     assert out.equal(analysis)
     assert path.is_file()
+    assert load_pickle(path).equal(out)
+
+
+def test_pickle_cache_analyzer_analyze_loads_cache_and_returns_analysis(
+    tmp_path: Path, analysis: BaseAnalysis
+) -> None:
+    path = tmp_path.joinpath("analysis.pickle")
+    save_pickle(analysis, path)
+    out = PickleCacheAnalyzer(NoOpAnalyzer(), path).analyze(pl.DataFrame())
+    assert out.equal(analysis)
     assert load_pickle(path).equal(out)

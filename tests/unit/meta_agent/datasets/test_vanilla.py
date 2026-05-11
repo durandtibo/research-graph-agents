@@ -23,8 +23,7 @@ def dataset() -> Dataset:
 
 @pytest.fixture
 def dataset_with_metadata(dataset: Dataset) -> Dataset:
-    dataset.metadata = {"tag": "meow"}
-    return dataset
+    return Dataset(dataset.examples, metadata={"tag": "meow"})
 
 
 @pytest.fixture

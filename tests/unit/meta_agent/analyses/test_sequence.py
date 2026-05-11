@@ -125,6 +125,41 @@ def test_analysis_list_equal_nan_true() -> None:
 @pytest.mark.parametrize(
     ("analyses", "expected"),
     [
+        pytest.param([], "", id="empty"),
+        pytest.param(
+            [Analysis("style analysis")],
+            "- style analysis",
+            id="single_string",
+        ),
+        pytest.param(
+            [Analysis("style analysis"), Analysis("semantic analysis")],
+            "- style analysis\n- semantic analysis",
+            id="multiple_strings",
+        ),
+        pytest.param([Analysis(0.9)], "- 0.9", id="float_value"),
+        pytest.param(
+            [AnalysisDict({"key": Analysis("value")})],
+            "- - key: value",
+            id="nested_analysis_dict",
+        ),
+        pytest.param(
+            [
+                Analysis("analysis 1"),
+                Analysis("analysis 2"),
+                AnalysisList([Analysis("analysis 3.1"), Analysis("analysis 3.2")]),
+            ],
+            "- analysis 1\n- analysis 2\n- - analysis 3.1\n  - analysis 3.2",
+            id="nested",
+        ),
+    ],
+)
+def test_analysis_list_to_markdown(analyses: Any, expected: str) -> None:
+    assert AnalysisList(analyses).to_markdown() == expected
+
+
+@pytest.mark.parametrize(
+    ("analyses", "expected"),
+    [
         pytest.param([], [], id="empty"),
         pytest.param(
             [Analysis("style analysis")],
@@ -161,6 +196,15 @@ def test_analysis_list_equal_nan_true() -> None:
             [{"key": "value"}],
             id="nested_analysis_dict",
         ),
+        pytest.param(
+            [
+                Analysis("analysis 1"),
+                Analysis("analysis 2"),
+                AnalysisList([Analysis("analysis 3.1"), Analysis("analysis 3.2")]),
+            ],
+            ["analysis 1", "analysis 2", ["analysis 3.1", "analysis 3.2"]],
+            id="nested",
+        ),
     ],
 )
 def test_analysis_list_to_primitive(analyses: Any, expected: Any) -> None:
@@ -181,11 +225,7 @@ def test_analysis_list_to_primitive(analyses: Any, expected: Any) -> None:
             '["style analysis", "semantic analysis"]',
             id="multiple_strings",
         ),
-        pytest.param(
-            [Analysis(0.9)],
-            "[0.9]",
-            id="float_value",
-        ),
+        pytest.param([Analysis(0.9)], "[0.9]", id="float_value"),
         pytest.param(
             [AnalysisDict({"key": Analysis("value")})],
             '[{"key": "value"}]',
@@ -216,11 +256,7 @@ def test_analysis_list_to_json_indent() -> None:
             "- style analysis\n- semantic analysis\n",
             id="multiple_strings",
         ),
-        pytest.param(
-            [Analysis(0.9)],
-            "- 0.9\n",
-            id="float_value",
-        ),
+        pytest.param([Analysis(0.9)], "- 0.9\n", id="float_value"),
         pytest.param(
             [AnalysisDict({"key": Analysis("value")})],
             "- key: value\n",

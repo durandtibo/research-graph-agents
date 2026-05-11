@@ -54,6 +54,28 @@ class BaseAnalysis(ABC):
         """
 
     @abstractmethod
+    def to_markdown(self) -> str:
+        r"""Return the result formatted as a Markdown string.
+
+        Produces a human-readable Markdown representation. Concrete
+        implementations in this package render bullet lists rather than
+        tables, but callers should treat the exact layout as an
+        implementation detail of the result type.
+
+        Returns:
+            A string containing the Markdown representation of the result.
+
+        Example:
+            ```pycon
+            >>> from argos.meta_agent.analyses import Analysis
+            >>> analysis = Analysis("my custom analysis: blabla...")
+            >>> print(analysis.to_markdown())
+            my custom analysis: blabla...
+
+            ```
+        """
+
+    @abstractmethod
     def to_primitive(self) -> PrimitiveType:
         r"""Return a JSON-compatible representation for external use.
 

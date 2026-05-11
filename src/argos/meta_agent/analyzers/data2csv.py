@@ -27,7 +27,7 @@ class Data2CsvAnalyzer(BaseAnalyzer):
         Data2CsvAnalyzer()
         >>> data = pl.DataFrame({"id": ["q1", "q2"], "error": [True, False]})
         >>> analysis = analyzer.analyze(data)
-        >>> print(analysis.to_primitive())
+        >>> print(analysis.to_markdown())
         Schema: id: String, error: Boolean
         id,error
         q1,true

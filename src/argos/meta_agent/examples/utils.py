@@ -101,6 +101,7 @@ def examples_to_dataframe(
         │ q1  ┆ What is 2+2? ┆ 4      ┆ {"cat"}   │
         │ q2  ┆ What is 4+2? ┆ 6      ┆ {"bear"}  │
         └─────┴──────────────┴────────┴───────────┘
+
         >>> frame = examples_to_dataframe(examples, unnest_columns=True)
         >>> frame
         shape: (2, 4)

@@ -10,27 +10,33 @@ from argos.meta_agent.results import Result
 
 
 def test_result_repr() -> None:
-    assert repr(Result({"loss": 0.5})) == "Result(loss=0.5)"
+    assert repr(Result({"loss": 0.5})) == "Result(metrics={'loss': 0.5})"
 
 
 def test_result_repr_empty() -> None:
-    assert repr(Result({})) == "Result()"
+    assert repr(Result({})) == "Result(metrics={})"
 
 
 def test_result_repr_multiple_metrics() -> None:
-    assert repr(Result({"loss": 0.5, "accuracy": 0.9})) == "Result(loss=0.5, accuracy=0.9)"
+    assert (
+        repr(Result({"loss": 0.5, "accuracy": 0.9}))
+        == "Result(metrics={'loss': 0.5, 'accuracy': 0.9})"
+    )
 
 
 def test_result_str() -> None:
-    assert str(Result({"loss": 0.5})) == "Result(loss=0.5)"
+    assert str(Result({"loss": 0.5})) == "Result(metrics={'loss': 0.5})"
 
 
 def test_result_str_empty() -> None:
-    assert str(Result({})) == "Result()"
+    assert str(Result({})) == "Result(metrics={})"
 
 
 def test_result_str_multiple_metrics() -> None:
-    assert str(Result({"loss": 0.5, "accuracy": 0.9})) == "Result(loss=0.5, accuracy=0.9)"
+    assert (
+        str(Result({"loss": 0.5, "accuracy": 0.9}))
+        == "Result(metrics={'loss': 0.5, 'accuracy': 0.9})"
+    )
 
 
 def test_result_equal_true() -> None:
@@ -75,11 +81,6 @@ def test_result_to_dict_empty() -> None:
     assert Result({}).to_dict() == {}
 
 
-def test_result_to_dict_matches_to_raw_dict() -> None:
-    result = Result({"loss": 0.5, "accuracy": 0.9})
-    assert result.to_dict() == result.to_raw_dict()
-
-
 def test_result_to_flat_dict() -> None:
     assert Result({"loss": 0.5, "accuracy": 0.9}).to_flat_dict() == {"loss": 0.5, "accuracy": 0.9}
 
@@ -90,20 +91,6 @@ def test_result_to_flat_dict_empty() -> None:
 
 def test_result_to_flat_dict_custom_separator() -> None:
     assert Result({"loss": 0.5}).to_flat_dict(separator="/") == {"loss": 0.5}
-
-
-def test_result_to_raw_dict() -> None:
-    assert Result({"loss": 0.5, "accuracy": 0.9}).to_raw_dict() == {"loss": 0.5, "accuracy": 0.9}
-
-
-def test_result_to_raw_dict_empty() -> None:
-    assert Result({}).to_raw_dict() == {}
-
-
-def test_result_to_raw_dict_returns_expected_values() -> None:
-    metrics = {"loss": 0.5}
-    out = Result(metrics).to_raw_dict()
-    assert out == metrics
 
 
 def test_result_to_markdown_empty() -> None:

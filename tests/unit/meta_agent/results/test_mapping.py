@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from coola.equality import objects_are_equal
-
 from argos.meta_agent.results import Result, ResultDict
 
 ################################
@@ -10,16 +8,24 @@ from argos.meta_agent.results import Result, ResultDict
 
 
 def test_result_dict_repr_empty() -> None:
-    assert repr(ResultDict({})) == "ResultDict(count=0)"
+    assert repr(ResultDict({})) == "ResultDict()"
 
 
 def test_result_dict_repr_single() -> None:
-    assert repr(ResultDict({"train": Result({"loss": 0.5})})) == "ResultDict(count=1)"
+    assert (
+        repr(ResultDict({"train": Result({"loss": 0.5})}))
+        == "ResultDict(\n  (train): Result(metrics={'loss': 0.5})\n)"
+    )
 
 
 def test_result_dict_repr_multiple() -> None:
     result = ResultDict({"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})})
-    assert repr(result) == "ResultDict(count=2)"
+    assert repr(result) == (
+        "ResultDict(\n"
+        "  (train): Result(metrics={'loss': 0.5})\n"
+        "  (val): Result(metrics={'loss': 0.3})\n"
+        ")"
+    )
 
 
 def test_result_dict_str_empty() -> None:
@@ -28,12 +34,17 @@ def test_result_dict_str_empty() -> None:
 
 def test_result_dict_str_single() -> None:
     result = ResultDict({"train": Result({"loss": 0.5})})
-    assert str(result) == "ResultDict(\n  (train): Result(loss=0.5)\n)"
+    assert str(result) == "ResultDict(\n  (train): Result(metrics={'loss': 0.5})\n)"
 
 
 def test_result_dict_str_multiple() -> None:
     result = ResultDict({"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})})
-    assert str(result) == "ResultDict(\n  (train): Result(loss=0.5)\n  (val): Result(loss=0.3)\n)"
+    assert (
+        str(result) == "ResultDict(\n"
+        "  (train): Result(metrics={'loss': 0.5})\n"
+        "  (val): Result(metrics={'loss': 0.3})\n"
+        ")"
+    )
 
 
 def test_result_dict_equal_true() -> None:
@@ -112,21 +123,6 @@ def test_result_dict_to_flat_dict_custom_separator() -> None:
     assert result.to_flat_dict(separator="/") == {"train/loss": 0.5}
 
 
-def test_result_dict_to_raw_dict_empty() -> None:
-    assert ResultDict({}).to_raw_dict() == {}
-
-
-def test_result_dict_to_raw_dict() -> None:
-    assert objects_are_equal(
-        ResultDict({"train": Result({"loss": 0.5})}).to_raw_dict(), {"train": Result({"loss": 0.5})}
-    )
-
-
-def test_result_dict_to_raw_dict_returns_original_objects() -> None:
-    child = Result({"loss": 0.5})
-    assert ResultDict({"train": child}).to_raw_dict()["train"] is child
-
-
 def test_result_dict_to_markdown_empty() -> None:
     assert ResultDict({}).to_markdown() == "_No metrics available._"
 
@@ -162,9 +158,3 @@ def test_result_dict_equal_nested() -> None:
     result1 = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
     result2 = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
     assert result1.equal(result2)
-
-
-def test_result_dict_to_raw_dict_returns_result_instances() -> None:
-    inner = Result({"loss": 0.5})
-    raw = ResultDict({"train": inner}).to_raw_dict()
-    assert objects_are_equal(raw, {"train": inner})

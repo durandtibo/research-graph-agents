@@ -28,7 +28,7 @@ class BaseEvaluator(ABC):
         >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
         >>> result = evaluator.evaluate(data)
         >>> result
-        Result()
+        Result(metrics={})
 
         ```
     """
@@ -52,7 +52,7 @@ class BaseEvaluator(ABC):
             >>> data = pl.DataFrame({"id": ["q1", "q2", "q3"]})
             >>> result = evaluator.evaluate(data)
             >>> result
-            Result()
+            Result(metrics={})
 
             ```
         """

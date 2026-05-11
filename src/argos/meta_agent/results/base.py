@@ -5,9 +5,13 @@ from __future__ import annotations
 __all__ = ["BaseResult"]
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from coola.equality.tester import EqualNanEqualityTester, get_default_registry
+from coola.nested import to_flat_dict
+
+if TYPE_CHECKING:
+    from argos.meta_agent.typing import FlatDict
 
 
 class BaseResult(ABC):
@@ -77,14 +81,13 @@ class BaseResult(ABC):
             ```
         """
 
-    @abstractmethod
-    def to_flat_dict(self) -> dict[str, Any]:
+    def to_flat_dict(self, separator: str = ".") -> FlatDict:
         r"""Return the result as a flat dictionary of native Python
         types.
 
-        Similar to ``to_dict``, but nested structures are flattened into
-        a single-level dictionary. Useful for logging, CSV export, or
-        any context that does not support nested data.
+        Args:
+            separator: The separator used to join nested keys when
+                flattening. Defaults to ``"."``.
 
         Returns:
             A flat dictionary mapping metric names to scalar native
@@ -92,35 +95,14 @@ class BaseResult(ABC):
 
         Example:
             ```pycon
-            >>> from argos.meta_agent.results import Result, ResultDict
-            >>> result = ResultDict({"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})})
-            >>> result.to_flat_dict()
-            {'train.loss': 0.5, 'val.loss': 0.3}
-
-            ```
-        """
-
-    @abstractmethod
-    def to_raw_dict(self) -> dict[str, Any]:
-        r"""Return the result values in their raw internal
-        representation.
-
-        Unlike ``to_dict``, values are returned as-is without any type
-        conversion. For example, numeric arrays are returned as numpy
-        arrays rather than lists of Python floats.
-
-        Returns:
-            A dictionary mapping metric names to their raw values.
-
-        Example:
-            ```pycon
             >>> from argos.meta_agent.results import Result
-            >>> result = Result({"accuracy": 0.9, "loss": 0.5})
-            >>> result.to_raw_dict()
-            {'accuracy': 0.9, 'loss': 0.5}
+            >>> result = Result({"loss": 0.5, "accuracy": 0.9})
+            >>> result.to_flat_dict()
+            {'loss': 0.5, 'accuracy': 0.9}
 
             ```
         """
+        return to_flat_dict(self.to_dict(), separator=separator)
 
     @abstractmethod
     def to_markdown(self) -> str:

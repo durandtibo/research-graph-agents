@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Self
 import polars as pl
 from coola.equality import objects_are_equal
 
-from argos.meta_agent.datasets import BaseDataset
+from argos.meta_agent.datasets.base import BaseDataset
 from argos.meta_agent.examples import Example, dataframe_to_examples
 from argos.meta_agent.typing import InputT, TargetT
 

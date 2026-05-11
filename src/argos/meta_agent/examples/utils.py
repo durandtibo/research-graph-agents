@@ -58,7 +58,11 @@ def dataframe_to_examples(
     return [example_type.from_dict(row) for row in frame.iter_rows(named=True)]
 
 
-def examples_to_dataframe(examples: list[BaseExample[InputT, TargetT]]) -> pl.DataFrame:
+def examples_to_dataframe(
+    examples: list[BaseExample[InputT, TargetT]],
+    *,
+    unnest_columns: bool = False,
+) -> pl.DataFrame:
     r"""Convert a list of examples into a Polars DataFrame.
 
     Each example is represented as a single row, where columns correspond
@@ -70,6 +74,10 @@ def examples_to_dataframe(examples: list[BaseExample[InputT, TargetT]]) -> pl.Da
         examples: A list of examples to convert. All examples should have
             consistent keys in their ``to_dict`` output to ensure a
             well-formed DataFrame. An empty list returns an empty DataFrame.
+        unnest_columns: If ``True``, nested fields are flattened into
+            separate top-level columns using ``to_flat_dict`` (e.g.
+            ``metadata.score`` becomes its own column). If ``False``
+            (default), nested fields are kept as struct columns.
 
     Returns:
         A Polars DataFrame with one row per example and one column per
@@ -78,23 +86,33 @@ def examples_to_dataframe(examples: list[BaseExample[InputT, TargetT]]) -> pl.Da
     Example:
         ```pycon
         >>> from argos.meta_agent.examples import Example, examples_to_dataframe
-        >>> frame = examples_to_dataframe(
-        ...     [
-        ...         Example(id="q1", input="What is 2+2?", target="4"),
-        ...         Example(id="q2", input="What is 4+2?", target="6"),
-        ...     ]
-        ... )
+        >>> examples = [
+        ...     Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "cat"}),
+        ...     Example(id="q2", input="What is 4+2?", target="6", metadata={"source": "bear"}),
+        ... ]
+        >>> frame = examples_to_dataframe(examples)
         >>> frame
         shape: (2, 4)
-        ┌─────┬──────────────┬────────┬──────────┐
-        │ id  ┆ input        ┆ target ┆ metadata │
-        │ --- ┆ ---          ┆ ---    ┆ ---      │
-        │ str ┆ str          ┆ str    ┆ null     │
-        ╞═════╪══════════════╪════════╪══════════╡
-        │ q1  ┆ What is 2+2? ┆ 4      ┆ null     │
-        │ q2  ┆ What is 4+2? ┆ 6      ┆ null     │
-        └─────┴──────────────┴────────┴──────────┘
+        ┌─────┬──────────────┬────────┬───────────┐
+        │ id  ┆ input        ┆ target ┆ metadata  │
+        │ --- ┆ ---          ┆ ---    ┆ ---       │
+        │ str ┆ str          ┆ str    ┆ struct[1] │
+        ╞═════╪══════════════╪════════╪═══════════╡
+        │ q1  ┆ What is 2+2? ┆ 4      ┆ {"cat"}   │
+        │ q2  ┆ What is 4+2? ┆ 6      ┆ {"bear"}  │
+        └─────┴──────────────┴────────┴───────────┘
+        >>> frame = examples_to_dataframe(examples, unnest_columns=True)
+        >>> frame
+        shape: (2, 4)
+        ┌─────┬──────────────┬────────┬─────────────────┐
+        │ id  ┆ input        ┆ target ┆ metadata.source │
+        │ --- ┆ ---          ┆ ---    ┆ ---             │
+        │ str ┆ str          ┆ str    ┆ str             │
+        ╞═════╪══════════════╪════════╪═════════════════╡
+        │ q1  ┆ What is 2+2? ┆ 4      ┆ cat             │
+        │ q2  ┆ What is 4+2? ┆ 6      ┆ bear            │
+        └─────┴──────────────┴────────┴─────────────────┘
 
         ```
     """
-    return pl.DataFrame([r.to_dict() for r in examples])
+    return pl.DataFrame([r.to_flat_dict() if unnest_columns else r.to_dict() for r in examples])

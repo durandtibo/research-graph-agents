@@ -57,7 +57,7 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
 
     @abstractmethod
     def to_dict(self) -> dict[str, Any]:
-        r"""Serialise the example to a plain dictionary.
+        r"""Serialize the example to a plain dictionary.
 
         Returns:
             A dictionary with keys ``id``, ``input``, ``target``, and

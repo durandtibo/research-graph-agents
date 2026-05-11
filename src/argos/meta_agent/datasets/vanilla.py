@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from argos.meta_agent.examples import BaseExample
 
 
-@dataclass
+@dataclass(frozen=True)
 class Dataset(BaseDataset[InputT, TargetT]):
     r"""Implement a concrete dataset backed by a flat dictionary of
     labeled examples.

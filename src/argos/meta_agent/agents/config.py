@@ -4,11 +4,11 @@ from __future__ import annotations
 
 __all__ = ["AgentConfig"]
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
-@dataclass
+@dataclass(frozen=True)
 class AgentConfig:
     r"""Define a generic agent configuration.
 
@@ -31,4 +31,4 @@ class AgentConfig:
     """
 
     components: dict[str, Any]
-    metadata: dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] | None = None

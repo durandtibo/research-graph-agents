@@ -19,14 +19,7 @@ def test_agent_config_components_and_metadata_are_set() -> None:
 
 def test_agent_config_metadata_defaults_to_empty_dict() -> None:
     config = AgentConfig(components={})
-    assert config.metadata == {}
-
-
-def test_agent_config_metadata_default_is_not_shared_between_instances() -> None:
-    config_a = AgentConfig(components={"llm": "gpt-4"})
-    config_b = AgentConfig(components={"llm": "claude"})
-    config_a.metadata["version"] = "1.0"
-    assert "version" not in config_b.metadata
+    assert config.metadata is None
 
 
 def test_agent_config_components_is_required() -> None:
@@ -54,12 +47,12 @@ def test_agent_config_components_can_be_empty() -> None:
 def test_agent_config_repr() -> None:
     config = AgentConfig(components={"model": "gpt-4o", "prompt": "You are a helpful assistant."})
     assert repr(config) == (
-        "AgentConfig(components={'model': 'gpt-4o', 'prompt': 'You are a helpful assistant.'}, metadata={})"
+        "AgentConfig(components={'model': 'gpt-4o', 'prompt': 'You are a helpful assistant.'}, metadata=None)"
     )
 
 
 def test_agent_config_repr_empty() -> None:
-    assert repr(AgentConfig(components={})) == "AgentConfig(components={}, metadata={})"
+    assert repr(AgentConfig(components={})) == "AgentConfig(components={}, metadata=None)"
 
 
 def test_agent_config_equality() -> None:

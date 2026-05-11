@@ -62,5 +62,20 @@ class AnalysisDict(BaseAnalysis):
             return False
         return objects_are_equal(self.analyses, other.analyses, equal_nan=equal_nan)
 
+    def to_markdown(self) -> str:
+        analyses = {
+            key: str_indent(analysis.to_markdown()) for key, analysis in self.analyses.items()
+        }
+        return "\n".join(
+            [
+                (
+                    f"- {key}:\n  {analysis}"
+                    if "\n" in analysis or analysis.startswith("- ")
+                    else f"- {key}: {analysis}"
+                )
+                for key, analysis in analyses.items()
+            ]
+        )
+
     def to_primitive(self) -> PrimitiveType:
         return {key: value.to_primitive() for key, value in self.analyses.items()}

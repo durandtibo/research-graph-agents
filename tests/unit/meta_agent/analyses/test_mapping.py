@@ -132,6 +132,54 @@ def test_analysis_dict_equal_nan_true() -> None:
 @pytest.mark.parametrize(
     ("analyses", "expected"),
     [
+        pytest.param({}, "", id="empty"),
+        pytest.param(
+            {"style": Analysis("style analysis")},
+            "- style: style analysis",
+            id="single_string",
+        ),
+        pytest.param(
+            {"style": Analysis("style analysis\nblabla...")},
+            "- style:\n  style analysis\n  blabla...",
+            id="multi-lines",
+        ),
+        pytest.param(
+            {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")},
+            "- style: style analysis\n- semantic: semantic analysis",
+            id="multiple_strings",
+        ),
+        pytest.param({"score": Analysis(0.9)}, "- score: 0.9", id="float_value"),
+        pytest.param(
+            {"style": AnalysisDict({"sub": Analysis("sub analysis")})},
+            "- style:\n  - sub: sub analysis",
+            id="nested_analysis_dict",
+        ),
+        pytest.param(
+            {
+                "style": AnalysisDict(
+                    {
+                        "sub": Analysis("sub analysis"),
+                        "subsub": AnalysisDict({"score": Analysis("subsub analysis\nblabla...")}),
+                    }
+                )
+            },
+            "- style:\n"
+            "  - sub: sub analysis\n"
+            "  - subsub:\n"
+            "    - score:\n"
+            "      subsub analysis\n"
+            "      blabla...",
+            id="deeply_nested_analysis_dict",
+        ),
+    ],
+)
+def test_analysis_dict_to_markdown(analyses: Any, expected: str) -> None:
+    assert AnalysisDict(analyses).to_markdown() == expected
+
+
+@pytest.mark.parametrize(
+    ("analyses", "expected"),
+    [
         pytest.param({}, {}, id="empty"),
         pytest.param(
             {"style": Analysis("style analysis")},

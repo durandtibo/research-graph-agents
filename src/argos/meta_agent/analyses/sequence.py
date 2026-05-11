@@ -65,5 +65,8 @@ class AnalysisList(BaseAnalysis):
             return False
         return objects_are_equal(self.analyses, other.analyses, equal_nan=equal_nan)
 
+    def to_markdown(self) -> str:
+        return "\n".join(["- " + str_indent(analysis.to_markdown()) for analysis in self.analyses])
+
     def to_primitive(self) -> PrimitiveType:
         return [value.to_primitive() for value in self.analyses]

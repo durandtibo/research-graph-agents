@@ -17,7 +17,6 @@ if TYPE_CHECKING:
     import polars as pl
 
     from argos.meta_agent.agents import BaseAgent
-    from argos.meta_agent.analyses import BaseAnalysis
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -80,7 +79,7 @@ class RefinedAnalyzer(BaseAnalyzer):
         args = str_indent(str_mapping(self._get_kwargs()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def analyze(self, data: pl.DataFrame) -> BaseAnalysis:
+    def analyze(self, data: pl.DataFrame) -> Analysis:
         logger.info("Generating an analysis of the data...")
         analysis = self._analyzer.analyze(data)
         logger.info("Calling an agent on the analysis...")

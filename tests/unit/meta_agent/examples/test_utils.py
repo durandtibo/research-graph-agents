@@ -199,3 +199,27 @@ def test_examples_to_dataframe_with_metadata() -> None:
             },
         ),
     )
+
+
+def test_examples_to_dataframe_unnest_columns() -> None:
+    frame = examples_to_dataframe(
+        [Example(id="q1", input="What is 2+2?", target="4", metadata={"source": "math"})],
+        unnest_columns=True,
+    )
+    assert_frame_equal(
+        frame,
+        pl.DataFrame(
+            {
+                "id": ["q1"],
+                "input": ["What is 2+2?"],
+                "target": ["4"],
+                "metadata.source": ["math"],
+            },
+            schema={
+                "id": pl.String,
+                "input": pl.String,
+                "target": pl.String,
+                "metadata.source": pl.String,
+            },
+        ),
+    )

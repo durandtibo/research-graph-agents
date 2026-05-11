@@ -7,15 +7,20 @@ __all__ = ["Dataset"]
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Self
 
-import polars as pl
 from coola.equality import objects_are_equal
 
-from argos.meta_agent.datasets import BaseDataset
-from argos.meta_agent.examples import Example, dataframe_to_examples
+from argos.meta_agent.datasets.base import BaseDataset
+from argos.meta_agent.examples import (
+    Example,
+    dataframe_to_examples,
+    examples_to_dataframe,
+)
 from argos.meta_agent.typing import InputT, TargetT
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+    import polars as pl
 
     from argos.meta_agent.examples import BaseExample
 
@@ -59,8 +64,8 @@ class Dataset(BaseDataset[InputT, TargetT]):
             self.examples, other.examples, equal_nan=equal_nan
         ) and objects_are_equal(self.metadata, other.metadata, equal_nan=equal_nan)
 
-    def to_dataframe(self) -> pl.DataFrame:
-        return pl.DataFrame([example.to_dict() for example in self.examples.values()])
+    def to_dataframe(self, unnest_columns: bool = False) -> pl.DataFrame:
+        return examples_to_dataframe(list(self.examples.values()), unnest_columns=unnest_columns)
 
     @classmethod
     def from_dataframe(

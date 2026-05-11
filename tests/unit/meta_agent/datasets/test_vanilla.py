@@ -74,7 +74,7 @@ def test_dataset_examples() -> None:
     ).examples == {"q1": Example(id="q1", input="What is 2+2?", target="4")}
 
 
-def test_dataset_metadata_() -> None:
+def test_dataset_metadata() -> None:
     assert Dataset(
         examples={"q1": Example(id="q1", input="What is 2+2?", target="4")},
         metadata={"source": "math"},
@@ -189,6 +189,28 @@ def test_dataset_to_dataframe_empty() -> None:
     assert_frame_equal(
         Dataset({}).to_dataframe(),
         pl.DataFrame({}),
+    )
+
+
+def test_dataset_to_dataframe_unnest_columns(dataset: Dataset) -> None:
+    assert_frame_equal(
+        dataset.to_dataframe(unnest_columns=True),
+        pl.DataFrame(
+            {
+                "id": ["id1", "id2", "id3", "id4", "id5"],
+                "input": ["input1", "input2", "input3", "input4", "input5"],
+                "target": ["target1", "target2", "target3", "target4", "target5"],
+                "metadata.tag": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+            },
+            schema=pl.Schema(
+                {
+                    "id": pl.String,
+                    "input": pl.String,
+                    "target": pl.String,
+                    "metadata.tag": pl.String,
+                },
+            ),
+        ),
     )
 
 

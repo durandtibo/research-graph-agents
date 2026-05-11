@@ -5,18 +5,15 @@ from __future__ import annotations
 
 __all__ = ["Result"]
 
-from typing import TYPE_CHECKING
+from typing import Any
 
+from attr import dataclass
 from coola.equality import objects_are_equal
-from coola.nested import to_flat_dict
-from coola.utils.format import repr_mapping_line, str_mapping_line
 
 from argos.meta_agent.results.base import BaseResult
 
-if TYPE_CHECKING:
-    from argos.meta_agent.typing import FlatDict
 
-
+@dataclass(frozen=True)
 class Result(BaseResult):
     r"""Define a simple result implementation for flat dictionary
     metrics.
@@ -34,6 +31,8 @@ class Result(BaseResult):
         ```pycon
         >>> from argos.meta_agent.results import Result
         >>> result = Result({"loss": 0.5, "accuracy": 0.9})
+        >>> result
+        Result(metrics={'loss': 0.5, 'accuracy': 0.9})
         >>> result.to_dict()
         {'loss': 0.5, 'accuracy': 0.9}
         >>> print(result.to_markdown())
@@ -43,53 +42,18 @@ class Result(BaseResult):
         ```
     """
 
-    def __init__(self, metrics: FlatDict) -> None:
-        self._metrics = metrics
-
-    def __repr__(self) -> str:
-        args = repr_mapping_line(self._metrics)
-        return f"{self.__class__.__qualname__}({args})"
-
-    def __str__(self) -> str:
-        args = str_mapping_line(self._metrics)
-        return f"{self.__class__.__qualname__}({args})"
+    metrics: dict[str, Any]
 
     def equal(self, other: object, equal_nan: bool = False) -> bool:
         if type(other) is not type(self):
             return False
-        return objects_are_equal(self._metrics, other._metrics, equal_nan=equal_nan)
+        return objects_are_equal(self.metrics, other.metrics, equal_nan=equal_nan)
 
-    def to_dict(self) -> FlatDict:
-        return self.to_raw_dict()
-
-    def to_flat_dict(self, separator: str = ".") -> FlatDict:
-        r"""Return the result as a flat dictionary of native Python
-        types.
-
-        Args:
-            separator: The separator used to join nested keys when
-                flattening. Defaults to ``"."``.
-
-        Returns:
-            A flat dictionary mapping metric names to scalar native
-                Python values, with no nested dicts or lists.
-
-        Example:
-            ```pycon
-            >>> from argos.meta_agent.results import Result
-            >>> result = Result({"loss": 0.5, "accuracy": 0.9})
-            >>> result.to_flat_dict()
-            {'loss': 0.5, 'accuracy': 0.9}
-
-            ```
-        """
-        return to_flat_dict(self.to_dict(), separator=separator)
-
-    def to_raw_dict(self) -> FlatDict:
-        return self._metrics
+    def to_dict(self) -> dict[str, Any]:
+        return self.metrics
 
     def to_markdown(self) -> str:
-        if not self._metrics:
+        if not self.metrics:
             return "_No metrics available._"
-        metrics = [f"- **{key}**: {value}" for key, value in self._metrics.items()]
+        metrics = [f"- **{key}**: {value}" for key, value in self.metrics.items()]
         return "\n".join(metrics)

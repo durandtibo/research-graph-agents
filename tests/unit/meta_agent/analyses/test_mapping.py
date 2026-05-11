@@ -167,3 +167,68 @@ def test_analysis_dict_equal_nan_true() -> None:
 )
 def test_analysis_dict_to_primitive(analyses: Any, expected: Any) -> None:
     assert AnalysisDict(analyses).to_primitive() == expected
+
+
+@pytest.mark.parametrize(
+    ("analyses", "expected"),
+    [
+        pytest.param({}, "{}", id="empty"),
+        pytest.param(
+            {"style": Analysis("style analysis")},
+            '{"style": "style analysis"}',
+            id="single_string",
+        ),
+        pytest.param(
+            {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")},
+            '{"style": "style analysis", "semantic": "semantic analysis"}',
+            id="multiple_strings",
+        ),
+        pytest.param(
+            {"score": Analysis(0.9)},
+            '{"score": 0.9}',
+            id="float_value",
+        ),
+        pytest.param(
+            {"style": AnalysisDict({"sub": Analysis("sub analysis")})},
+            '{"style": {"sub": "sub analysis"}}',
+            id="nested_analysis_dict",
+        ),
+    ],
+)
+def test_analysis_dict_to_json(analyses: Any, expected: str) -> None:
+    assert AnalysisDict(analyses).to_json() == expected
+
+
+def test_analysis_dict_to_json_indent() -> None:
+    analysis = AnalysisDict({"key": Analysis("value")})
+    assert analysis.to_json(indent=2) == '{\n  "key": "value"\n}'
+
+
+@pytest.mark.parametrize(
+    ("analyses", "expected"),
+    [
+        pytest.param({}, "{}\n", id="empty"),
+        pytest.param(
+            {"style": Analysis("style analysis")},
+            "style: style analysis\n",
+            id="single_string",
+        ),
+        pytest.param(
+            {"style": Analysis("style analysis"), "semantic": Analysis("semantic analysis")},
+            "semantic: semantic analysis\nstyle: style analysis\n",
+            id="multiple_strings",
+        ),
+        pytest.param(
+            {"score": Analysis(0.9)},
+            "score: 0.9\n",
+            id="float_value",
+        ),
+        pytest.param(
+            {"style": AnalysisDict({"sub": Analysis("sub analysis")})},
+            "style:\n  sub: sub analysis\n",
+            id="nested_analysis_dict",
+        ),
+    ],
+)
+def test_analysis_dict_to_yaml(analyses: Any, expected: str) -> None:
+    assert AnalysisDict(analyses).to_yaml() == expected

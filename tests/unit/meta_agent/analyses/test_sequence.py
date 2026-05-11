@@ -106,6 +106,12 @@ def test_analysis_list_equal_false_different_type() -> None:
     assert not AnalysisList([]).equal([])
 
 
+def test_analysis_list_equal_false_different_type_child() -> None:
+    class Child(AnalysisList): ...
+
+    assert not AnalysisList([]).equal(Child([]))
+
+
 def test_analysis_list_equal_nan_false_by_default() -> None:
     assert not AnalysisList([Analysis(float("nan"))]).equal(AnalysisList([Analysis(float("nan"))]))
 
@@ -159,3 +165,68 @@ def test_analysis_list_equal_nan_true() -> None:
 )
 def test_analysis_list_to_primitive(analyses: Any, expected: Any) -> None:
     assert AnalysisList(analyses).to_primitive() == expected
+
+
+@pytest.mark.parametrize(
+    ("analyses", "expected"),
+    [
+        pytest.param([], "[]", id="empty"),
+        pytest.param(
+            [Analysis("style analysis")],
+            '["style analysis"]',
+            id="single_string",
+        ),
+        pytest.param(
+            [Analysis("style analysis"), Analysis("semantic analysis")],
+            '["style analysis", "semantic analysis"]',
+            id="multiple_strings",
+        ),
+        pytest.param(
+            [Analysis(0.9)],
+            "[0.9]",
+            id="float_value",
+        ),
+        pytest.param(
+            [AnalysisDict({"key": Analysis("value")})],
+            '[{"key": "value"}]',
+            id="nested_analysis_dict",
+        ),
+    ],
+)
+def test_analysis_list_to_json(analyses: Any, expected: str) -> None:
+    assert AnalysisList(analyses).to_json() == expected
+
+
+def test_analysis_list_to_json_indent() -> None:
+    analysis = AnalysisList([Analysis("a"), Analysis("b")])
+    assert analysis.to_json(indent=2) == '[\n  "a",\n  "b"\n]'
+
+
+@pytest.mark.parametrize(
+    ("analyses", "expected"),
+    [
+        pytest.param([], "[]\n", id="empty"),
+        pytest.param(
+            [Analysis("style analysis")],
+            "- style analysis\n",
+            id="single_string",
+        ),
+        pytest.param(
+            [Analysis("style analysis"), Analysis("semantic analysis")],
+            "- style analysis\n- semantic analysis\n",
+            id="multiple_strings",
+        ),
+        pytest.param(
+            [Analysis(0.9)],
+            "- 0.9\n",
+            id="float_value",
+        ),
+        pytest.param(
+            [AnalysisDict({"key": Analysis("value")})],
+            "- key: value\n",
+            id="nested_analysis_dict",
+        ),
+    ],
+)
+def test_analysis_list_to_yaml(analyses: Any, expected: str) -> None:
+    assert AnalysisList(analyses).to_yaml() == expected

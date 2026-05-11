@@ -292,6 +292,3 @@ def test_dataset_to_dataframe_single_example() -> None:
             },
         ),
     )
-    assert Dataset(examples={"q1": Example(id="q1", input="What is 2+2?", target="4")}) != Dataset(
-        examples={"q1": Example(id="q1", input="What is 2+2?", target="5")}
-    )

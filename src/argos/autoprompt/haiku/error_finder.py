@@ -140,6 +140,21 @@ class ErrorFinder(BaseErrorFinder):
         return self._root_path.joinpath("error_topic.json")
 
     def find(self, predictions: pl.DataFrame) -> str:
+        r"""Build a markdown report for structure and topic mistakes.
+
+        The returned report contains two sections:
+        ``"Examples with Structure Errors"`` and
+        ``"Examples with Topic Errors"``. Each section includes a summary
+        and markdown table generated from rows where prediction and target
+        labels differ.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` with haiku text,
+                targets, predictions, and reasoning columns.
+
+        Returns:
+            A markdown report combining structure and topic error analyses.
+        """
         structure = self._find_structure_errors(predictions)
         topic = self._find_topic_errors(predictions)
         return (

@@ -1,4 +1,4 @@
-r"""Contain code to implement inference pipelines."""
+r"""Provide inference pipelines for the haiku autoprompt workflow."""
 
 from __future__ import annotations
 
@@ -69,6 +69,31 @@ class InferencePipeline(BaseInferencePipeline):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def process(self) -> pl.DataFrame:
+        r"""Run inference and optionally reuse or populate a cache file.
+
+        If ``path`` was provided and already points to an existing file,
+        predictions are loaded from that Parquet file and the predictor is
+        not executed. Otherwise, predictions are generated from
+        ``dataset`` and optionally written to ``path``.
+
+        Returns:
+            A :class:`~polars.DataFrame` containing prediction results.
+
+        Example:
+            ```pycon
+            >>> import polars as pl
+            >>> from langchain_core.runnables import RunnableLambda
+            >>> from argos.autoprompt.haiku.inference import InferencePipeline
+            >>> from argos.autoprompt.haiku.predictor import Predictor
+            >>> dataset = pl.DataFrame({"topic": ["ocean"], "haiku": ["waves break softly"]})
+            >>> model = RunnableLambda(lambda row: {"overall_prediction": 1})
+            >>> predictor = Predictor(model=model, batch_size=1)
+            >>> pipeline = InferencePipeline(dataset=dataset, predictor=predictor, path=None)
+            >>> "overall_prediction" in pipeline.process().columns
+            True
+
+            ```
+        """
         if self._path and self._path.is_file():
             logger.info(f"Reading predictions from {self._path}...")
             return pl.read_parquet(self._path)

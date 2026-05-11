@@ -85,6 +85,25 @@ class ErrorAnalyzer(BaseErrorAnalyzer):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def analyze(self, predictions: pl.DataFrame) -> str:
+        r"""Generate a textual analysis from prediction errors.
+
+        The method first delegates to ``error_finder`` to build a markdown
+        report of mispredicted examples. It then invokes ``model`` with
+        ``{"text": report}`` and extracts the analysis from either
+        ``AIMessage.content`` or the ``"analysis"`` key of a dict output.
+        When ``path`` is set, the analysis text is written to disk.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` with predictions and
+                targets used to derive errors.
+
+        Returns:
+            The generated error analysis text.
+
+        Raises:
+            KeyError: If the model returns a dict without an
+                ``"analysis"`` key.
+        """
         errors = self._error_finder.find(predictions)
         out = self._model.invoke({"text": errors})
         analysis = out.content if isinstance(out, AIMessage) else out["analysis"]

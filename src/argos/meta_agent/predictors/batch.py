@@ -76,6 +76,21 @@ class BatchPredictor(BasePredictor[InputT, TargetT, OutputT]):
         agent: BaseAgent[InputT, OutputT],
         benchmark: Benchmark[InputT, TargetT],
     ) -> PredictionResult[OutputT]:
+        r"""Run batched agent inference over a benchmark.
+
+        Benchmark examples are processed in chunks of ``batch_size``, and
+        each chunk is passed to :meth:`agent.predict`. Returned predictions
+        are flattened into a single :class:`PredictionResult` aligned with
+        benchmark example IDs in their original order.
+
+        Args:
+            agent: The agent used to produce outputs from benchmark inputs.
+            benchmark: The benchmark containing labeled input examples.
+
+        Returns:
+            A :class:`~argos.meta_agent.prediction.PredictionResult`
+                containing one prediction record per benchmark example.
+        """
         batches = batchify(list(benchmark.examples.values()), size=self._batch_size)
         predictions = []
         with timeblock(message="LLM inference time: {time}"):

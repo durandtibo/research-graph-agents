@@ -45,7 +45,7 @@ class BaseEvaluator(ABC):
 
     @abstractmethod
     def evaluate(self, predictions: pl.DataFrame) -> dict[str, Any]:
-        r"""Evaluate the performances.
+        r"""Evaluate prediction quality from a DataFrame.
 
         Args:
             predictions: A :class:`~polars.DataFrame` containing
@@ -60,7 +60,7 @@ class BaseEvaluator(ABC):
 
 
 class HaikuJudgeEvaluator(BaseEvaluator):
-    r"""Evaluate the performances of the Haiku Judge.
+    r"""Evaluate the performance of the haiku judge.
 
     Args:
         path: An optional path where to save the evaluation metrics as
@@ -113,6 +113,41 @@ class HaikuJudgeEvaluator(BaseEvaluator):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def evaluate(self, predictions: pl.DataFrame) -> dict[str, Any]:
+        r"""Compute and optionally persist classification metrics.
+
+        Metrics are computed for overall, structure, and topic labels
+        using the configured column names. Returned values are plain
+        dictionaries (not dataclass objects) so they can be serialized
+        directly.
+
+        Args:
+            predictions: A :class:`~polars.DataFrame` containing
+                prediction and target columns.
+
+        Returns:
+            A nested dictionary with ``"overall"``, ``"structure"``, and
+            ``"topic"`` metric payloads.
+
+        Example:
+            ```pycon
+            >>> import polars as pl
+            >>> from argos.autoprompt.haiku.evaluator import HaikuJudgeEvaluator
+            >>> evaluator = HaikuJudgeEvaluator()
+            >>> df = pl.DataFrame(
+            ...     {
+            ...         "overall_prediction": [1, 0],
+            ...         "overall_target": [1, 1],
+            ...         "structure_prediction": [1, 0],
+            ...         "structure_target": [1, 0],
+            ...         "topic_prediction": [0, 1],
+            ...         "topic_target": [0, 1],
+            ...     }
+            ... )
+            >>> sorted(evaluator.evaluate(df))
+            ['overall', 'structure', 'topic']
+
+            ```
+        """
         metrics = evaluate_judge_classification_metrics(
             predictions,
             overall_prediction_col=self._overall_prediction_col,

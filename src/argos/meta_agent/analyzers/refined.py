@@ -83,7 +83,7 @@ class RefinedAnalyzer(BaseAnalyzer):
         logger.info("Generating an analysis of the data...")
         analysis = self._analyzer.analyze(data)
         logger.info("Calling an agent on the analysis...")
-        content = self._agent.predict([str(analysis.to_primitive())])[0]
+        content = self._agent.predict([analysis.to_markdown()])[0]
         return Analysis(content)
 
     def equal(self, other: object, equal_nan: bool = False) -> bool:

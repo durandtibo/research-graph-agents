@@ -73,9 +73,16 @@ class ResultDict(BaseResult):
 
     def to_markdown(self) -> str:
         if not self.results:
-            return "_No metrics available._"
-        metrics = [
-            f"- **{key}**:\n  {str_indent(value.to_markdown())}"
-            for key, value in self.results.items()
-        ]
-        return "\n".join(metrics)
+            return "_No results available._"
+
+        results = {key: str_indent(result.to_markdown()) for key, result in self.results.items()}
+        return "\n".join(
+            [
+                (
+                    f"- {key}:\n  {result}"
+                    if "\n" in result or result.startswith("- ")
+                    else f"- {key}: {result}"
+                )
+                for key, result in results.items()
+            ]
+        )

@@ -124,18 +124,37 @@ def test_result_dict_to_flat_dict_custom_separator() -> None:
 
 
 def test_result_dict_to_markdown_empty() -> None:
-    assert ResultDict({}).to_markdown() == "_No metrics available._"
+    assert ResultDict({}).to_markdown() == "_No results available._"
 
 
 def test_result_dict_to_markdown_single() -> None:
     result = ResultDict({"train": Result({"loss": 0.5})})
-    assert result.to_markdown() == "- **train**:\n  - **loss**: 0.5"
+    assert result.to_markdown() == "- train:\n  - loss: 0.5"
 
 
 def test_result_dict_to_markdown_multiple() -> None:
     result = ResultDict({"train": Result({"loss": 0.5}), "val": Result({"loss": 0.3})})
+    assert result.to_markdown() == ("- train:\n  - loss: 0.5\n- val:\n  - loss: 0.3")
+
+
+def test_result_dict_to_markdown_nested() -> None:
+    result = ResultDict(
+        {
+            "train": ResultDict({"2024": Result({"loss": 0.5}), "2025": Result({"loss": 0.3})}),
+            "val": ResultDict({"2024": Result({"loss": 0.6}), "2025": Result({"loss": 0.4})}),
+        }
+    )
     assert result.to_markdown() == (
-        "- **train**:\n  - **loss**: 0.5\n- **val**:\n  - **loss**: 0.3"
+        "- train:\n"
+        "  - 2024:\n"
+        "    - loss: 0.5\n"
+        "  - 2025:\n"
+        "    - loss: 0.3\n"
+        "- val:\n"
+        "  - 2024:\n"
+        "    - loss: 0.6\n"
+        "  - 2025:\n"
+        "    - loss: 0.4"
     )
 
 
@@ -151,7 +170,7 @@ def test_result_dict_nested_to_flat_dict() -> None:
 
 def test_result_dict_nested_to_markdown() -> None:
     result = ResultDict({"outer": ResultDict({"inner": Result({"loss": 0.5})})})
-    assert result.to_markdown() == "- **outer**:\n  - **inner**:\n    - **loss**: 0.5"
+    assert result.to_markdown() == "- outer:\n  - inner:\n    - loss: 0.5"
 
 
 def test_result_dict_equal_nested() -> None:

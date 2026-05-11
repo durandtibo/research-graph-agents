@@ -5,13 +5,10 @@ from __future__ import annotations
 __all__ = ["BaseResult"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from coola.equality.tester import EqualNanEqualityTester, get_default_registry
 from coola.nested import to_flat_dict
-
-if TYPE_CHECKING:
-    from argos.meta_agent.typing import FlatDict
 
 
 class BaseResult(ABC):
@@ -81,7 +78,7 @@ class BaseResult(ABC):
             ```
         """
 
-    def to_flat_dict(self, separator: str = ".") -> FlatDict:
+    def to_flat_dict(self, separator: str = ".") -> dict[str, Any]:
         r"""Return the result as a flat dictionary of native Python
         types.
 
@@ -121,8 +118,8 @@ class BaseResult(ABC):
             >>> from argos.meta_agent.results import Result
             >>> result = Result({"accuracy": 0.9, "loss": 0.5})
             >>> print(result.to_markdown())
-            - **accuracy**: 0.9
-            - **loss**: 0.5
+            - accuracy: 0.9
+            - loss: 0.5
 
             ```
         """

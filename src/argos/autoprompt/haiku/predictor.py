@@ -14,11 +14,11 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
+from coola.utils.batching import batchify
 from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 from coola.utils.timing import timeblock
 from langchain_core.runnables import Runnable, RunnableConfig
 
-from argos.utils.batching import batchify
 from argos.utils.dataframe import concat_and_merge, unnest_struct_columns
 from argos.utils.mapping import recursive_to_dict
 

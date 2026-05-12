@@ -7,6 +7,7 @@ __all__ = ["BaseEntity"]
 from abc import ABC, abstractmethod
 from typing import Any, Self
 
+from coola.equality import objects_are_equal
 from coola.equality.tester import EqualNanEqualityTester, get_default_registry
 from coola.nested import to_flat_dict
 
@@ -37,7 +38,6 @@ class BaseEntity(ABC):
     id: str
     metadata: dict[str, Any] | None = None
 
-    @abstractmethod
     def equal(self, other: object, equal_nan: bool = False) -> bool:
         r"""Return ``True`` if the two objects are equal, otherwise
         ``False``.
@@ -50,6 +50,9 @@ class BaseEntity(ABC):
         Returns:
             ``True`` if the two objects are equal, otherwise ``False``
         """
+        if type(other) is not type(self):
+            return False
+        return objects_are_equal(self.to_dict(), other.to_dict(), equal_nan=equal_nan)
 
     @classmethod
     @abstractmethod

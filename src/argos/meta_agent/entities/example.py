@@ -8,10 +8,10 @@ from dataclasses import asdict, dataclass
 from typing import Any, Generic, Self
 
 from argos.meta_agent.entities.base import BaseEntity
-from argos.meta_agent.typing import InputT, OutputT, TargetT
+from argos.meta_agent.typing import InputT
 
 
-class BaseExample(BaseEntity, Generic[InputT, TargetT, OutputT]):
+class BaseExample(BaseEntity, Generic[InputT]):
     r"""Abstract base class defining the interface for a single labeled
     example.
 
@@ -20,7 +20,6 @@ class BaseExample(BaseEntity, Generic[InputT, TargetT, OutputT]):
     Attributes:
         id: A unique identifier for the example.
         input: The input passed to the agent.
-        target: The expected ground-truth output.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
 
@@ -38,19 +37,16 @@ class BaseExample(BaseEntity, Generic[InputT, TargetT, OutputT]):
         ```
     """
 
-    id: str
-    input: InputT | None = None
-    metadata: dict[str, Any] | None = None
+    input: InputT
 
 
 @dataclass(frozen=True)
-class Example(BaseExample[InputT, TargetT, OutputT]):
+class Example(BaseExample[InputT]):
     r"""Define a concrete labeled example for use in datasets.
 
     Args:
         id: A unique identifier for the example.
         input: The input passed to the agent.
-        target: The expected ground-truth output.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
 
@@ -69,7 +65,7 @@ class Example(BaseExample[InputT, TargetT, OutputT]):
     """
 
     id: str
-    input: InputT | None = None
+    input: InputT
     metadata: dict[str, Any] | None = None
 
     @classmethod

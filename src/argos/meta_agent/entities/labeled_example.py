@@ -2,16 +2,16 @@ r"""Define the abstract class and implementations for records."""
 
 from __future__ import annotations
 
-__all__ = ["BaseRecord", "Record"]
+__all__ = ["BaseLabeledExample", "LabeledExample"]
 
 from dataclasses import asdict, dataclass
 from typing import Any, Generic, Self
 
-from argos.meta_agent.entities.base import BaseEntity
-from argos.meta_agent.typing import InputT, OutputT, TargetT
+from argos.meta_agent.entities.example import BaseExample
+from argos.meta_agent.typing import InputT, TargetT
 
 
-class BaseRecord(BaseEntity, Generic[InputT, TargetT, OutputT]):
+class BaseLabeledExample(BaseExample[InputT], Generic[InputT, TargetT]):
     r"""Abstract base class defining the interface for a single labeled
     example.
 
@@ -21,67 +21,54 @@ class BaseRecord(BaseEntity, Generic[InputT, TargetT, OutputT]):
         id: A unique identifier for the example.
         input: The input passed to the agent.
         target: The expected ground-truth output.
-        prediction: The predicted output.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.entities import Record
-        >>> example = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+        >>> from argos.meta_agent.entities import LabeledExample
+        >>> example = LabeledExample(id="q1", input="What is 2+2?", target="4")
         >>> example
-        Record(id='q1', input='What is 2+2?', target='4', prediction='5', metadata=None)
+        LabeledExample(id='q1', input='What is 2+2?', target='4', metadata=None)
         >>> example.id
         'q1'
         >>> example.input
         'What is 2+2?'
-        >>> example.target
-        '4'
-        >>> example.prediction
-        '5'
 
         ```
     """
 
-    input: InputT | None = None
-    target: TargetT | None = None
-    prediction: OutputT | None = None
+    target: TargetT
 
 
 @dataclass(frozen=True)
-class Record(BaseRecord[InputT, TargetT, OutputT]):
+class LabeledExample(BaseLabeledExample[InputT, TargetT]):
     r"""Define a concrete labeled example for use in datasets.
 
     Args:
         id: A unique identifier for the example.
         input: The input passed to the agent.
         target: The expected ground-truth output.
-        prediction: The predicted output.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.entities import Record
-        >>> example = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+        >>> from argos.meta_agent.entities import LabeledExample
+        >>> example = LabeledExample(id="q1", input="What is 2+2?", target="4")
         >>> example
-        Record(id='q1', input='What is 2+2?', target='4', prediction='5', metadata=None)
+        LabeledExample(id='q1', input='What is 2+2?', target='4', metadata=None)
         >>> example.id
         'q1'
         >>> example.input
         'What is 2+2?'
-        >>> example.target
-        '4'
-        >>> example.prediction
-        '5'
 
         ```
     """
 
     id: str
-    input: InputT | None = None
-    target: TargetT | None = None
-    prediction: OutputT | None = None
+    input: InputT
+    target: TargetT
     metadata: dict[str, Any] | None = None
 
     @classmethod
@@ -90,7 +77,6 @@ class Record(BaseRecord[InputT, TargetT, OutputT]):
             id=data["id"],
             input=data.get("input"),
             target=data.get("target"),
-            prediction=data.get("prediction"),
             metadata=data.get("metadata"),
         )
 

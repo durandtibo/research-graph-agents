@@ -6,13 +6,16 @@ __all__ = [
     "BaseEntity",
     "BaseExample",
     "BaseLabeledExample",
+    "BasePrediction",
     "BaseRecord",
     "Example",
     "LabeledExample",
+    "Prediction",
     "Record",
 ]
 
 from argos.meta_agent.entities.base import BaseEntity
 from argos.meta_agent.entities.example import BaseExample, Example
 from argos.meta_agent.entities.labeled_example import BaseLabeledExample, LabeledExample
+from argos.meta_agent.entities.prediction import BasePrediction, Prediction
 from argos.meta_agent.entities.record import BaseRecord, Record

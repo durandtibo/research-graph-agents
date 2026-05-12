@@ -1,0 +1,8 @@
+r"""Contain entities."""
+
+from __future__ import annotations
+
+__all__ = ["BaseEntity", "BaseRecord", "Record"]
+
+from argos.meta_agent.entities.base import BaseEntity
+from argos.meta_agent.entities.record import BaseRecord, Record

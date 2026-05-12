@@ -2,7 +2,7 @@ r"""Define the abstract class and implementations for records."""
 
 from __future__ import annotations
 
-__all__ = ["BaseRecord", "Record"]
+__all__ = ["BaseExample", "Example"]
 
 from dataclasses import asdict, dataclass
 from typing import Any, Generic, Self
@@ -11,7 +11,7 @@ from argos.meta_agent.entities.base import BaseEntity
 from argos.meta_agent.typing import InputT, OutputT, TargetT
 
 
-class BaseRecord(BaseEntity, Generic[InputT, TargetT, OutputT]):
+class BaseExample(BaseEntity, Generic[InputT, TargetT, OutputT]):
     r"""Abstract base class defining the interface for a single labeled
     example.
 
@@ -26,31 +26,25 @@ class BaseRecord(BaseEntity, Generic[InputT, TargetT, OutputT]):
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.entities import Record
-        >>> example = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+        >>> from argos.meta_agent.entities import Example
+        >>> example = Example(id="q1", input="What is 2+2?")
         >>> example
-        Record(id='q1', input='What is 2+2?', target='4', prediction='5', metadata=None)
+        Example(id='q1', input='What is 2+2?', metadata=None)
         >>> example.id
         'q1'
         >>> example.input
         'What is 2+2?'
-        >>> example.target
-        '4'
-        >>> example.prediction
-        '5'
 
         ```
     """
 
     id: str
     input: InputT | None = None
-    target: TargetT | None = None
-    prediction: OutputT | None = None
     metadata: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
-class Record(BaseRecord[InputT, TargetT, OutputT]):
+class Example(BaseExample[InputT, TargetT, OutputT]):
     r"""Define a concrete labeled example for use in datasets.
 
     Args:
@@ -62,35 +56,27 @@ class Record(BaseRecord[InputT, TargetT, OutputT]):
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.entities import Record
-        >>> example = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+        >>> from argos.meta_agent.entities import Example
+        >>> example = Example(id="q1", input="What is 2+2?")
         >>> example
-        Record(id='q1', input='What is 2+2?', target='4', prediction='5', metadata=None)
+        Example(id='q1', input='What is 2+2?', metadata=None)
         >>> example.id
         'q1'
         >>> example.input
         'What is 2+2?'
-        >>> example.target
-        '4'
-        >>> example.prediction
-        '5'
 
         ```
     """
 
     id: str
     input: InputT | None = None
-    target: TargetT | None = None
-    prediction: OutputT | None = None
     metadata: dict[str, Any] | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Self:
         return cls(
             id=data["id"],
-            input=data.get("input"),
-            target=data.get("target"),
-            prediction=data.get("prediction"),
+            input=data["input"],
             metadata=data.get("metadata"),
         )
 

@@ -8,7 +8,8 @@ stable equality checks during evaluations.
 Example:
     ```pycon
     >>> from argos.meta_agent.entities import Record
-    >>> Record(id="q1", input="What is 2+2?", target="4", prediction="5").to_dict()
+    >>> record = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+    >>> record.to_dict()
     {'id': 'q1', 'input': 'What is 2+2?', 'target': '4', 'prediction': '5', 'metadata': None}
 
     ```

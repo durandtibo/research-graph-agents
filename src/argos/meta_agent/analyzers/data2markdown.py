@@ -1,5 +1,4 @@
-r"""Implement an analyzer that converts a DataFrame to a markdown format
-analysis."""
+r"""Implement an analyzer that converts a DataFrame to Markdown format."""
 
 from __future__ import annotations
 

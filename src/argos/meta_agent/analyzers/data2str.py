@@ -1,5 +1,4 @@
-r"""Implement an analyzer that converts a DataFrame to a string format
-analysis."""
+r"""Implement an analyzer that converts a DataFrame to string format."""
 
 from __future__ import annotations
 

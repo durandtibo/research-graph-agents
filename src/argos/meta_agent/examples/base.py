@@ -74,7 +74,7 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
         """
 
     def to_flat_dict(self, separator: str = ".") -> dict[str, Any]:
-        r"""Return the result as a flat dictionary of native Python
+        r"""Return the example as a flat dictionary of native Python
         types.
 
         Args:
@@ -82,7 +82,7 @@ class BaseExample(ABC, Generic[InputT, TargetT]):
                 flattening. Defaults to ``"."``.
 
         Returns:
-            A flat dictionary mapping metric names to scalar native
+            A flat dictionary mapping field names to scalar native
                 Python values, with no nested dicts or lists.
 
         Example:

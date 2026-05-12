@@ -1,4 +1,4 @@
-r"""Define the abstract class for entities."""
+r"""Define the abstract interface shared by all meta-agent entities."""
 
 from __future__ import annotations
 
@@ -13,13 +13,13 @@ from coola.nested import to_flat_dict
 
 
 class BaseEntity(ABC):
-    r"""Abstract base class defining the interface for a single labeled
-    example.
+    r"""Abstract base class defining the interface for a serializable
+    entity.
 
     Subclasses must define all attributes and implement all methods.
 
     Attributes:
-        id: A unique identifier for the example.
+        id: A unique identifier for the entity.
         metadata: Optional dictionary of auxiliary information.
             Defaults to ``None``.
 
@@ -60,8 +60,9 @@ class BaseEntity(ABC):
         r"""Construct an instance from a plain dictionary.
 
         Args:
-            data: Must contain ``id``, ``input``, and ``target`` keys.
-                ``metadata`` is optional.
+            data: Serialized entity data. It must contain ``id`` and may
+                include subtype-specific fields plus optional
+                ``metadata``.
 
         Returns:
             A new instance of the calling subclass.
@@ -78,11 +79,11 @@ class BaseEntity(ABC):
 
     @abstractmethod
     def to_dict(self) -> dict[str, Any]:
-        r"""Serialize the example to a plain dictionary.
+        r"""Serialize the entity to a plain dictionary.
 
         Returns:
-            A dictionary with keys ``id``, ``input``, ``target``, and
-            ``metadata``.
+            A dictionary containing ``id``, optional ``metadata``, and
+            subtype-specific fields.
 
         Example:
             ```pycon
@@ -95,16 +96,14 @@ class BaseEntity(ABC):
         """
 
     def to_flat_dict(self, separator: str = ".") -> dict[str, Any]:
-        r"""Return the result as a flat dictionary of native Python
-        types.
+        r"""Flatten :meth:`to_dict` output into a single-level dictionary.
 
         Args:
             separator: The separator used to join nested keys when
                 flattening. Defaults to ``"."``.
 
         Returns:
-            A flat dictionary mapping metric names to scalar native
-                Python values, with no nested dicts or lists.
+            A flattened dictionary generated from :meth:`to_dict`.
 
         Example:
             ```pycon

@@ -1,4 +1,4 @@
-r"""Define the abstract class and implementations for predictions."""
+r"""Define abstract and concrete entities for model predictions."""
 
 from __future__ import annotations
 
@@ -62,6 +62,10 @@ class Prediction(BasePrediction[T]):
         '5'
 
         ```
+
+    Note:
+        ``from_dict`` expects ``id`` and ``prediction`` keys and raises
+        ``KeyError`` if one is missing.
     """
 
     id: str

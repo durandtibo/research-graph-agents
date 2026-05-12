@@ -1,4 +1,4 @@
-r"""Define the abstract class and implementations for records."""
+r"""Define abstract and concrete entities for labeled examples."""
 
 from __future__ import annotations
 
@@ -64,6 +64,11 @@ class LabeledExample(BaseLabeledExample[InputT, TargetT]):
         'What is 2+2?'
 
         ```
+
+    Note:
+        ``from_dict`` always requires ``id``. It reads ``input`` and
+        ``target`` with ``dict.get``, so missing keys are converted to
+        ``None``.
     """
 
     id: str

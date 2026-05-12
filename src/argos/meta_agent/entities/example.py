@@ -1,4 +1,4 @@
-r"""Define the abstract class and implementations for examples."""
+r"""Define abstract and concrete entities for input-only examples."""
 
 from __future__ import annotations
 
@@ -61,6 +61,10 @@ class Example(BaseExample[InputT]):
         'What is 2+2?'
 
         ```
+
+    Note:
+        ``from_dict`` expects ``id`` and ``input`` keys and raises
+        ``KeyError`` if one is missing.
     """
 
     id: str

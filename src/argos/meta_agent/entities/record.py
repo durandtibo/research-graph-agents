@@ -1,4 +1,4 @@
-r"""Define the abstract class and implementations for records."""
+r"""Define abstract and concrete entities for full evaluation records."""
 
 from __future__ import annotations
 
@@ -75,6 +75,11 @@ class Record(BaseRecord[InputT, TargetT, OutputT]):
         '5'
 
         ```
+
+    Note:
+        ``from_dict`` always requires ``id``. It reads ``input``,
+        ``target``, and ``prediction`` with ``dict.get``, so omitted
+        keys are converted to ``None``.
     """
 
     id: str

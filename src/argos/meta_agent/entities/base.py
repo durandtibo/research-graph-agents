@@ -26,10 +26,10 @@ class BaseEntity(ABC):
     Example:
         ```pycon
         >>> from argos.meta_agent.entities import Record
-        >>> example = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
-        >>> example
+        >>> x = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+        >>> x
         Record(id='q1', input='What is 2+2?', target='4', prediction='5', metadata=None)
-        >>> example.to_dict()
+        >>> x.to_dict()
         {'id': 'q1', 'input': 'What is 2+2?', 'target': '4', 'prediction': '5', 'metadata': None}
 
         ```
@@ -69,8 +69,8 @@ class BaseEntity(ABC):
         Example:
             ```pycon
             >>> from argos.meta_agent.entities import Record
-            >>> example = Record.from_dict({"id": "q1", "input": "What is 2+2?", "target": "4"})
-            >>> example
+            >>> x = Record.from_dict({"id": "q1", "input": "What is 2+2?", "target": "4"})
+            >>> x
             Record(id='q1', input='What is 2+2?', target='4', prediction=None, metadata=None)
 
             ```
@@ -87,8 +87,8 @@ class BaseEntity(ABC):
         Example:
             ```pycon
             >>> from argos.meta_agent.entities import Record
-            >>> example = Record(id="q1", input="What is 2+2?", target="4")
-            >>> example.to_dict()
+            >>> x = Record(id="q1", input="What is 2+2?", target="4")
+            >>> x.to_dict()
             {'id': 'q1', 'input': 'What is 2+2?', 'target': '4', 'prediction': None, 'metadata': None}
 
             ```
@@ -109,8 +109,8 @@ class BaseEntity(ABC):
         Example:
             ```pycon
             >>> from argos.meta_agent.entities import Record
-            >>> example = Record(id="q1", input="What is 2+2?", target={"answer": 4, "style": "math"})
-            >>> example.to_flat_dict()
+            >>> x = Record(id="q1", input="What is 2+2?", target={"answer": 4, "style": "math"})
+            >>> x.to_flat_dict()
             {'id': 'q1', 'input': 'What is 2+2?', 'target.answer': 4, 'target.style': 'math', 'prediction': None, 'metadata': None}
 
             ```

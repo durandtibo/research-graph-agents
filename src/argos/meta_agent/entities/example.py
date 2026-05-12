@@ -1,4 +1,4 @@
-r"""Define the abstract class and implementations for records."""
+r"""Define the abstract class and implementations for examples."""
 
 from __future__ import annotations
 
@@ -12,8 +12,7 @@ from argos.meta_agent.typing import InputT
 
 
 class BaseExample(BaseEntity, Generic[InputT]):
-    r"""Abstract base class defining the interface for a single labeled
-    example.
+    r"""Abstract base class defining the interface for an example.
 
     Subclasses must define all attributes and implement all methods.
 
@@ -42,7 +41,7 @@ class BaseExample(BaseEntity, Generic[InputT]):
 
 @dataclass(frozen=True)
 class Example(BaseExample[InputT]):
-    r"""Define a concrete labeled example for use in datasets.
+    r"""Define a concrete example for use in datasets.
 
     Args:
         id: A unique identifier for the example.

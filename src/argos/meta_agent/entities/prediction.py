@@ -1,4 +1,4 @@
-r"""Define the abstract class and implementations for records."""
+r"""Define the abstract class and implementations for predictions."""
 
 from __future__ import annotations
 
@@ -13,8 +13,7 @@ T = TypeVar("T")
 
 
 class BasePrediction(BaseEntity, Generic[T]):
-    r"""Abstract base class defining the interface for a single labeled
-    example.
+    r"""Abstract base class defining the interface for a prediction.
 
     Subclasses must define all attributes and implement all methods.
 
@@ -43,7 +42,7 @@ class BasePrediction(BaseEntity, Generic[T]):
 
 @dataclass(frozen=True)
 class Prediction(BasePrediction[T]):
-    r"""Define a concrete labeled example for use in datasets.
+    r"""Define a concrete prediction for use in datasets.
 
     Args:
         id: A unique identifier for the example.
@@ -54,12 +53,12 @@ class Prediction(BasePrediction[T]):
     Example:
         ```pycon
         >>> from argos.meta_agent.entities import Prediction
-        >>> example = Prediction(id="q1", prediction="5")
-        >>> example
+        >>> x = Prediction(id="q1", prediction="5")
+        >>> x
         Prediction(id='q1', prediction='5', metadata=None)
-        >>> example.id
+        >>> x.id
         'q1'
-        >>> example.prediction
+        >>> x.prediction
         '5'
 
         ```

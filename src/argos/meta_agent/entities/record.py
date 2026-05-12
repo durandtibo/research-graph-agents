@@ -12,13 +12,12 @@ from argos.meta_agent.typing import InputT, OutputT, TargetT
 
 
 class BaseRecord(BaseEntity, Generic[InputT, TargetT, OutputT]):
-    r"""Abstract base class defining the interface for a single labeled
-    example.
+    r"""Abstract base class defining the interface for a record.
 
     Subclasses must define all attributes and implement all methods.
 
     Attributes:
-        id: A unique identifier for the example.
+        id: A unique identifier for the record/example.
         input: The input passed to the agent.
         target: The expected ground-truth output.
         prediction: The predicted output.
@@ -28,16 +27,16 @@ class BaseRecord(BaseEntity, Generic[InputT, TargetT, OutputT]):
     Example:
         ```pycon
         >>> from argos.meta_agent.entities import Record
-        >>> example = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
-        >>> example
+        >>> x = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+        >>> x
         Record(id='q1', input='What is 2+2?', target='4', prediction='5', metadata=None)
-        >>> example.id
+        >>> x.id
         'q1'
-        >>> example.input
+        >>> x.input
         'What is 2+2?'
-        >>> example.target
+        >>> x.target
         '4'
-        >>> example.prediction
+        >>> x.prediction
         '5'
 
         ```
@@ -50,7 +49,7 @@ class BaseRecord(BaseEntity, Generic[InputT, TargetT, OutputT]):
 
 @dataclass(frozen=True)
 class Record(BaseRecord[InputT, TargetT, OutputT]):
-    r"""Define a concrete labeled example for use in datasets.
+    r"""Define a concrete record for use in datasets.
 
     Args:
         id: A unique identifier for the example.
@@ -63,16 +62,16 @@ class Record(BaseRecord[InputT, TargetT, OutputT]):
     Example:
         ```pycon
         >>> from argos.meta_agent.entities import Record
-        >>> example = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
-        >>> example
+        >>> x = Record(id="q1", input="What is 2+2?", target="4", prediction="5")
+        >>> x
         Record(id='q1', input='What is 2+2?', target='4', prediction='5', metadata=None)
-        >>> example.id
+        >>> x.id
         'q1'
-        >>> example.input
+        >>> x.input
         'What is 2+2?'
-        >>> example.target
+        >>> x.target
         '4'
-        >>> example.prediction
+        >>> x.prediction
         '5'
 
         ```

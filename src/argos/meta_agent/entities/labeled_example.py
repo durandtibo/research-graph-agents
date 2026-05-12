@@ -27,12 +27,12 @@ class BaseLabeledExample(BaseExample[InputT], Generic[InputT, TargetT]):
     Example:
         ```pycon
         >>> from argos.meta_agent.entities import LabeledExample
-        >>> example = LabeledExample(id="q1", input="What is 2+2?", target="4")
-        >>> example
+        >>> x = LabeledExample(id="q1", input="What is 2+2?", target="4")
+        >>> x
         LabeledExample(id='q1', input='What is 2+2?', target='4', metadata=None)
-        >>> example.id
+        >>> x.id
         'q1'
-        >>> example.input
+        >>> x.input
         'What is 2+2?'
 
         ```
@@ -55,12 +55,12 @@ class LabeledExample(BaseLabeledExample[InputT, TargetT]):
     Example:
         ```pycon
         >>> from argos.meta_agent.entities import LabeledExample
-        >>> example = LabeledExample(id="q1", input="What is 2+2?", target="4")
-        >>> example
+        >>> x = LabeledExample(id="q1", input="What is 2+2?", target="4")
+        >>> x
         LabeledExample(id='q1', input='What is 2+2?', target='4', metadata=None)
-        >>> example.id
+        >>> x.id
         'q1'
-        >>> example.input
+        >>> x.input
         'What is 2+2?'
 
         ```

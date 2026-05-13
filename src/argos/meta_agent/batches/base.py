@@ -1,53 +1,51 @@
-r"""Contain the base class to define a dataset."""
+r"""Contain the base class to define a batch."""
 
 from __future__ import annotations
 
-__all__ = ["BaseDataset"]
+__all__ = ["BaseBatch"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Generic, Self
+from typing import TYPE_CHECKING, Any, Generic, Self, TypeVar
 
+import polars as pl
 from coola.equality.tester import EqualNanEqualityTester, get_default_registry
 
-from argos.meta_agent.examples import Example
-from argos.meta_agent.typing import InputT, TargetT
+from argos.meta_agent.entities import BaseEntity, Record, dataframe_to_entities
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    import polars as pl
-
-    from argos.meta_agent.examples import BaseExample
+T = TypeVar("T", bound=BaseEntity)
 
 
-class BaseDataset(ABC, Generic[InputT, TargetT]):
+class BaseBatch(ABC, Generic[T]):
     r"""Abstract base class defining the interface for a dataset.
 
     Subclasses must define all attributes and implement all methods.
 
     Attributes:
-        examples: A mapping from example ID to
-            :class:`~argos.meta_agent.examples.BaseExample` instance.
+        items: A mapping from entity ID to
+            :class:`~argos.meta_agent.entities.BaseEntity` instance.
         metadata: Optional dictionary of auxiliary information about
             the dataset. Defaults to ``None``.
 
     Example:
         ```pycon
-        >>> from argos.meta_agent.datasets import Dataset
-        >>> from argos.meta_agent.examples import Example
-        >>> dataset = Dataset(
+        >>> from argos.meta_agent.batches import Batch
+        >>> from argos.meta_agent.entities import LabeledExample
+        >>> dataset = Batch(
         ...     {
-        ...         "q1": Example(id="q1", input="What is 2+2?", target="4"),
-        ...         "q2": Example(id="q2", input="What is 3+3?", target="6"),
+        ...         "q1": LabeledExample(id="q1", input="What is 2+2?", target="4"),
+        ...         "q2": LabeledExample(id="q2", input="What is 3+3?", target="6"),
         ...     }
         ... )
-        >>> len(dataset.examples)
+        >>> len(dataset.items)
         2
 
         ```
     """
 
-    examples: dict[str, BaseExample[InputT, TargetT]]
+    items: dict[str, T]
     metadata: dict[str, Any] | None = None
 
     @abstractmethod
@@ -64,9 +62,8 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
             ``True`` if the two objects are equal, otherwise ``False``
         """
 
-    @abstractmethod
     def to_dataframe(self) -> pl.DataFrame:
-        r"""Return a Polars DataFrame representing the dataset examples.
+        r"""Return a Polars DataFrame representing the batch of items.
 
         The dataset-level ``metadata`` attribute is not included in the
         returned DataFrame. Each row corresponds to one example, with
@@ -78,12 +75,12 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
         Example:
             ```pycon
             >>> import polars as pl
-            >>> from argos.meta_agent.datasets import Dataset
-            >>> from argos.meta_agent.examples import Example
-            >>> dataset = Dataset.from_examples(
+            >>> from argos.meta_agent.batches import Batch
+            >>> from argos.meta_agent.entities import LabeledExample
+            >>> dataset = Batch.from_list(
             ...     [
-            ...         Example(id="q1", input="What is 2+2?", target="4"),
-            ...         Example(id="q2", input="What is 3+3?", target="6"),
+            ...         LabeledExample(id="q1", input="What is 2+2?", target="4"),
+            ...         LabeledExample(id="q2", input="What is 3+3?", target="6"),
             ...     ]
             ... )
             >>> dataset.to_dataframe()
@@ -99,40 +96,42 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
 
             ```
         """
+        return pl.DataFrame([r.to_dict() for r in self.items.values()])
 
     @classmethod
-    @abstractmethod
     def from_dataframe(
         cls,
         frame: pl.DataFrame,
         metadata: dict[str, Any] | None = None,
-        example_type: type[BaseExample[InputT, TargetT]] = Example,
+        entity_type: type[T] = Record,
     ) -> Self:
-        r"""Create a dataset from a dataframe.
+        r"""Create a batch from a dataframe.
 
         Args:
             frame: A Polars DataFrame where each row represents a single
                 example. Column names must match the fields expected by
-                ``example_type.from_dict``.
+                ``entity_type.from_dict``.
             metadata: The dataset metadata.
-            example_type: The example class to instantiate for each row.
-                Defaults to :class:`Example`.
+            entity_type: The entity class to instantiate for each row.
+                Defaults to :class:`~argos.meta_agent.entities.Record`.
 
         Returns:
-            The dataset instance.
+            The batch instance.
         """
+        items = dataframe_to_entities(frame=frame, entity_type=entity_type)
+        return cls.from_list(items=items, metadata=metadata)
 
     @classmethod
     @abstractmethod
-    def from_examples(
+    def from_list(
         cls,
-        examples: Sequence[BaseExample[InputT, TargetT]],
+        items: Sequence[T],
         metadata: dict[str, Any] | None = None,
     ) -> Self:
-        r"""Create a dataset from a list of examples.
+        r"""Create a dataset from a list of items.
 
         Args:
-            examples: A list of examples. The example IDs must be unique.
+            items: A list of items. The example IDs must be unique.
             metadata: The dataset metadata.
 
         Returns:
@@ -143,19 +142,19 @@ class BaseDataset(ABC, Generic[InputT, TargetT]):
 
         Example:
             ```pycon
-            >>> from argos.meta_agent.datasets import Dataset
-            >>> from argos.meta_agent.examples import Example
-            >>> dataset = Dataset.from_examples(
+            >>> from argos.meta_agent.batches import Batch
+            >>> from argos.meta_agent.entities import LabeledExample
+            >>> dataset = Batch.from_list(
             ...     [
-            ...         Example(id="q1", input="What is 2+2?", target="4"),
-            ...         Example(id="q2", input="What is 3+3?", target="6"),
+            ...         LabeledExample(id="q1", input="What is 2+2?", target="4"),
+            ...         LabeledExample(id="q2", input="What is 3+3?", target="6"),
             ...     ]
             ... )
-            >>> len(dataset.examples)
+            >>> len(dataset.items)
             2
 
             ```
         """
 
 
-get_default_registry().register_many({BaseDataset: EqualNanEqualityTester()}, exist_ok=True)
+get_default_registry().register_many({BaseBatch: EqualNanEqualityTester()}, exist_ok=True)

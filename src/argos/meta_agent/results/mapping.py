@@ -30,7 +30,7 @@ class ResultDict(BaseResult):
     Note:
         :meth:`to_markdown` renders one top-level bullet per key and
         nests the child result markdown underneath it. Empty mappings
-        return ``"_No metrics available._"``.
+        return ``"_No results available._"``.
 
     Example:
         ```pycon
@@ -41,10 +41,10 @@ class ResultDict(BaseResult):
         >>> result.to_flat_dict()
         {'train.loss': 0.5, 'val.loss': 0.3}
         >>> print(result.to_markdown())
-        - **train**:
-          - **loss**: 0.5
-        - **val**:
-          - **loss**: 0.3
+        - train:
+          - loss: 0.5
+        - val:
+          - loss: 0.3
 
         ```
     """
@@ -73,9 +73,16 @@ class ResultDict(BaseResult):
 
     def to_markdown(self) -> str:
         if not self.results:
-            return "_No metrics available._"
-        metrics = [
-            f"- **{key}**:\n  {str_indent(value.to_markdown())}"
-            for key, value in self.results.items()
-        ]
-        return "\n".join(metrics)
+            return "_No results available._"
+
+        results = {key: str_indent(result.to_markdown()) for key, result in self.results.items()}
+        return "\n".join(
+            [
+                (
+                    f"- {key}:\n  {result}"
+                    if "\n" in result or result.startswith("- ")
+                    else f"- {key}: {result}"
+                )
+                for key, result in results.items()
+            ]
+        )

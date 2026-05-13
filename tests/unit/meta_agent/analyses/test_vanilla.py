@@ -85,6 +85,30 @@ def test_analysis_equal_nan_true() -> None:
 
 
 @pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        pytest.param("my analysis", "my analysis", id="string"),
+        pytest.param("", "", id="empty_string"),
+        pytest.param(3.14, "3.14", id="float"),
+        pytest.param(42, "42", id="integer"),
+        pytest.param(True, "True", id="boolean"),
+        pytest.param(None, "None", id="none"),
+        pytest.param({"key": "value"}, "{'key': 'value'}", id="dict"),
+        pytest.param({}, "{}", id="empty_dict"),
+        pytest.param(
+            {"nested": {"key": "value"}}, "{'nested': {'key': 'value'}}", id="nested_dict"
+        ),
+        pytest.param([1, 2, 3], "[1, 2, 3]", id="list"),
+        pytest.param([], "[]", id="empty_list"),
+        pytest.param([[1, 2], [3, 4]], "[[1, 2], [3, 4]]", id="nested_list"),
+        pytest.param([{"key": "value"}], "[{'key': 'value'}]", id="list_of_dicts"),
+    ],
+)
+def test_analysis_to_markdown(content: Any, expected: Any) -> None:
+    assert Analysis(content).to_markdown() == expected
+
+
+@pytest.mark.parametrize(
     "content",
     [
         pytest.param("my analysis", id="string"),

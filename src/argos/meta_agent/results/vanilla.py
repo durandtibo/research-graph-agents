@@ -36,8 +36,8 @@ class Result(BaseResult):
         >>> result.to_dict()
         {'loss': 0.5, 'accuracy': 0.9}
         >>> print(result.to_markdown())
-        - **loss**: 0.5
-        - **accuracy**: 0.9
+        - loss: 0.5
+        - accuracy: 0.9
 
         ```
     """
@@ -55,5 +55,5 @@ class Result(BaseResult):
     def to_markdown(self) -> str:
         if not self.metrics:
             return "_No metrics available._"
-        metrics = [f"- **{key}**: {value}" for key, value in self.metrics.items()]
+        metrics = [f"- {key}: {value}" for key, value in self.metrics.items()]
         return "\n".join(metrics)

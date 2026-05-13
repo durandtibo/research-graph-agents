@@ -52,5 +52,8 @@ class Analysis(BaseAnalysis):
             return False
         return objects_are_equal(asdict(self), asdict(other), equal_nan=equal_nan)
 
+    def to_markdown(self) -> str:
+        return str(self.content)
+
     def to_primitive(self) -> PrimitiveType:
         return self.content

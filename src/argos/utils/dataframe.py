@@ -195,6 +195,16 @@ def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> 
         >>> import polars as pl
         >>> from argos.utils.dataframe import unnest_struct_columns
         >>> frame = pl.DataFrame({"id": [1, 2], "coords": [{"x": 10, "y": 20}, {"x": 30, "y": 40}]})
+        >>> frame
+        shape: (2, 2)
+        ┌─────┬───────────┐
+        │ id  ┆ coords    │
+        │ --- ┆ ---       │
+        │ i64 ┆ struct[2] │
+        ╞═════╪═══════════╡
+        │ 1   ┆ {10,20}   │
+        │ 2   ┆ {30,40}   │
+        └─────┴───────────┘
         >>> unnest_struct_columns(frame)
         shape: (2, 3)
         ┌─────┬─────┬─────┐
@@ -205,11 +215,23 @@ def unnest_struct_columns(frame: pl.DataFrame, separator: str | None = None) -> 
         │ 1   ┆ 10  ┆ 20  │
         │ 2   ┆ 30  ┆ 40  │
         └─────┴─────┴─────┘
+        >>> unnest_struct_columns(frame, separator=".")
+        shape: (2, 3)
+        ┌─────┬──────────┬──────────┐
+        │ id  ┆ coords.x ┆ coords.y │
+        │ --- ┆ ---      ┆ ---      │
+        │ i64 ┆ i64      ┆ i64      │
+        ╞═════╪══════════╪══════════╡
+        │ 1   ┆ 10       ┆ 20       │
+        │ 2   ┆ 30       ┆ 40       │
+        └─────┴──────────┴──────────┘
 
         ```
     """
     struct_columns = [
-        col_name for col_name, dtype in frame.schema.items() if isinstance(dtype, pl.Struct)
+        col_name
+        for col_name, dtype in frame.schema.items()
+        if isinstance(dtype, (pl.Struct, pl.Array, pl.List))
     ]
 
     return frame.unnest(struct_columns, separator=separator)

@@ -1,4 +1,5 @@
-r"""Define an analyzer wrapper to export the analysis to a JSON file."""
+r"""Define analyzer wrappers that export the analysis result to a
+file."""
 
 from __future__ import annotations
 
@@ -25,17 +26,17 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BaseExportAnalyzer(BaseAnalyzer):
-    r"""Implement an analyzer wrapper that persists the analysis to a
-    JSON file.
+    r"""Implement an abstract analyzer wrapper that exports the analysis
+    to a file.
 
-    Delegates the analysis to an inner ``analyzer``, then serialises
-    the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_primitive`
-    and saves it to ``path``.  The original analysis object is returned
-    unchanged so the wrapper is transparent to callers.
+    Delegates the analysis to an inner ``analyzer``, then exports the
+    result to ``path`` via the :meth:`_export` hook. The original
+    analysis object is returned unchanged so the wrapper is transparent
+    to callers.
 
     Args:
-        analyzer: The inner analyzer whose output is saved.
-        path: Destination path for the JSON file.
+        analyzer: The inner analyzer whose output is exported.
+        path: Destination path for the exported file.
 
     Example:
         ```pycon
@@ -100,16 +101,16 @@ class BaseExportAnalyzer(BaseAnalyzer):
 
 
 class JsonExportAnalyzer(BaseExportAnalyzer):
-    r"""Implement an analyzer wrapper that persists the analysis to a
-    JSON file.
+    r"""Implement an analyzer wrapper that exports the analysis to a JSON
+    file.
 
-    Delegates the analysis to an inner ``analyzer``, then serialises
+    Delegates the analysis to an inner ``analyzer``, then serializes
     the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_primitive`
-    and saves it to ``path``.  The original analysis object is returned
-    unchanged so the wrapper is transparent to callers.
+    and saves it to ``path`` as JSON. The original analysis object is
+    returned unchanged so the wrapper is transparent to callers.
 
     Args:
-        analyzer: The inner analyzer whose output is saved.
+        analyzer: The inner analyzer whose output is exported.
         path: Destination path for the JSON file.
 
     Example:
@@ -142,17 +143,17 @@ class JsonExportAnalyzer(BaseExportAnalyzer):
 
 
 class PickleExportAnalyzer(BaseExportAnalyzer):
-    r"""Implement an analyzer wrapper that persists the analysis to a
-    JSON file.
+    r"""Implement an analyzer wrapper that exports the analysis to a
+    Pickle file.
 
-    Delegates the analysis to an inner ``analyzer``, then serialises
+    Delegates the analysis to an inner ``analyzer``, then serializes
     the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_primitive`
-    and saves it to ``path``.  The original analysis object is returned
-    unchanged so the wrapper is transparent to callers.
+    and saves it to ``path`` as Pickle. The original analysis object is
+    returned unchanged so the wrapper is transparent to callers.
 
     Args:
-        analyzer: The inner analyzer whose output is saved.
-        path: Destination path for the JSON file.
+        analyzer: The inner analyzer whose output is exported.
+        path: Destination path for the Pickle file.
 
     Example:
         ```pycon

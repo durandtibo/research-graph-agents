@@ -7,6 +7,7 @@ __all__ = ["BatchPredictor"]
 import logging
 from typing import TYPE_CHECKING, Any
 
+from coola.utils.batching import batchify
 from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 from coola.utils.timing import timeblock
 from langchain_core.runnables import RunnableConfig
@@ -14,7 +15,6 @@ from langchain_core.runnables import RunnableConfig
 from argos.meta_agent.predictions import BasePrediction, Prediction
 from argos.meta_agent.predictors.base import BasePredictor
 from argos.meta_agent.typing import InputT, OutputT, TargetT
-from argos.utils.batching import batchify
 
 if TYPE_CHECKING:
     from argos.meta_agent.agents import BaseAgent

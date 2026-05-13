@@ -15,7 +15,6 @@ from argos.meta_agent.entities import BaseEntity, Record, dataframe_to_entities
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-
 T = TypeVar("T", bound=BaseEntity)
 
 
@@ -103,7 +102,7 @@ class BaseBatch(ABC, Generic[T]):
     def from_dataframe(
         cls,
         frame: pl.DataFrame,
-        metadata: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
         entity_type: type[T] = Record,
     ) -> Self:
         r"""Create a dataset from a dataframe.

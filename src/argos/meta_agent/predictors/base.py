@@ -7,15 +7,18 @@ __all__ = ["BasePredictor"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Generic
 
-from argos.meta_agent.typing import InputT, OutputT, TargetT
+from argos.meta_agent.typing import InputT, OutputT
 
 if TYPE_CHECKING:
     from argos.meta_agent.agents import BaseAgent
-    from argos.meta_agent.datasets import BaseDataset
-    from argos.meta_agent.predictions import BasePrediction
+    from argos.meta_agent.batches import BaseBatch
+    from argos.meta_agent.entities import (
+        BaseExample,
+        BasePrediction,
+    )
 
 
-class BasePredictor(ABC, Generic[InputT, TargetT, OutputT]):
+class BasePredictor(ABC, Generic[InputT, OutputT]):
     r"""Define the base class to implement a predictor.
 
     Subclasses must implement :meth:`predict` to run an agent over all
@@ -39,8 +42,8 @@ class BasePredictor(ABC, Generic[InputT, TargetT, OutputT]):
     def predict(
         self,
         agent: BaseAgent[InputT, OutputT],
-        dataset: BaseDataset[InputT, TargetT],
-    ) -> BasePrediction[OutputT]:
+        dataset: BaseBatch[BaseExample[InputT]],
+    ) -> BaseBatch[BasePrediction[OutputT]]:
         r"""Make the prediction result for the input dataset.
 
         Args:
@@ -55,13 +58,14 @@ class BasePredictor(ABC, Generic[InputT, TargetT, OutputT]):
             ```pycon
             >>> from langchain_core.runnables import RunnableLambda
             >>> from argos.meta_agent.agents import Agent
-            >>> from argos.meta_agent.datasets import Dataset
-            >>> from argos.meta_agent.examples import Example
+            >>> from argos.meta_agent.batches import Batch
+            >>> from argos.meta_agent.entities import LabeledExample
             >>> from argos.meta_agent.predictors import BatchPredictor
             >>> agent = Agent(RunnableLambda(str.upper))
-            >>> dataset = Dataset.from_examples([Example(id="q1", input="hello", target="HELLO")])
+            >>> dataset = Batch.from_list([LabeledExample(id="q1", input="hello", target="HELLO")])
             >>> predictor = BatchPredictor()
-            >>> predictor.predict(agent, dataset).to_dict()
+            >>> predictions = predictor.predict(agent, dataset)
+            >>> predictions
             {'q1': 'HELLO'}
 
             ```

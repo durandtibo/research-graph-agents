@@ -30,7 +30,7 @@ class ResultDict(BaseResult):
     Note:
         :meth:`to_markdown` renders one top-level bullet per key and
         nests the child result markdown underneath it. Empty mappings
-        return ``"_No metrics available._"``.
+        return ``"_No results available._"``.
 
     Example:
         ```pycon

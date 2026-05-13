@@ -1,4 +1,4 @@
-r"""Define an analyzer that transform an analysis with an agent."""
+r"""Define an analyzer that transforms an analysis with an agent."""
 
 from __future__ import annotations
 

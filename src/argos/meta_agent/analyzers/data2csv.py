@@ -1,5 +1,4 @@
-r"""Implement an analyzer that converts a DataFrame to a CSV format
-analysis."""
+r"""Implement an analyzer that converts a DataFrame to CSV format."""
 
 from __future__ import annotations
 

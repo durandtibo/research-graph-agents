@@ -1,4 +1,4 @@
-r"""Define an analyzer wrapper to export the analysis to a JSON file."""
+r"""Define analyzer wrappers that cache the analysis result to a file."""
 
 from __future__ import annotations
 
@@ -25,17 +25,20 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BaseCacheAnalyzer(BaseAnalyzer):
-    r"""Implement an analyzer wrapper that persists the analysis to a
-    JSON file.
+    r"""Implement an abstract analyzer wrapper that caches the analysis to
+    a file.
 
-    Delegates the analysis to an inner ``analyzer``, then serialises
-    the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_primitive`
-    and saves it to ``path``.  The original analysis object is returned
-    unchanged so the wrapper is transparent to callers.
+    On the first call to :meth:`analyze`, the inner ``analyzer`` is
+    invoked and the resulting :class:`~argos.meta_agent.analyses.BaseAnalysis`
+    object is persisted to ``path``.  On subsequent calls, the cached
+    object is loaded directly from ``path``, skipping the inner
+    analyzer. The returned analysis is the same whether it was freshly
+    computed or loaded from cache, so the wrapper is transparent to
+    callers.
 
     Args:
-        analyzer: The inner analyzer whose output is saved.
-        path: Destination path for the JSON file.
+        analyzer: The inner analyzer whose output is cached.
+        path: Destination path for the cache file.
 
     Example:
         ```pycon
@@ -113,17 +116,19 @@ class BaseCacheAnalyzer(BaseAnalyzer):
 
 
 class PickleCacheAnalyzer(BaseCacheAnalyzer):
-    r"""Implement an analyzer wrapper that persists the analysis to a
-    JSON file.
+    r"""Implement an analyzer wrapper that caches the analysis to a
+    Pickle file.
 
-    Delegates the analysis to an inner ``analyzer``, then serialises
-    the result via :meth:`~argos.meta_agent.analyses.BaseAnalysis.to_primitive`
-    and saves it to ``path``.  The original analysis object is returned
-    unchanged so the wrapper is transparent to callers.
+    On the first call to :meth:`analyze`, the inner ``analyzer`` is
+    invoked and the resulting
+    :class:`~argos.meta_agent.analyses.BaseAnalysis` object is
+    serialized in full to a Pickle file at ``path``.  On subsequent
+    calls, the cached object is deserialized from ``path`` directly,
+    bypassing the inner analyzer.
 
     Args:
-        analyzer: The inner analyzer whose output is saved.
-        path: Destination path for the JSON file.
+        analyzer: The inner analyzer whose output is cached.
+        path: Destination path for the Pickle file.
 
     Example:
         ```pycon

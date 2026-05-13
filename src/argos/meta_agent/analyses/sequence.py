@@ -1,4 +1,4 @@
-r"""Implement a simple analysis implementation."""
+r"""Implement a list-based composite analysis."""
 
 from __future__ import annotations
 

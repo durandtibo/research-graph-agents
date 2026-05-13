@@ -31,7 +31,7 @@ def test_example_metadata() -> None:
 
 def test_example_is_frozen() -> None:
     example = Example(id="q1", input="What is 2+2?")
-    with pytest.raises(FrozenInstanceError):
+    with pytest.raises(FrozenInstanceError, match="cannot assign to field 'id'"):
         example.id = "q2"
 
 

@@ -27,6 +27,8 @@ __all__ = [
     "LabeledExample",
     "Prediction",
     "Record",
+    "dataframe_to_entities",
+    "entities_to_dataframe",
 ]
 
 from argos.meta_agent.entities.base import BaseEntity
@@ -34,3 +36,4 @@ from argos.meta_agent.entities.example import BaseExample, Example
 from argos.meta_agent.entities.labeled_example import BaseLabeledExample, LabeledExample
 from argos.meta_agent.entities.prediction import BasePrediction, Prediction
 from argos.meta_agent.entities.record import BaseRecord, Record
+from argos.meta_agent.entities.utils import dataframe_to_entities, entities_to_dataframe

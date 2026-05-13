@@ -13,13 +13,13 @@ from coola.utils.timing import timeblock
 from langchain_core.runnables import RunnableConfig
 
 from argos.meta_agent.batches import BaseBatch, Batch
+from argos.meta_agent.entities import Prediction
 from argos.meta_agent.predictors.base import BasePredictor
 from argos.meta_agent.typing import InputT, OutputT
 
 if TYPE_CHECKING:
     from argos.meta_agent.agents import BaseAgent
     from argos.meta_agent.entities import BaseExample, BasePrediction
-
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -83,12 +83,11 @@ class BatchPredictor(BasePredictor[InputT, OutputT]):
                 logger.info(f"--- Processing Batch {index + 1} ---")
                 inputs = [example.input for example in batch]
                 outputs = agent.predict(inputs=inputs, config=self._config)
-                predictions.extend(outputs)
+                predictions.extend(
+                    [Prediction(id=ex.id, prediction=out) for ex, out in zip(batch, outputs)]
+                )
 
-        return Batch.from_list(
-            example_ids=list(dataset.items.keys()),
-            predictions=predictions,
-        )
+        return Batch.from_list(predictions)
 
     def _get_kwargs(self) -> dict[str, Any]:
         return {"batch_size": self._batch_size, "config": self._config}

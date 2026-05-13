@@ -6,24 +6,21 @@ import pytest
 from langchain_core.runnables import RunnableConfig
 
 from argos.meta_agent.agents import Agent, BaseAgent
-from argos.meta_agent.benchmark import Benchmark, BenchmarkExample
-from argos.meta_agent.prediction import (
-    PredictionRecord,
-    PredictionResult,
-)
+from argos.meta_agent.batches import Batch
+from argos.meta_agent.entities import LabeledExample, Prediction
 from argos.meta_agent.predictors import BasePredictor, BatchPredictor
 from tests.unit.helpers.runnable import DoubleRunnable
 
 
 @pytest.fixture
-def benchmark() -> Benchmark:
-    return Benchmark(
+def dataset() -> Batch:
+    return Batch(
         {
-            "id1": BenchmarkExample(id="id1", input=1, target=None),
-            "id2": BenchmarkExample(id="id2", input=2, target=None),
-            "id3": BenchmarkExample(id="id3", input=3, target=None),
-            "id4": BenchmarkExample(id="id4", input=4, target=None),
-            "id5": BenchmarkExample(id="id5", input=5, target=None),
+            "id1": LabeledExample(id="id1", input=1, target=None),
+            "id2": LabeledExample(id="id2", input=2, target=None),
+            "id3": LabeledExample(id="id3", input=3, target=None),
+            "id4": LabeledExample(id="id4", input=4, target=None),
+            "id5": LabeledExample(id="id5", input=5, target=None),
         }
     )
 
@@ -76,33 +73,33 @@ def test_batch_predictor_str_custom_batch_size() -> None:
 
 
 @pytest.mark.parametrize("batch_size", [1, 2, 4, 10])
-def test_batch_predictor_predict_batch_size(batch_size: int, benchmark: Benchmark) -> None:
+def test_batch_predictor_predict_batch_size(batch_size: int, dataset: Batch) -> None:
     predictor = BatchPredictor(batch_size=batch_size)
-    result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=benchmark)
-    assert result == PredictionResult(
-        [
-            PredictionRecord(example_id="id1", prediction=2),
-            PredictionRecord(example_id="id2", prediction=4),
-            PredictionRecord(example_id="id3", prediction=6),
-            PredictionRecord(example_id="id4", prediction=8),
-            PredictionRecord(example_id="id5", prediction=10),
-        ]
+    result = predictor.predict(agent=Agent(DoubleRunnable()), dataset=dataset)
+    assert result == Batch(
+        {
+            "id1": Prediction(id="id1", prediction=2),
+            "id2": Prediction(id="id2", prediction=4),
+            "id3": Prediction(id="id3", prediction=6),
+            "id4": Prediction(id="id4", prediction=8),
+            "id5": Prediction(id="id5", prediction=10),
+        }
     )
 
 
-def test_batch_predictor_predict_passes_config_to_agent(benchmark: Benchmark) -> None:
+def test_batch_predictor_predict_passes_config_to_agent(dataset: Batch) -> None:
     agent = Mock(spec=BaseAgent, predict=Mock(side_effect=[[2, 4], [6, 8], [10]]))
     config = RunnableConfig(max_concurrency=4)
     predictor = BatchPredictor(batch_size=2, config=config)
-    predictor.predict(agent, benchmark)
+    predictor.predict(agent, dataset)
     for call in agent.predict.call_args_list:
         assert call.kwargs["config"] is config
 
 
-def test_batch_predictor_predict_with_empty_benchmark() -> None:
+def test_batch_predictor_predict_with_empty_dataset() -> None:
     predictor = BatchPredictor(batch_size=2)
-    result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=Benchmark(examples={}))
-    assert result == PredictionResult([])
+    result = predictor.predict(agent=Agent(DoubleRunnable()), dataset=Batch({}))
+    assert result == Batch({})
 
 
 def test_batch_predictor_is_instance_of_base_predictor() -> None:
@@ -111,22 +108,22 @@ def test_batch_predictor_is_instance_of_base_predictor() -> None:
 
 def test_batch_predictor_predict_single_example() -> None:
     agent = Agent(DoubleRunnable())
-    benchmark = Benchmark({"id1": BenchmarkExample(id="id1", input=7, target=None)})
-    result = BatchPredictor(batch_size=4).predict(agent=agent, benchmark=benchmark)
-    assert result == PredictionResult([PredictionRecord(example_id="id1", prediction=14)])
+    dataset = Batch({"id1": LabeledExample(id="id1", input=7, target=None)})
+    result = BatchPredictor(batch_size=4).predict(agent=agent, dataset=dataset)
+    assert result == Batch({"id1": Prediction(id="id1", prediction=14)})
 
 
 def test_batch_predictor_predict_with_batch_size_larger_than_examples(
-    benchmark: Benchmark,
+    dataset: Batch,
 ) -> None:
     predictor = BatchPredictor(batch_size=100)
-    result = predictor.predict(agent=Agent(DoubleRunnable()), benchmark=benchmark)
-    assert result == PredictionResult(
-        [
-            PredictionRecord(example_id="id1", prediction=2),
-            PredictionRecord(example_id="id2", prediction=4),
-            PredictionRecord(example_id="id3", prediction=6),
-            PredictionRecord(example_id="id4", prediction=8),
-            PredictionRecord(example_id="id5", prediction=10),
-        ]
+    result = predictor.predict(agent=Agent(DoubleRunnable()), dataset=dataset)
+    assert result == Batch(
+        {
+            "id1": Prediction(id="id1", prediction=2),
+            "id2": Prediction(id="id2", prediction=4),
+            "id3": Prediction(id="id3", prediction=6),
+            "id4": Prediction(id="id4", prediction=8),
+            "id5": Prediction(id="id5", prediction=10),
+        }
     )

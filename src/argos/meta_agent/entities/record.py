@@ -1,4 +1,5 @@
-r"""Define abstract and concrete entities for full evaluation records."""
+r"""Define abstract and concrete entities for full evaluation
+records."""
 
 from __future__ import annotations
 

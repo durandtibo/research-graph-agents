@@ -35,7 +35,7 @@ def test_labeled_example_metadata() -> None:
 
 def test_labeled_example_is_frozen() -> None:
     example = LabeledExample(id="q1", input="What is 2+2?", target="4")
-    with pytest.raises(FrozenInstanceError):
+    with pytest.raises(FrozenInstanceError, match="cannot assign to field 'id'"):
         example.id = "q2"
 
 
@@ -86,6 +86,14 @@ def test_labeled_example_equal_false_metadata_vs_none() -> None:
 def test_labeled_example_equal_false_different_type() -> None:
     assert not LabeledExample(id="q1", input="What is 2+2?", target="4").equal(
         {"id": "q1", "input": "What is 2+2?", "target": "4", "metadata": None}
+    )
+
+
+def test_labeled_example_equal_false_different_type_child() -> None:
+    class Child(LabeledExample): ...
+
+    assert not LabeledExample(id="q1", input="What is 2+2?", target="4").equal(
+        Child(id="q1", input="What is 2+2?", target="4")
     )
 
 

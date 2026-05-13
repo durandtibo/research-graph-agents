@@ -96,7 +96,8 @@ class BaseEntity(ABC):
         """
 
     def to_flat_dict(self, separator: str = ".") -> dict[str, Any]:
-        r"""Flatten :meth:`to_dict` output into a single-level dictionary.
+        r"""Flatten :meth:`to_dict` output into a single-level
+        dictionary.
 
         Args:
             separator: The separator used to join nested keys when

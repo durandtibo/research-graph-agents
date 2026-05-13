@@ -1,4 +1,5 @@
-r"""Define analyzer wrappers that export the analysis result to a file."""
+r"""Define analyzer wrappers that export the analysis result to a
+file."""
 
 from __future__ import annotations
 

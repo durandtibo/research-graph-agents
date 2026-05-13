@@ -1,4 +1,5 @@
-r"""Define analyzer wrappers that cache the analysis result to a file."""
+r"""Define analyzer wrappers that cache the analysis result to a
+file."""
 
 from __future__ import annotations
 
@@ -25,8 +26,8 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 class BaseCacheAnalyzer(BaseAnalyzer):
-    r"""Implement an abstract analyzer wrapper that caches the analysis to
-    a file.
+    r"""Implement an abstract analyzer wrapper that caches the analysis
+    to a file.
 
     On the first call to :meth:`analyze`, the inner ``analyzer`` is
     invoked and the resulting :class:`~argos.meta_agent.analyses.BaseAnalysis`

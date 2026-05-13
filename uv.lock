@@ -235,7 +235,7 @@ requires-dist = [
     { name = "langchain-google-genai", specifier = ">=4.2,<5.0" },
     { name = "langchain-ollama", specifier = ">=1.1,<2.0" },
     { name = "langchain-openai", specifier = ">=1.2,<2.0" },
-    { name = "langgraph", specifier = ">=1.1,<2.0" },
+    { name = "langgraph", specifier = ">=1.2.0,<2.0" },
     { name = "polars", specifier = ">=1.39,<2.0" },
     { name = "python-dotenv", specifier = ">=1.2,<2.0" },
     { name = "rich", marker = "extra == 'rich'", specifier = ">=15.0.0,<16.0" },

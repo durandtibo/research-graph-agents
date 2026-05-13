@@ -50,7 +50,7 @@ dependencies = [
     "langchain-google-genai >= 4.2,<5.0",
     "langchain-ollama >= 1.1,<2.0",
     "langchain-openai>=1.2,<2.0",
-    "langgraph>=1.1,<2.0",
+    "langgraph>=1.2.0,<2.0",
     "polars >= 1.39,<2.0",
     "python-dotenv >= 1.2,<2.0",
 ]

@@ -12,19 +12,19 @@ from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mappin
 from coola.utils.timing import timeblock
 from langchain_core.runnables import RunnableConfig
 
-from argos.meta_agent.prediction import PredictionResult
+from argos.meta_agent.batches import BaseBatch, Batch
+from argos.meta_agent.entities import Prediction
 from argos.meta_agent.predictors.base import BasePredictor
-from argos.meta_agent.typing import InputT, OutputT, TargetT
+from argos.meta_agent.typing import InputT, OutputT
 
 if TYPE_CHECKING:
     from argos.meta_agent.agents import BaseAgent
-    from argos.meta_agent.benchmark import Benchmark
-
+    from argos.meta_agent.entities import BaseExample, BasePrediction
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-class BatchPredictor(BasePredictor[InputT, TargetT, OutputT]):
+class BatchPredictor(BasePredictor[InputT, OutputT]):
     r"""Define a predictor that computes predictions by batches.
 
     Args:
@@ -74,21 +74,20 @@ class BatchPredictor(BasePredictor[InputT, TargetT, OutputT]):
     def predict(
         self,
         agent: BaseAgent[InputT, OutputT],
-        benchmark: Benchmark[InputT, TargetT],
-    ) -> PredictionResult[OutputT]:
-        batches = batchify(list(benchmark.examples.values()), size=self._batch_size)
+        dataset: BaseBatch[BaseExample[InputT]],
+    ) -> BaseBatch[BasePrediction[OutputT]]:
+        batches = batchify(list(dataset.items.values()), size=self._batch_size)
         predictions = []
         with timeblock(message="LLM inference time: {time}"):
             for index, batch in enumerate(batches):
                 logger.info(f"--- Processing Batch {index + 1} ---")
                 inputs = [example.input for example in batch]
                 outputs = agent.predict(inputs=inputs, config=self._config)
-                predictions.extend(outputs)
+                predictions.extend(
+                    [Prediction(id=ex.id, prediction=out) for ex, out in zip(batch, outputs)]
+                )
 
-        return PredictionResult.from_predictions(
-            example_ids=list(benchmark.examples.keys()),
-            predictions=predictions,
-        )
+        return Batch.from_list(predictions)
 
     def _get_kwargs(self) -> dict[str, Any]:
         return {"batch_size": self._batch_size, "config": self._config}

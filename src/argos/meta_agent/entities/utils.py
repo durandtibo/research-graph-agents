@@ -25,7 +25,6 @@ def dataframe_to_entities(frame: pl.DataFrame, entity_type: type[EntityT]) -> li
             entity. Column names must match the fields expected by
             ``entity_type.from_dict``.
         entity_type: The entity class to instantiate for each row.
-            Defaults to :class:`Example`.
 
     Returns:
         A list of entities, one per row, in the same order as the

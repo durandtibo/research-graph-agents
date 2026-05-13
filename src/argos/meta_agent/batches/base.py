@@ -1,4 +1,4 @@
-r"""Contain the base class to define a dataset."""
+r"""Contain the base class to define a batch."""
 
 from __future__ import annotations
 
@@ -105,18 +105,18 @@ class BaseBatch(ABC, Generic[T]):
         metadata: dict[str, Any] | None = None,
         entity_type: type[T] = Record,
     ) -> Self:
-        r"""Create a dataset from a dataframe.
+        r"""Create a batch from a dataframe.
 
         Args:
             frame: A Polars DataFrame where each row represents a single
                 example. Column names must match the fields expected by
-                ``example_type.from_dict``.
+                ``entity_type.from_dict``.
             metadata: The dataset metadata.
-            entity_type: The example class to instantiate for each row.
-                Defaults to :class:`Example`.
+            entity_type: The entity class to instantiate for each row.
+                Defaults to :class:`~argos.meta_agent.entities.Record`.
 
         Returns:
-            The dataset instance.
+            The batch instance.
         """
         items = dataframe_to_entities(frame=frame, entity_type=entity_type)
         return cls.from_list(items=items, metadata=metadata)

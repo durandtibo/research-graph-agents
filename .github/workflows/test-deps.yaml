@@ -26,6 +26,20 @@ jobs:
       package-name: coola
       package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).coola) }}
 
+  grandalf:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: grandalf
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).grandalf) }}
+
+  iden:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: iden
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).iden) }}
+
   langchain:
     needs: get-versions
     uses: ./.github/workflows/test-code-dep.yaml
@@ -40,19 +54,20 @@ jobs:
       package-name: langchain-core
       package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-core) }}
 
-  langchain-google-genai:
-    needs: get-versions
-    uses: ./.github/workflows/test-code-dep.yaml
-    with:
-      package-name: langchain-google-genai
-      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-google-genai) }}
-
   langgraph:
     needs: get-versions
     uses: ./.github/workflows/test-code-dep.yaml
     with:
       package-name: langgraph
       package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langgraph) }}
+
+  polars:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: polars
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).polars) }}
+
 
   python-dotenv:
     needs: get-versions
@@ -64,3 +79,34 @@ jobs:
   #################################
   #     Optional dependencies     #
   #################################
+
+
+  langchain-anthropic:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: langchain-anthropic
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-anthropic) }}
+
+
+  langchain-google-genai:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: langchain-google-genai
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-google-genai) }}
+
+  langchain-ollama:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: langchain-ollama
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-ollama) }}
+
+
+  langchain-openai:
+    needs: get-versions
+    uses: ./.github/workflows/test-code-dep.yaml
+    with:
+      package-name: langchain-openai
+      package-versions: ${{ toJson(fromJson(needs.get-versions.outputs.package_versions).langchain-openai) }}

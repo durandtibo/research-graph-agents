@@ -5,9 +5,9 @@ from __future__ import annotations
 
 __all__ = ["Result"]
 
+from dataclasses import dataclass
 from typing import Any
 
-from attr import dataclass
 from coola.equality import objects_are_equal
 
 from argos.meta_agent.results.base import BaseResult

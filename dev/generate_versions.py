@@ -23,13 +23,22 @@ def fetch_package_versions() -> dict[str, list[str]]:
     """
     return {
         "coola": list(fetch_latest_minor_versions("coola", lower="1.1")),
+        "grandalf": list(fetch_latest_minor_versions("grandalf", lower="0.8")),
+        "iden": list(fetch_latest_minor_versions("iden", lower="0.4")),
         "langchain": list(fetch_latest_minor_versions("langchain", lower="1.2")),
         "langchain-core": list(fetch_latest_minor_versions("langchain-core", lower="1.2")),
+        "langgraph": list(fetch_latest_major_versions("langgraph", lower="1.1")),
+        "python-dotenv": list(fetch_latest_major_versions("python-dotenv", lower="1.2")),
+        "polars": list(fetch_latest_major_versions("polars", lower="1.40")),
+        # LangChain optional packages
+        "langchain-anthropic": list(
+            fetch_latest_major_versions("langchain-anthropic", lower="1.4")
+        ),
         "langchain-google-genai": list(
             fetch_latest_major_versions("langchain-google-genai", lower="4.2")
         ),
-        "langgraph": list(fetch_latest_major_versions("langgraph", lower="1.1")),
-        "python-dotenv": list(fetch_latest_major_versions("python-dotenv", lower="1.2")),
+        "langchain-ollama": list(fetch_latest_major_versions("langchain-ollama", lower="1.1")),
+        "langchain-openai": list(fetch_latest_major_versions("langchain-openai", lower="1.2")),
     }
 
 

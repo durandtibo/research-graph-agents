@@ -50,7 +50,7 @@ dependencies = [
     "langchain-ollama >= 1.1,<2.0",
     "langchain-openai>=1.2,<2.0",
     "langgraph>=1.2,<2.0",
-    "polars >= 1.40,<2.0",
+    "polars>=1.42.1,<2.0",
     "python-dotenv >= 1.2,<2.0",
 ]
 
